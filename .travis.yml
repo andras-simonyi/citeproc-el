@@ -19,8 +19,8 @@ before_install:
 - make -f emacs-travis.mk install_cask
 - emacs --version
 - cask exec emacs --version
-install:
 - git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
+install:
 - cask install
 script:
 - cask build 2>&1 | tee build.log
