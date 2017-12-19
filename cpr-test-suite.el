@@ -33,6 +33,8 @@
 
 (require 'citeproc)
 
+(defvar cpr-test-suite-locale-dir "./test/locales")
+
 (defun cpr-test-suite-parse-testfile (file)
   "Return a parsed form of CSL test FILE."
   (let (result
@@ -74,12 +76,12 @@ CSL test."
   "Create a processor from STYLE and PARSED-INPUT."
   (cpr-proc-create style
 		   (cpr-test-suite-create-getter parsed-input)
-		   (cpr-locale-getter-from-dir "/home/simka/projects/locales")))
+		   (cpr-locale-getter-from-dir cpr-test-suite-locale-dir)))
 
 (defun cpr-test-suite-proc-from-testfile (file)
   "Create an (itemless) processor from a test FILE."
   (let ((style-string (alist-get 'CSL (cpr-test-suite-parse-testfile file)))
-	(locale-getter (cpr-locale-getter-from-dir "/home/simka/projects/locales")))
+	(locale-getter (cpr-locale-getter-from-dir cpr-test-suite-locale-dir)))
     (cpr-proc-create style-string nil locale-getter)))
 
 (defun cpr-test-suite-parse-citation (ct-desc &optional cites-only)

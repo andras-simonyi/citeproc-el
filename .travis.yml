@@ -20,6 +20,7 @@ before_install:
 - emacs --version
 - cask exec emacs --version
 - git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
+- git clone --depth 1 https://github.com/citation-style-language/locales.git test/locales
 install:
 - cask install
 script:
