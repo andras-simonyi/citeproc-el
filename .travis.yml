@@ -1,4 +1,3 @@
-#language: emacs-lisp
 language: python
 sudo: false
 cache:
@@ -25,5 +24,4 @@ install:
 script:
 - cask build 2>&1 | tee build.log
 - sh -c "! grep -oe '.*:Warning:.*' build.log"
-# travis doesn't like ! at the start of commands; see build #412 commit vs. parsed config
-- make test
+- cask exec ert-runner test/citeproc-test.el
