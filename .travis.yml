@@ -20,6 +20,7 @@ before_install:
 - emacs --version
 - cask exec emacs --version
 install:
+- git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
 - cask install
 script:
 - cask build 2>&1 | tee build.log
