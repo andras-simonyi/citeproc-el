@@ -1,4 +1,4 @@
-;;; cpr-lib.el --- utility functions for citeproc-el -*- lexical-binding: t; -*-
+;;; cpr-lib.el --- misc functions and variables for citeproc-el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -26,6 +26,20 @@
 ;;; Code:
 
 (require 'dash)
+
+(defconst cpr--number-vars
+  '(chapter-number collection-number edition issue number number-of-pages
+		   number-of-volumes volume citation-number first-reference-note-number)
+  "CLS number variables.")
+
+(defconst cpr--date-vars
+  '(accessed container event-date issued original-date submitted)
+  "CLS date variables.")
+
+(defconst cpr--name-vars
+  '(author collection-editor composer container-author director editor editorial-director
+	   illustrator interviewer original-author recipient reviewed-author translator)
+  "CLS name variables.")
 
 (defun cpr-lib-parse-xml-file (file)
   "Return the parsed xml representation of FILE."

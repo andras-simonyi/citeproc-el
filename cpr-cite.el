@@ -76,7 +76,7 @@ non-nil then don't link citations to the referred items."
 	  (plain-pref (cpr-rt-to-plain rt-pref))
 	  (rt-suff (cpr-rt-from-str suff))
 	  (plain-suff (cpr-rt-to-plain rt-suff))
-	  (rendered-varlist (cpr--render-varlist-in-rt (cpr-cite--varlist cite)
+	  (rendered-varlist (cpr-render-varlist-in-rt (cpr-cite--varlist cite)
 						       style 'cite 'display no-link)))
     (when (s-present-p plain-suff)
       (push (cpr-rt-from-str suff) result)
@@ -387,6 +387,10 @@ INDEX is the actual note-index, NND is the near-note-distance."
   (if (and (cpr-lib-numeric-p s1) (cpr-lib-numeric-p s2))
       (equal (cpr-number-extract s1) (cpr-number-extract s2))
     (string= (s-trim s1) (s-trim s2))))
+
+(defvar cpr-disambiguation-cite-pos 'last
+  "Which cite position should be the basis of cite disambiguation.
+Possible values are 'last, 'first and 'subsequent.")
 
 (defun cpr-proc-update-positions (proc)
   "Update all position-related fields in PROC."

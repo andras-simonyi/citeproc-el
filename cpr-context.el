@@ -172,6 +172,39 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
       (cpr-term-gender match)
     nil))
 
+(defun cpr-render-varlist-in-rt (var-alist style mode render-mode &optional no-item-no)
+  "Render an item described by VAR-ALIST with STYLE in rich-text.
+Does NOT finalize the rich-text rendering. MODE is either 'bib or
+'cite, RENDER-MODE is 'display or 'sort. If NO-ITEM-NO is non-nil
+then don't add item-no information."
+  (if-let ((unprocessed-id (alist-get 'unprocessed-with-id var-alist)))
+      ;; Itemid received no associated csl fields from the getter!
+      (list nil (concat "NO_ITEM_DATA:" unprocessed-id))
+    (let* ((context (cpr-context-create var-alist style mode render-mode))
+	   (layout-fun-accessor (if (eq mode 'cite) 'cpr-style-cite-layout
+				  'cpr-style-bib-layout))
+	   (layout-fun (funcall layout-fun-accessor style)))
+      (if (null layout-fun) "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
+	(let* ((year-suffix (alist-get 'year-suffix var-alist))
+	       (rendered (funcall layout-fun context))
+	       (itemid-attr (if (eq mode 'cite) 'cited-item-no 'bib-item-no))
+	       (itemid-attr-val (cons itemid-attr
+				      (alist-get 'citation-number var-alist))))
+	  ;; Add item-no information as the last attribute
+	  (unless no-item-no
+	    (cond ((consp rendered) (setf (car rendered)
+					  (-snoc (car rendered) itemid-attr-val)))
+		  ((stringp rendered) (setq rendered
+					    (list (list itemid-attr-val) rendered)))))
+	  ;; Add year-suffix if needed
+	  (if year-suffix
+	      (car (cpr-rt-add-year-suffix
+		    rendered
+		    ;; year suffix is empty if already rendered by var just to delete the
+		    ;; suppressed date
+		    (if (cpr-style-uses-ys-var style) "" year-suffix)))
+	    rendered))))))
+
 (provide 'cpr-context)
 
 ;;; cpr-context.el ends here

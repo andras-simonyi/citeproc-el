@@ -58,7 +58,7 @@ DISAMB-POS contains the position on which cite disambiguation is
   "Return the rich-text cite of itemdata ITD using STYLE."
   (if (cpr-itemdata-rc-uptodate itd)
       (cpr-itemdata-rawcite itd)
-    (let ((rc (cpr--render-varlist-in-rt
+    (let ((rc (cpr-render-varlist-in-rt
 	       (cons (cons 'position (cpr-itemdata-disamb-pos itd))
 		     (cpr-itemdata-varvals itd))
 	       style

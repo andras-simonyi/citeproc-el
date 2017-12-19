@@ -26,8 +26,9 @@
 
 ;;; Commentary:
 
-;; Citeproc-el is a CSL 1.0.1 Citation Processor written in Emacs Lisp. See the
-;; accompanying README for documentation.
+;; Citeproc-el is a CSL 1.0.1 Citation Processor written in Emacs Lisp. This
+;; file contains most of the public API. See the accompanying README for
+;; documentation.
 
 ;;; Code:
 
@@ -47,9 +48,7 @@
 (require 'cpr-formatters)
 (require 'cpr-itemgetters)
 
-(defvar cpr-disambiguation-cite-pos 'last
-  "Which cite position should be the basis of cite disambiguation.
-Possible values are 'last, 'first and 'subsequent.")
+;;; Public API 
 
 (defun cpr-proc-create (style it-getter loc-getter &optional loc force-loc)
   "Return a CSL processor for a given STYLE, IT-GETTER and LOC-GETTER.
@@ -84,7 +83,7 @@ non-nil then don't link cites to the referred items."
   (--map (cpr-citation--render-formatted-citation it proc format no-links)
 	 (queue-head (cpr-proc-citations proc))))
 
-;;; For one-off renderings
+;; For one-off renderings
 
 (defun cpr-style-create (style locale-getter &optional locale force-locale)
   "Compile style in STYLE into a cpr-style struct.
@@ -104,7 +103,7 @@ LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
     (cpr-style--set-opt-defaults style)
     style))
 
-;; FIXME: this should be rethought -- should we apply the specific wrappers as
+;; REVIEW: this should be rethought -- should we apply the specific wrappers as
 ;; well?
 (defun cpr-render-varlist (var-alist style mode format)
   "Render an item described by VAR-ALIST with STYLE.
@@ -113,7 +112,7 @@ FORMAT is a symbol representing a supported output format."
   (funcall (cpr-formatter-rt (cpr-formatter-for-format format))
 	   (cpr-rt-cull-spaces-puncts
 	    (cpr-rt-finalize
-	     (cpr--render-varlist-in-rt var-alist style mode 'display t)))))
+	     (cpr-render-varlist-in-rt var-alist style mode 'display t)))))
 
 (defun cpr-proc-append-citations (proc citations)
   "Append CITATIONS to the queue of citations in PROC.
@@ -136,7 +135,64 @@ CITATIONS is a list of `cpr-citation' structures."
 	(queue-append (cpr-proc-citations proc) citation))
       (setf (cpr-proc-finalized proc) nil))))
 
-;;;; Bibliography rendering
+(defun cpr-render-bib (proc format &optional no-link-targets)
+  "Render a bibliography of items in PROC in FORMAT.
+If optional NO-LINK-TARGETS is non-nil then don't generate
+targets for citatation links.
+  Returns a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons
+cell, in which FORMATTING-PARAMETERS is an alist containing the
+the following formatting parameters keyed to the parameter names
+as symbols:
+  max-offset (integer): The width of the widest first field in the
+bibliography, measured in characters.
+  line-spacing (integer): Vertical line distance specified as a
+multiple of standard line height.
+  entry-spacing (integer): Vertical distance between
+bibliographic entries, specified as a multiple of standard line
+height.
+  second-field-align ('flush or 'margin): The position of
+second-field alignment.
+  hanging-indent (boolean): Whether the bibliography items should
+be rendered with hanging-indents."
+  (if (null (cpr-style-bib-layout (cpr-proc-style proc)))
+      "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
+    (when (not (cpr-proc-finalized proc))
+      (cpr-proc-finalize proc))
+    (let* ((formatter (cpr-formatter-for-format format))
+	   (rt-formatter (cpr-formatter-rt formatter))
+	   (bib-formatter (cpr-formatter-bib formatter))
+	   (bibitem-formatter (cpr-formatter-bib-item formatter))
+	   (style (cpr-proc-style proc))
+	   (bib-opts (cpr-style-bib-opts style))
+	   (punct-in-quote (string= (alist-get 'punctuation-in-quote
+					       (cpr-style-locale-opts style))
+				    "true"))
+	   (sorted (cpr-proc-get-itd-list proc))
+	   (raw-bib (--map (cpr-rt-finalize
+			    (cpr-render-varlist-in-rt
+			     (cpr-itemdata-varvals it)
+			     style 'bib 'display no-link-targets)
+			    punct-in-quote)
+			   sorted))
+	   (substituted
+	    (if-let (subs-auth-subst
+		     (alist-get 'subsequent-author-substitute bib-opts))
+		(cpr--bib-subsequent-author-substitute raw-bib subs-auth-subst)
+	      raw-bib))
+	   (max-offset (if (alist-get 'second-field-align bib-opts)
+			   (cpr--bib-max-offset raw-bib)
+			 0)))
+      (let ((format-params (cons (cons 'max-offset max-offset)
+				 (cpr--bib-opts-to-formatting-params bib-opts))))
+	(cons (funcall bib-formatter
+		       (--map (funcall bibitem-formatter
+				       (funcall rt-formatter (cpr-rt-cull-spaces-puncts it))
+				       format-params)
+			      substituted)
+		       format-params)
+	      format-params)))))
+
+;;;; Bibliography rendering helpers
 
 (defun cpr--bib-opts-to-formatting-params (bib-opts)
   "Convert BIB-OPTS to a formatting parameters alist."
@@ -177,112 +233,6 @@ modified bibliography."
 	   (car (cpr-rt-replace-first-names it s))
 	 (prog1 it (setq prev-author author))))
      bib)))
-
-(defun cpr-render-bib (proc format &optional no-link-targets)
-  "Render a bibliography of items in PROC in FORMAT.
-If optional NO-LINK-TARGETS is non-nil then don't generate
-targets for citatation links.
-  Returns a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons
-cell, in which FORMATTING-PARAMETERS is an alist containing the
-the following formatting parameters keyed to the parameter names
-as symbols:
-  max-offset (integer): The width of the widest first field in the
-bibliography, measured in characters.
-  line-spacing (integer): Vertical line distance specified as a
-multiple of standard line height.
-  entry-spacing (integer): Vertical distance between
-bibliographic entries, specified as a multiple of standard line
-height.
-  second-field-align ('flush or 'margin): The position of
-second-field alignment.
-  hanging-indent (boolean): Whether the bibliography items should
-be rendered with hanging-indents."
-  (if (null (cpr-style-bib-layout (cpr-proc-style proc)))
-      "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
-    (when (not (cpr-proc-finalized proc))
-      (cpr-proc-finalize proc))
-    (let* ((formatter (cpr-formatter-for-format format))
-	   (rt-formatter (cpr-formatter-rt formatter))
-	   (bib-formatter (cpr-formatter-bib formatter))
-	   (bibitem-formatter (cpr-formatter-bib-item formatter))
-	   (style (cpr-proc-style proc))
-	   (bib-opts (cpr-style-bib-opts style))
-	   (punct-in-quote (string= (alist-get 'punctuation-in-quote
-					       (cpr-style-locale-opts style))
-				    "true"))
-	   (sorted (cpr-proc-get-itd-list proc))
-	   (raw-bib (--map (cpr-rt-finalize
-			    (cpr--render-varlist-in-rt
-			     (cpr-itemdata-varvals it)
-			     style 'bib 'display no-link-targets)
-			    punct-in-quote)
-			   sorted))
-	   (substituted
-	    (if-let (subs-auth-subst
-		     (alist-get 'subsequent-author-substitute bib-opts))
-		(cpr--bib-subsequent-author-substitute raw-bib subs-auth-subst)
-	      raw-bib))
-	   (max-offset (if (alist-get 'second-field-align bib-opts)
-			   (cpr--bib-max-offset raw-bib)
-			 0)))
-      (let ((format-params (cons (cons 'max-offset max-offset)
-				 (cpr--bib-opts-to-formatting-params bib-opts))))
-	(cons (funcall bib-formatter
-		       (--map (funcall bibitem-formatter
-				       (funcall rt-formatter (cpr-rt-cull-spaces-puncts it))
-				       format-params)
-			      substituted)
-		       format-params)
-	      format-params)))))
-
-(defun cpr--render-varlist-in-rt (var-alist style mode render-mode &optional no-item-no)
-  "Render an item described by VAR-ALIST with STYLE in rich-text.
-Does NOT finalize the rich-text rendering. MODE is either 'bib or
-'cite, RENDER-MODE is 'display or 'sort. If NO-ITEM-NO is non-nil
-then don't add item-no information."
-  (if-let ((unprocessed-id (alist-get 'unprocessed-with-id var-alist)))
-      ;; Itemid received no associated csl fields from the getter!
-      (list nil (concat "NO_ITEM_DATA:" unprocessed-id))
-    (let* ((context (cpr-context-create var-alist style mode render-mode))
-	   (layout-fun-accessor (if (eq mode 'cite) 'cpr-style-cite-layout
-				  'cpr-style-bib-layout))
-	   (layout-fun (funcall layout-fun-accessor style)))
-      (if (null layout-fun) "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
-	(let* ((year-suffix (alist-get 'year-suffix var-alist))
-	       (rendered (funcall layout-fun context))
-	       (itemid-attr (if (eq mode 'cite) 'cited-item-no 'bib-item-no))
-	       (itemid-attr-val (cons itemid-attr
-				      (alist-get 'citation-number var-alist))))
-	  ;; Add item-no information as the last attribute
-	  (unless no-item-no
-	    (cond ((consp rendered) (setf (car rendered)
-					  (-snoc (car rendered) itemid-attr-val)))
-		  ((stringp rendered) (setq rendered
-					    (list (list itemid-attr-val) rendered)))))
-	  ;; Add year-suffix if needed
-	  (if year-suffix
-	      (car (cpr-rt-add-year-suffix
-		    rendered
-		    ;; year suffix is empty if already rendered by var just to delete the
-		    ;; suppressed date
-		    (if (cpr-style-uses-ys-var style) "" year-suffix)))
-	    rendered))))))
-
-;;;; General CSL
-
-(defconst cpr--number-vars
-  '(chapter-number collection-number edition issue number number-of-pages
-		   number-of-volumes volume citation-number first-reference-note-number)
-  "CLS number variables.")
-
-(defconst cpr--date-vars
-  '(accessed container event-date issued original-date submitted)
-  "CLS date variables.")
-
-(defconst cpr--name-vars
-  '(author collection-editor composer container-author director editor editorial-director
-	   illustrator interviewer original-author recipient reviewed-author translator)
-  "CLS name variables.")
 
 (provide 'citeproc)
 

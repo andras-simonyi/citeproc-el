@@ -37,6 +37,7 @@
 (require 'let-alist)
 
 (require 'cpr-s)
+(require 'cpr-lib)
 
 (defconst cpr-rt-format-attrs
   '(font-variant font-style font-weight text-decoration vertical-align font-variant
