@@ -2,7 +2,7 @@
 
 (require 'cpr-test-suite)
 
-(cpr-test-suite-create-from-dir "/home/simka/projects/citeproc/tests" "/home/simka/projects/citeproc/tests/expected-fails")
+(cpr-test-suite-create-from-dir "/home/simka/projects/citeproc/tests" "./expected_fails.lst")
 
 (provide 'citeproc-test)
 
