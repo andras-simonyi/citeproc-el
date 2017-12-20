@@ -34,7 +34,6 @@
 ;;; Code:
 
 (require 'cpr-lib)
-
 (require 'cpr-context)
 
 (defun cpr-choose-eval-conditions (attrs context)
@@ -60,10 +59,11 @@ Return a list of elementary (CONDITION-TYPE . PARAM) pairs."
 
 (defun cpr-choose--eval-elementary-condition (type param context)
   "Evaluate an elementary choose condition of TYPE with PARAM.
-TYPE is one of the symbols 'variable, 'type, 'locator,
-'is-numeric, 'is-uncertain-date, 'match, 'position,
-'disambiguate. Return a list containing the result of evaluation,
-which is a generalized boolean, or nil if TYPE is 'match."
+TYPE is one of the symbols `variable', `type', `locator',
+`is-numeric', `is-uncertain-date', `match', `position' and
+`disambiguate'. Return a list containing the result of
+evaluation, which is a generalized boolean, or nil if TYPE is
+`match'."
   (if (eq type 'match) nil
     (list
      (pcase type
