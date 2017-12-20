@@ -74,7 +74,7 @@ CSL test."
 
 (defun cpr-test-suite-proc-from-style (style parsed-input)
   "Create a processor from STYLE and PARSED-INPUT."
-  (cpr-proc-create style
+  (citeproc-create style
 		   (cpr-test-suite-create-getter parsed-input)
 		   (cpr-locale-getter-from-dir cpr-test-suite-locale-dir)))
 
@@ -82,7 +82,7 @@ CSL test."
   "Create an (itemless) processor from a test FILE."
   (let ((style-string (alist-get 'CSL (cpr-test-suite-parse-testfile file)))
 	(locale-getter (cpr-locale-getter-from-dir cpr-test-suite-locale-dir)))
-    (cpr-proc-create style-string nil locale-getter)))
+    (citeproc-create style-string nil locale-getter)))
 
 (defun cpr-test-suite-parse-citation (ct-desc &optional cites-only)
   "Parse test citations description CT-DESC.
@@ -116,13 +116,17 @@ Return the resulting output."
     (when (string= mode "citation")
       (cond
        (citation-items
-	(cpr-proc-append-citations proc (--map (cpr-test-suite-parse-citation it t) citation-items)))
+	(citeproc-append-citations (--map (cpr-test-suite-parse-citation it t)
+					  citation-items)
+				   proc))
        (citations
-	(cpr-proc-append-citations proc (mapcar #'cpr-test-suite-parse-citation citations)))
-       (t (cpr-proc-append-citations proc (list (cpr-test-suite-parse-citation input t))))))
+	(citeproc-append-citations (mapcar #'cpr-test-suite-parse-citation citations)
+				   proc))
+       (t (citeproc-append-citations (list (cpr-test-suite-parse-citation input t))
+				     proc))))
     (let ((output (if (string= mode "citation")
-		      (cpr-render-citations proc 'csl-test t)
-		    (car (cpr-render-bib proc 'csl-test t)))))
+		      (citeproc-render-citations proc 'csl-test t)
+		    (car (citeproc-render-bib proc 'csl-test t)))))
       (if (string= mode "citation") (s-join "\n" output) output))))
 
 (defun cpr-test-suite-expected-from-parsed (parsed)

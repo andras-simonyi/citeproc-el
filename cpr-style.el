@@ -81,7 +81,7 @@ is the parsed form of the xml STYLE-FILE."
 ;; locale to be used. In theory, there may be more than one compatible in-style
 ;; locales that should be merged in an order reflecting their closeness to the
 ;; requested locale.
-(defun cpr-style-create-from-locale (parsed-style year-suffix locale)
+(defun citeproc-create-style-from-locale (parsed-style year-suffix locale)
   "Create a citation style from parsed xml style PARSED-STYLE.
 YEAR-SUFFIX specifies whether the style explicitly uses the
 `year-suffix' csl variable. LOCALE is the locale for which
@@ -307,6 +307,25 @@ LAYOUT is either 'bib or 'cite."
 	     (bib (cpr-style-bib-opts style))
 	     (cite (cpr-style-cite-opts style)))
 	   (cpr-style-opts style)))
+
+(defun cpr-style-bib-opts-to-formatting-params (bib-opts)
+  "Convert BIB-OPTS to a formatting parameters alist."
+  (let ((result
+	 (cl-loop
+	  for (opt . val) in bib-opts
+	  if (memq opt
+		   '(hanging-indent line-spacing entry-spacing second-field-align))
+	  collect (cons opt
+			(pcase val
+			  ("true" t)
+			  ("false" nil)
+			  ("flush" 'flush)
+			  ("margin" 'margin)
+			  (_ (string-to-number val)))))))
+    (if (alist-get 'second-field-align result)
+	result
+      (cons (cons 'second-field-align nil)
+	    result))))
 
 (provide 'cpr-style)
 

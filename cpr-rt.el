@@ -514,6 +514,29 @@ The values are ordered depth-first."
   "Return the list of name vars in raw content R."
   (--select (memq it cpr--name-vars) (cpr-rt-endered-vars r)))
 
+;;; Helpers for bibliography rendering
+
+(defun cpr-rt-max-offset (rts)
+  "Return the maximal first field width in rich-texts RTS."
+  (cl-loop for raw-item in rts maximize
+	   (length (cpr-rt-to-plain (cadr raw-item)))))
+
+(defun cpr-rt-subsequent-author-substitute (bib s)
+  "Substitute S for subsequent author(s) in BIB.
+BIB is a list of bib entries in rich-text format. Return the
+modified bibliography."
+  (let (prev-author)
+    (--map
+     (let ((author
+	    (cpr-rt-find-first-node
+	     it
+	     (lambda (x)
+	       (and (consp x) (assoc 'rendered-names (car x)))))))
+       (if (equal author prev-author)
+	   (car (cpr-rt-replace-first-names it s))
+	 (prog1 it (setq prev-author author))))
+     bib)))
+
 (provide 'cpr-rt)
 
 ;;; cpr-rt.el ends here

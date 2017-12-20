@@ -1,12 +1,12 @@
-;;; citeproc.el --- a CSL 1.0.1 Citation Processor for Emacs -*- lexical-binding: t; -*-
+;;; citeproc.el --- a CSL 1.0.1 Citation Processor -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
 ;; URL: https://github.com/andras-simonyi/citeproc-el
-;; Keywords: bibliography citation cite csl
-;; Package-Requires: ((emacs "25") (dash "2.13") (s "1.12.0") (f "0.18.0") (queue "0.2"))
+;; Keywords: bib
+;; Package-Requires: ((emacs "25") (dash "2.13.0") (s "1.12.0") (f "0.18.0") (queue "0.2"))
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -26,9 +26,9 @@
 
 ;;; Commentary:
 
-;; Citeproc-el is a CSL 1.0.1 Citation Processor written in Emacs Lisp. This
-;; file contains most of the public API. See the accompanying README for
-;; documentation.
+;; citeproc-el is a library for rendering citations and bibliographies in styles
+;; described in the Citation Style Language (CSL). This file contains the public
+;; API. See the accompanying README for full documentation.
 
 ;;; Code:
 
@@ -36,6 +36,7 @@
 (require 'cl-lib)
 (require 'queue)
 
+(require 'cpr-rt)
 (require 'cpr-locale)
 (require 'cpr-style)
 (require 'cpr-choose)
@@ -50,7 +51,7 @@
 
 ;;; Public API 
 
-(defun cpr-proc-create (style it-getter loc-getter &optional loc force-loc)
+(defun citeproc-create (style it-getter loc-getter &optional loc force-loc)
   "Return a CSL processor for a given STYLE, IT-GETTER and LOC-GETTER.
 STYLE is either a path to a CSL style file or a CSL style as a
   string.
@@ -67,14 +68,14 @@ Optional LOC is the locale to use if the style doesn't specify a
   default one. Defaults to \"en-US\".
 If optional FORCE-LOC is non-nil then use locale LOC even if
   STYLE specifies a different one as default. Defaults to nil."
-  (let ((style (cpr-style-create style loc-getter loc force-loc))
+  (let ((style (citeproc-create-style style loc-getter loc force-loc))
 	(names (make-hash-table :test 'equal))
 	(itemdata (make-hash-table :test 'equal))
 	(citations (make-queue)))
     (cpr-proc--create :style style :getter it-getter :names names
 		      :itemdata itemdata :citations citations :finalized t)))
 
-(defun cpr-render-citations (proc format &optional no-links)
+(defun citeproc-render-citations (proc format &optional no-links)
   "Render all citations in PROC in the given FORMAT.
 Return a list of formatted citations. If optional NO-LINKS is
 non-nil then don't link cites to the referred items."
@@ -83,9 +84,7 @@ non-nil then don't link cites to the referred items."
   (--map (cpr-citation--render-formatted-citation it proc format no-links)
 	 (queue-head (cpr-proc-citations proc))))
 
-;; For one-off renderings
-
-(defun cpr-style-create (style locale-getter &optional locale force-locale)
+(defun citeproc-create-style (style locale-getter &optional locale force-locale)
   "Compile style in STYLE into a cpr-style struct.
 STYLE is either a path to a CSL style file, or a style as a string.
 LOCALE-GETTER is a getter function for locales, the optional
@@ -98,14 +97,16 @@ LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
 							"en-US")))
 	  (act-parsed-locale (funcall locale-getter preferred-locale))
 	  (act-locale (alist-get 'lang (cadr act-parsed-locale)))
-	  (style (cpr-style-create-from-locale parsed-style (not (not year-suffix)) act-locale)))
+	  (style (citeproc-create-style-from-locale
+		  parsed-style
+		  (not (not year-suffix)) act-locale)))
     (cpr-style--update-locale style act-parsed-locale)
     (cpr-style--set-opt-defaults style)
     style))
 
 ;; REVIEW: this should be rethought -- should we apply the specific wrappers as
 ;; well?
-(defun cpr-render-varlist (var-alist style mode format)
+(defun citeproc-render-varlist (var-alist style mode format)
   "Render an item described by VAR-ALIST with STYLE.
 MODE is either 'bib or 'cite,
 FORMAT is a symbol representing a supported output format."
@@ -114,8 +115,8 @@ FORMAT is a symbol representing a supported output format."
 	    (cpr-rt-finalize
 	     (cpr-render-varlist-in-rt var-alist style mode 'display t)))))
 
-(defun cpr-proc-append-citations (proc citations)
-  "Append CITATIONS to the queue of citations in PROC.
+(defun citeproc-append-citations (citations proc)
+  "Append CITATIONS to the list of citations in PROC.
 CITATIONS is a list of `cpr-citation' structures."
   (let ((itemdata (cpr-proc-itemdata proc))
 	ids)
@@ -135,7 +136,7 @@ CITATIONS is a list of `cpr-citation' structures."
 	(queue-append (cpr-proc-citations proc) citation))
       (setf (cpr-proc-finalized proc) nil))))
 
-(defun cpr-render-bib (proc format &optional no-link-targets)
+(defun citeproc-render-bib (proc format &optional no-link-targets)
   "Render a bibliography of items in PROC in FORMAT.
 If optional NO-LINK-TARGETS is non-nil then don't generate
 targets for citatation links.
@@ -177,13 +178,13 @@ be rendered with hanging-indents."
 	   (substituted
 	    (if-let (subs-auth-subst
 		     (alist-get 'subsequent-author-substitute bib-opts))
-		(cpr--bib-subsequent-author-substitute raw-bib subs-auth-subst)
+		(cpr-rt-subsequent-author-substitute raw-bib subs-auth-subst)
 	      raw-bib))
 	   (max-offset (if (alist-get 'second-field-align bib-opts)
-			   (cpr--bib-max-offset raw-bib)
+			   (cpr-rt-max-offset raw-bib)
 			 0)))
       (let ((format-params (cons (cons 'max-offset max-offset)
-				 (cpr--bib-opts-to-formatting-params bib-opts))))
+				 (cpr-style-bib-opts-to-formatting-params bib-opts))))
 	(cons (funcall bib-formatter
 		       (--map (funcall bibitem-formatter
 				       (funcall rt-formatter (cpr-rt-cull-spaces-puncts it))
@@ -191,48 +192,6 @@ be rendered with hanging-indents."
 			      substituted)
 		       format-params)
 	      format-params)))))
-
-;;;; Bibliography rendering helpers
-
-(defun cpr--bib-opts-to-formatting-params (bib-opts)
-  "Convert BIB-OPTS to a formatting parameters alist."
-  (let ((result
-	 (cl-loop
-	  for (opt . val) in bib-opts
-	  if (memq opt
-		   '(hanging-indent line-spacing entry-spacing second-field-align))
-	  collect (cons opt
-			(pcase val
-			  ("true" t)
-			  ("false" nil)
-			  ("flush" 'flush)
-			  ("margin" 'margin)
-			  (_ (string-to-number val)))))))
-    (if (alist-get 'second-field-align result)
-	result
-      (cons (cons 'second-field-align nil)
-	    result))))
-
-(defun cpr--bib-max-offset (rb)
-  "Return the maximal first field width in rich-text bibliography RB."
-  (cl-loop for raw-item in rb maximize
-	   (length (cpr-rt-to-plain (cadr raw-item)))))
-
-(defun cpr--bib-subsequent-author-substitute (bib s)
-  "Substitute S for subsequent author(s) in BIB.
-BIB is a list of bib entries in rich-text format. Return the
-modified bibliography."
-  (let (prev-author)
-    (--map
-     (let ((author
-	    (cpr-rt-find-first-node
-	     it
-	     (lambda (x)
-	       (and (consp x) (assoc 'rendered-names (car x)))))))
-       (if (equal author prev-author)
-	   (car (cpr-rt-replace-first-names it s))
-	 (prog1 it (setq prev-author author))))
-     bib)))
 
 (provide 'citeproc)
 

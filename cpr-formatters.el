@@ -43,7 +43,7 @@ BIB-ITEM is a two-argument function mapping the output of RT for
   below) to a fully formatted bibliography item,
 BIB is a two-argument function mapping a list of formatted
   bibliography items and a FORMATTING-PARAMETERS alist (see
-  `cpr-render-bib' for details) to a fully formatted
+  `citeproc-render-bib' for details) to a fully formatted
   bibliography."
   rt (cite #'identity) (bib-item (lambda (x _) x))
   (bib (lambda (x _) (mapconcat #'identity x "\n"))))
