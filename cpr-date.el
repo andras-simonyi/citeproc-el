@@ -42,11 +42,8 @@ to be interpreted as a season number."
 
 (defun cpr-date-parse (date-rep)
   "Parse CSL json date repr. DATE-REP into an internal one."
-  (-let (((&alist 'date-parts dates
-		  'circa circa
-		  'season season)
-	  date-rep))
-    (--map (cpr-date--conv it season circa) dates)))
+  (let-alist date-rep
+    (--map (cpr-date--conv it .season .circa) .date-parts)))
 
 (defun cpr-date--conv (dates &optional season circa)
   "Convert date-part list DATES to a cpr-date struct.
