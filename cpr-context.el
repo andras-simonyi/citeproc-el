@@ -44,8 +44,7 @@
 
 (defun cpr-context-create (var-alist style mode render-mode)
   "Create a cpr-context struct from var-values VAR-ALIST and csl style STYLE.
-MODE is either 'bib or 'cite,
-RENDER-MODE is 'display or 'sort."
+MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
   (cpr-context--create :vars var-alist
 		       :macros (cpr-style-macros style)
 		       :terms (cpr-style-terms style)
@@ -174,9 +173,9 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
 
 (defun cpr-render-varlist-in-rt (var-alist style mode render-mode &optional no-item-no)
   "Render an item described by VAR-ALIST with STYLE in rich-text.
-Does NOT finalize the rich-text rendering. MODE is either 'bib or
-'cite, RENDER-MODE is 'display or 'sort. If NO-ITEM-NO is non-nil
-then don't add item-no information."
+Does NOT finalize the rich-text rendering. MODE is either `bib'
+or `cite', RENDER-MODE is `display' or `sort'. If NO-ITEM-NO is
+non-nil then don't add item-no information."
   (if-let ((unprocessed-id (alist-get 'unprocessed-with-id var-alist)))
       ;; Itemid received no associated csl fields from the getter!
       (list nil (concat "NO_ITEM_DATA:" unprocessed-id))

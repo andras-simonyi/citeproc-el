@@ -119,7 +119,7 @@ cite-sort-orders slots of `cpr-style' for details)."
 
 (defun cpr-sort--render-keys (style var-alist mode)
   "Render the sort keys of an item with STYLE and VAR-ALIST.
-MODE is either 'cite or 'bib."
+MODE is either `cite' or `bib'."
   (let ((context (cpr-context-create var-alist style mode 'sort))
 	(sort (cl-ecase mode
 		(cite (cpr-style-cite-sort style))

@@ -106,7 +106,7 @@ LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
 ;; well?
 (defun citeproc-render-varlist (var-alist style mode format)
   "Render an item described by VAR-ALIST with STYLE.
-MODE is either 'bib or 'cite,
+MODE is one of the symbols `bib' or `cite',
 FORMAT is a symbol representing a supported output format."
   (funcall (cpr-formatter-rt (cpr-formatter-for-format format))
 	   (cpr-rt-cull-spaces-puncts

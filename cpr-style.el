@@ -302,7 +302,7 @@ position and before the (possibly empty) body."
 
 (defun cpr-style-global-opts (style layout)
   "Return the global opts in STYLE for LAYOUT.
-LAYOUT is either 'bib or 'cite."
+LAYOUT is either `bib' or `cite'."
   (-concat (cl-ecase layout
 	     (bib (cpr-style-bib-opts style))
 	     (cite (cpr-style-cite-opts style)))
