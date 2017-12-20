@@ -25,8 +25,10 @@
 
 ;;; Code:
 
+(require 'dash)
 (require 'subr-x)
 (require 'bibtex)
+(require 'cl-lib)
 
 (require 'cpr-s)
 
