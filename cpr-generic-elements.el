@@ -31,6 +31,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 'let-alist)
 
 (require 'cpr-rt)
 (require 'cpr-context)
