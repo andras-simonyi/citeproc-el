@@ -231,10 +231,9 @@ D is a cpr-date structure. Return a rich-text content."
   "Render the month in date D according to formatting in ATTRS.
 D is a cpr-date structure. Return a rich-text content."
   (if-let (month (cpr-date-month d))
-      (-let (((&alist 'form form)
-	      attrs)
-	     (term-pref (if (cpr-date-season d)
-			    "season-" "month-")))
+      (let ((form (alist-get 'form attrs))
+	    (term-pref (if (cpr-date-season d)
+			   "season-" "month-")))
 	(cpr-rt-format-single
 	 attrs
 	 (pcase (cpr-lib-intern form)
@@ -253,9 +252,8 @@ D is a cpr-date structure. Return a rich-text content."
   "Render the day in date D according to formatting in ATTRS.
 D is a cpr-date structure. Return a rich-text content."
   (if-let (day (cpr-date-day d))
-      (-let (((&alist 'form form)
-	      attrs)
-	     (month (cpr-date-month d)))
+      (let ((form (alist-get 'form attrs))
+	    (month (cpr-date-month d)))
 	(cpr-rt-format-single
 	 attrs
 	 (cond

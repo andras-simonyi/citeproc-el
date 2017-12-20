@@ -24,8 +24,9 @@
 ;; Functions corresponding to the generic CSL rendering elements cs:layout,
 ;; cs:group and cs:text. With the exception of `cpr--layout' they return a
 ;; (CONTENT . CONTENT-TYPE) pair, where CONTENT is the rendered rich-text output
-;; and CONTENT-TYPE is one of the symbols 'text-only, 'empty-vars, 'present-var.
-;; In contrast, `cpr--layout' returns only the rendered rich-text content.
+;; and CONTENT-TYPE is one of the symbols `text-only', `empty-vars' and
+;; `present-var.' In contrast, `cpr--layout' returns only the rendered rich-text
+;; content.
 
 ;;; Code:
 
@@ -83,32 +84,26 @@
 
 (defun cpr--text (attrs context &rest _body)
   "Render the content of a text element with ATTRS and BODY."
-  (-let* (((&alist 'variable variable
-		   'macro macro
-		   'term term
-		   'value value
-		   'plural plural
-		   'form form)
-	   attrs)
-	  (content nil)
-	  (type 'text-only))
-    (cond (value (setq content value))
-	  (variable (let ((val (cpr-var-value (intern variable) context (cpr-lib-intern form))))
-		      (setq content val)
-		      (if val
-			  (progn
-			    (setq type 'present-var)
-			    (push `(rendered-var . ,(intern variable)) attrs))
-			(setq type 'empty-vars))))
-	  (term (setq form (if form (intern form) 'long)
-		      plural (if (or (not plural)
-				     (string= plural "false"))
-				 'single 'multiple)
-		      content (cpr-term-inflected-text term form plural context)))
-	  (macro (let ((macro-val (cpr-macro-output macro context)))
-		   (setq content (car macro-val))
-		   (setq type (cdr macro-val)))))
-    (cons (cpr-rt-format-single attrs content context) type)))
+  (let-alist attrs
+   (let ((content nil)
+	 (type 'text-only))
+     (cond (.value (setq content .value))
+	   (.variable (let ((val (cpr-var-value (intern .variable) context (cpr-lib-intern .form))))
+		       (setq content val)
+		       (if val
+			   (progn
+			     (setq type 'present-var)
+			     (push `(rendered-var . ,(intern .variable)) attrs))
+			 (setq type 'empty-vars))))
+	   (.term (setq .form (if .form (intern .form) 'long)
+			.plural (if (or (not .plural)
+					(string= .plural "false"))
+				    'single 'multiple)
+			content (cpr-term-inflected-text .term .form .plural context)))
+	   (.macro (let ((macro-val (cpr-macro-output .macro context)))
+		     (setq content (car macro-val))
+		     (setq type (cdr macro-val)))))
+     (cons (cpr-rt-format-single attrs content context) type))))
 
 (provide 'cpr-generic-elements)
 

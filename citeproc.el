@@ -1,4 +1,4 @@
-;;; citeproc.el --- a CSL 1.0.1 Citation Processor -*- lexical-binding: t; -*-
+;;; citeproc.el --- A CSL 1.0.1 Citation Processor -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
