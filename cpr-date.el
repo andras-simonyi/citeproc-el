@@ -35,9 +35,9 @@
 
 (cl-defstruct (cpr-date (:constructor cpr-date-create))
   "Struct for representing dates.
-Slots YEAR, MONTH, DAY are integers, while SEASON and APPROXIMATE
-are booleans. SEASON indicates whether the integer in slot MONTH
-is to be interpreted as a season number."
+Slots YEAR, MONTH, DAY are integers, while SEASON and CIRCA are
+booleans. SEASON indicates whether the integer in slot MONTH is
+to be interpreted as a season number."
   (year nil) (month nil) (day nil) (season nil) (circa nil))
 
 (defun cpr-date-parse (date-rep)
