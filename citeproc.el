@@ -49,8 +49,6 @@
 (require 'cpr-formatters)
 (require 'cpr-itemgetters)
 
-;;; Public API 
-
 (defun citeproc-create (style it-getter loc-getter &optional loc force-loc)
   "Return a CSL processor for a given STYLE, IT-GETTER and LOC-GETTER.
 STYLE is either a path to a CSL style file or a CSL style as a
