@@ -28,6 +28,7 @@
 (require 'subr-x)
 (require 'cl-lib)
 (require 'dash)
+(require 'let-alist)
 
 (require 'cpr-lib)
 (require 'cpr-rt)
