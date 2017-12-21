@@ -107,7 +107,7 @@ Return the added itemdata structure."
 
 (defun cpr-proc-put-item-by-id (proc itemid)
   "Put item with ITEMID into the itemlist of PROC.
-Returns the itemdata struct that was added."
+Return the itemdata struct that was added."
   (let ((item (cdar (funcall (cpr-proc-getter proc)
 			     (list itemid)))))
     (cpr-proc--put-item proc

@@ -140,8 +140,8 @@ If optional NO-LINK-TARGETS is non-nil then don't generate
 targets for citatation links.
   Returns a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons
 cell, in which FORMATTING-PARAMETERS is an alist containing the
-the following formatting parameters keyed to the parameter names
-as symbols:
+following formatting parameters keyed to the parameter names as
+symbols:
   max-offset (integer): The width of the widest first field in the
 bibliography, measured in characters.
   line-spacing (integer): Vertical line distance specified as a
@@ -149,7 +149,7 @@ multiple of standard line height.
   entry-spacing (integer): Vertical distance between
 bibliographic entries, specified as a multiple of standard line
 height.
-  second-field-align ('flush or 'margin): The position of
+  second-field-align (`flush' or `margin'): The position of
 second-field alignment.
   hanging-indent (boolean): Whether the bibliography items should
 be rendered with hanging-indents."
