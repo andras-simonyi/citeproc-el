@@ -149,7 +149,7 @@ character was found."
   (--> s
        (citeproc-bt--preprocess-for-decode it)
        (citeproc-bt--decode it)
-       (s-replace-all '(("{" . "") ("}" . "") ("\n" . " ")) it)
+       (s-replace-all '(("{" . "") ("}" . "") ("\n" . " ") ("\\" . "")) it)
        (replace-regexp-in-string "[[:space:]]\\{2,\\}" " " it)
        (s-chomp it)))
 
