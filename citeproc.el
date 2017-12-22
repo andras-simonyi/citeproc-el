@@ -187,7 +187,8 @@ be rendered with hanging-indents."
 				 (citeproc-style-bib-opts-to-formatting-params bib-opts))))
 	(cons (funcall bib-formatter
 		       (--map (funcall bibitem-formatter
-				       (funcall rt-formatter (citeproc-rt-cull-spaces-puncts it))
+				       (funcall
+					rt-formatter (citeproc-rt-cull-spaces-puncts it))
 				       format-params)
 			      substituted)
 		       format-params)
