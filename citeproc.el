@@ -36,29 +36,31 @@
 (require 'cl-lib)
 (require 'queue)
 
-(require 'cpr-rt)
-(require 'cpr-locale)
-(require 'cpr-style)
-(require 'cpr-choose)
-(require 'cpr-generic-elements)
-(require 'cpr-context)
-(require 'cpr-itemdata)
-(require 'cpr-proc)
-(require 'cpr-cite)
-(require 'cpr-sort)
-(require 'cpr-formatters)
-(require 'cpr-itemgetters)
+(require 'citeproc-rt)
+(require 'citeproc-locale)
+(require 'citeproc-style)
+(require 'citeproc-choose)
+(require 'citeproc-generic-elements)
+(require 'citeproc-context)
+(require 'citeproc-itemdata)
+(require 'citeproc-proc)
+(require 'citeproc-cite)
+(require 'citeproc-sort)
+(require 'citeproc-formatters)
+(require 'citeproc-itemgetters)
+
+;;; Public API
 
 (defun citeproc-create (style it-getter loc-getter &optional loc force-loc)
   "Return a CSL processor for a given STYLE, IT-GETTER and LOC-GETTER.
 STYLE is either a path to a CSL style file or a CSL style as a
   string.
-IT-GETTER is a function that takes a list of itemid strings as
-  its sole argument and returns an alist in which the given
-  itemids are the keys and the values are the parsed csl json
-  descriptions of the corresponding bibliography items (keys are
-  symbols, arrays and hashes should be represented as lists and
-  alists, respecively).
+IT-GETTER is an item-getter function that takes a list of itemid
+  strings as its sole argument and returns an alist in which the
+  given itemids are the keys and the values are the parsed csl
+  json descriptions of the corresponding bibliography items (keys
+  are symbols, arrays and hashes should be represented as lists
+  and alists, respecively).
 LOC-GETTER is a function that takes a locale string (e.g.
   \"en_GB\") as an argument and returns a corresponding parsed
   CSL locale (in the same format as IT-GETTER).
@@ -70,25 +72,25 @@ If optional FORCE-LOC is non-nil then use locale LOC even if
 	(names (make-hash-table :test 'equal))
 	(itemdata (make-hash-table :test 'equal))
 	(citations (make-queue)))
-    (cpr-proc--create :style style :getter it-getter :names names
-		      :itemdata itemdata :citations citations :finalized t)))
+    (citeproc-proc--create :style style :getter it-getter :names names
+			   :itemdata itemdata :citations citations :finalized t)))
 
 (defun citeproc-render-citations (proc format &optional no-links)
   "Render all citations in PROC in the given FORMAT.
 Return a list of formatted citations. If optional NO-LINKS is
 non-nil then don't link cites to the referred items."
-  (when (not (cpr-proc-finalized proc))
-    (cpr-proc-finalize proc))
-  (--map (cpr-citation--render-formatted-citation it proc format no-links)
-	 (queue-head (cpr-proc-citations proc))))
+  (when (not (citeproc-proc-finalized proc))
+    (citeproc-proc--finalize proc))
+  (--map (citeproc-citation--render-formatted-citation it proc format no-links)
+	 (queue-head (citeproc-proc-citations proc))))
 
 (defun citeproc-create-style (style locale-getter &optional locale force-locale)
-  "Compile style in STYLE into a cpr-style struct.
+  "Compile style in STYLE into a citeproc-style struct.
 STYLE is either a path to a CSL style file, or a style as a string.
 LOCALE-GETTER is a getter function for locales, the optional
 LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
   LOCALE even if the style's default locale is different."
-  (-let* (((year-suffix . parsed-style) (cpr-style-parse style))
+  (-let* (((year-suffix . parsed-style) (citeproc-style-parse style))
 	  (default-locale (alist-get 'default-locale (cadr parsed-style)))
 	  (preferred-locale (if force-locale locale (or default-locale
 							locale
@@ -98,8 +100,8 @@ LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
 	  (style (citeproc-create-style-from-locale
 		  parsed-style
 		  (not (not year-suffix)) act-locale)))
-    (cpr-style--update-locale style act-parsed-locale)
-    (cpr-style--set-opt-defaults style)
+    (citeproc-style--update-locale style act-parsed-locale)
+    (citeproc-style--set-opt-defaults style)
     style))
 
 ;; REVIEW: this should be rethought -- should we apply the specific wrappers as
@@ -108,31 +110,31 @@ LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
   "Render an item described by VAR-ALIST with STYLE.
 MODE is one of the symbols `bib' or `cite',
 FORMAT is a symbol representing a supported output format."
-  (funcall (cpr-formatter-rt (cpr-formatter-for-format format))
-	   (cpr-rt-cull-spaces-puncts
-	    (cpr-rt-finalize
-	     (cpr-render-varlist-in-rt var-alist style mode 'display t)))))
+  (funcall (citeproc-formatter-rt (citeproc-formatter-for-format format))
+	   (citeproc-rt-cull-spaces-puncts
+	    (citeproc-rt-finalize
+	     (citeproc-render-varlist-in-rt var-alist style mode 'display t)))))
 
 (defun citeproc-append-citations (citations proc)
   "Append CITATIONS to the list of citations in PROC.
-CITATIONS is a list of `cpr-citation' structures."
-  (let ((itemdata (cpr-proc-itemdata proc))
+CITATIONS is a list of `citeproc-citation' structures."
+  (let ((itemdata (citeproc-proc-itemdata proc))
 	ids)
     ;; Collect new itemids
     (dolist (citation citations)
-      (dolist (cite (cpr-citation-cites citation))
+      (dolist (cite (citeproc-citation-cites citation))
 	(push (alist-get 'id cite) ids)))
     (let* ((uniq-ids (delete-dups (nreverse ids))) ; reverse pushed ids
 	   (new-ids (--remove (gethash it itemdata) uniq-ids)))
       ;; Add all new items in one pass
-      (cpr-proc-put-items-by-id proc new-ids)
+      (citeproc-proc-put-items-by-id proc new-ids)
       ;; Add itemdata to the cite structs and add them to the cite queue.
       (dolist (citation citations)
-	(setf (cpr-citation-cites citation)
+	(setf (citeproc-citation-cites citation)
 	      (--map (cons (cons 'itd (gethash (alist-get 'id it) itemdata)) it)
-		     (cpr-citation-cites citation)))
-	(queue-append (cpr-proc-citations proc) citation))
-      (setf (cpr-proc-finalized proc) nil))))
+		     (citeproc-citation-cites citation)))
+	(queue-append (citeproc-proc-citations proc) citation))
+      (setf (citeproc-proc-finalized proc) nil))))
 
 (defun citeproc-render-bib (proc format &optional no-link-targets)
   "Render a bibliography of items in PROC in FORMAT.
@@ -153,43 +155,56 @@ height.
 second-field alignment.
   hanging-indent (boolean): Whether the bibliography items should
 be rendered with hanging-indents."
-  (if (null (cpr-style-bib-layout (cpr-proc-style proc)))
+  (if (null (citeproc-style-bib-layout (citeproc-proc-style proc)))
       "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
-    (when (not (cpr-proc-finalized proc))
-      (cpr-proc-finalize proc))
-    (let* ((formatter (cpr-formatter-for-format format))
-	   (rt-formatter (cpr-formatter-rt formatter))
-	   (bib-formatter (cpr-formatter-bib formatter))
-	   (bibitem-formatter (cpr-formatter-bib-item formatter))
-	   (style (cpr-proc-style proc))
-	   (bib-opts (cpr-style-bib-opts style))
+    (when (not (citeproc-proc-finalized proc))
+      (citeproc-proc--finalize proc))
+    (let* ((formatter (citeproc-formatter-for-format format))
+	   (rt-formatter (citeproc-formatter-rt formatter))
+	   (bib-formatter (citeproc-formatter-bib formatter))
+	   (bibitem-formatter (citeproc-formatter-bib-item formatter))
+	   (style (citeproc-proc-style proc))
+	   (bib-opts (citeproc-style-bib-opts style))
 	   (punct-in-quote (string= (alist-get 'punctuation-in-quote
-					       (cpr-style-locale-opts style))
+					       (citeproc-style-locale-opts style))
 				    "true"))
-	   (sorted (cpr-proc-get-itd-list proc))
-	   (raw-bib (--map (cpr-rt-finalize
-			    (cpr-render-varlist-in-rt
-			     (cpr-itemdata-varvals it)
+	   (sorted (citeproc-proc-get-itd-list proc))
+	   (raw-bib (--map (citeproc-rt-finalize
+			    (citeproc-render-varlist-in-rt
+			     (citeproc-itemdata-varvals it)
 			     style 'bib 'display no-link-targets)
 			    punct-in-quote)
 			   sorted))
 	   (substituted
 	    (if-let (subs-auth-subst
 		     (alist-get 'subsequent-author-substitute bib-opts))
-		(cpr-rt-subsequent-author-substitute raw-bib subs-auth-subst)
+		(citeproc-rt-subsequent-author-substitute raw-bib subs-auth-subst)
 	      raw-bib))
 	   (max-offset (if (alist-get 'second-field-align bib-opts)
-			   (cpr-rt-max-offset raw-bib)
+			   (citeproc-rt-max-offset raw-bib)
 			 0)))
       (let ((format-params (cons (cons 'max-offset max-offset)
-				 (cpr-style-bib-opts-to-formatting-params bib-opts))))
+				 (citeproc-style-bib-opts-to-formatting-params bib-opts))))
 	(cons (funcall bib-formatter
 		       (--map (funcall bibitem-formatter
-				       (funcall rt-formatter (cpr-rt-cull-spaces-puncts it))
+				       (funcall rt-formatter (citeproc-rt-cull-spaces-puncts it))
 				       format-params)
 			      substituted)
 		       format-params)
 	      format-params)))))
+
+;;; Helpers 
+
+(defun citeproc-proc--finalize (proc)
+  "Finalize processor PROC by sorting and disambiguating items."
+  (unless (citeproc-proc-finalized proc)
+    (citeproc-proc-update-sortkeys proc)
+    (citeproc-proc-sort-itds proc)
+    (citeproc-proc-update-positions proc)
+    (citeproc-proc-disamb proc)
+    (citeproc-proc-sort-cites proc)
+    (citeproc-proc-group-and-collapse-cites proc)
+    (setf (citeproc-proc-finalized proc) t)))
 
 (provide 'citeproc)
 

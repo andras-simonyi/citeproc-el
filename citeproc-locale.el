@@ -1,4 +1,4 @@
-;; cpr-locale.el --- CSL locale related functions -*- lexical-binding: t; -*-
+;; citeproc-locale.el --- CSL locale related functions -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -22,18 +22,18 @@
 ;;; Commentary:
 
 ;; In addition to some locale handling helpers, this file provides the function
-;; `cpr-locale-getter-from-dir', which constructs locale getter functions that
-;; retrieve locales from a given directory.
+;; `citeproc-locale-getter-from-dir', which constructs locale getter functions
+;; that retrieve locales from a given directory.
 
 ;;; Code:
 
 (require 'dash)
 (require 'f)
 
-(require 'cpr-lib)
-(require 'cpr-term)
+(require 'citeproc-lib)
+(require 'citeproc-term)
 
-(defconst cpr-locale--default-variants-alist
+(defconst citeproc-locale--default-variants-alist
   '(("af" . "ZA") ("ca" . "AD") ("cs" . "CZ") ("cy" . "GB")
     ("da" . "DK") ("en" . "US") ("el" . "GR") ("et" . "EE")
     ("fa" . "IR") ("he" . "IR") ("ja" . "JP") ("km" . "KH")
@@ -44,37 +44,37 @@
 Only those locales are given for which the default variant is not
 simply the result of upcasing.")
 
-(defun cpr-locale--extend (loc)
+(defun citeproc-locale--extend (loc)
   "Extend simple locale LOC to default variant."
-  (let ((variant (assoc-default loc cpr-locale--default-variants-alist)))
+  (let ((variant (assoc-default loc citeproc-locale--default-variants-alist)))
     (concat loc "-" (or variant (s-upcase loc)))))
 
-(defun cpr-locale--compatible-p (l1 l2)
+(defun citeproc-locale--compatible-p (l1 l2)
   "Whether locales L1 and L2 are compatible."
   (or (not (and l1 l2))
       (s-prefix-p l1 l2)
       (s-prefix-p l2 l1)))
 
-(defun cpr-locale-getter-from-dir (dir)
+(defun citeproc-locale-getter-from-dir (dir)
   "Return a locale getter getting parsed locales from a local DIR.
 If the requested locale couldn't be read then return the parsed
 en-US locale, which must exist."
   (lambda (loc)
-    (let* ((ext-loc (if (s-contains-p "-" loc) loc (cpr-locale--extend loc)))
+    (let* ((ext-loc (if (s-contains-p "-" loc) loc (citeproc-locale--extend loc)))
 	   (loc-file (concat dir "/locales-" ext-loc ".xml"))
 	   (loc-available (f-readable-p loc-file)))
-      (cpr-lib-remove-xml-comments
-       (cpr-lib-parse-xml-file (if loc-available
-				   loc-file
-				 (concat dir "/locales-en-US.xml")))))))
+      (citeproc-lib-remove-xml-comments
+       (citeproc-lib-parse-xml-file (if loc-available
+					loc-file
+				      (concat dir "/locales-en-US.xml")))))))
 
-(defun cpr-locale-termlist-from-xml-frag (frag)
-  "Transform xml FRAG representing cpr--terms into a cpr-term list."
+(defun citeproc-locale-termlist-from-xml-frag (frag)
+  "Transform xml FRAG representing citeproc--terms into a citeproc-term list."
   (--mapcat (if (eq 'term (car it))
-		(cpr-term--from-xml-frag (cdr it))
+		(citeproc-term--from-xml-frag (cdr it))
 	      nil)
 	    frag))
 
-(provide 'cpr-locale)
+(provide 'citeproc-locale)
 
-;;; cpr-locale.el ends here
+;;; citeproc-locale.el ends here

@@ -1,4 +1,4 @@
-;;; cpr-name.el --- CSL name and label rendering -*- lexical-binding: t; -*-
+;;; citeproc-name.el --- CSL name and label rendering -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -29,48 +29,52 @@
 (require 'let-alist)
 (require 'dash)
 
-(require 'cpr-lib)
-(require 'cpr-s)
-(require 'cpr-rt)
-(require 'cpr-context)
-(require 'cpr-term)
+(require 'citeproc-lib)
+(require 'citeproc-s)
+(require 'citeproc-rt)
+(require 'citeproc-context)
+(require 'citeproc-term)
 
 ;; OPTIMIZE: Name count could be sped up by only counting the names to be
 ;; rendered without actually rendering them
-(defun cpr-name-render-vars (varstring attrs name-attrs name-part-attrs et-al-attrs
-				       with-label label-before-names label-attrs context)
+(defun citeproc-name-render-vars (varstring attrs name-attrs name-part-attrs et-al-attrs
+					    with-label label-before-names label-attrs context)
   "Render namevars contained in VARSTRING according to the given attrs.
 VARSTRING is a string containing variable names separated by
 spaces. Labels are also rendered (with formatting according to
 LABEL-ATTRS) if WITH-LABEL is t."
   (let* ((vars (-map 'intern (s-split " " varstring)))
-	 (present-vars (--filter (cpr-var-value it context) vars))
+	 (present-vars (--filter (citeproc-var-value it context) vars))
 	 ed-trans)
     (when (and (memq 'editor present-vars)
 	       (memq 'translator present-vars)
 	       (= 2 (length present-vars))
-	       (equal (--map (alist-get 'name-id it) (cpr-var-value 'editor context))
-		      (--map (alist-get 'name-id it) (cpr-var-value 'translator context))))
+	       (equal (--map (alist-get 'name-id it)
+			     (citeproc-var-value 'editor context))
+		      (--map (alist-get 'name-id it)
+			     (citeproc-var-value 'translator context))))
       (setq present-vars '(editor)
 	    ed-trans t))
     (when (not (alist-get 'delimiter attrs))
-      (when-let (names-delim (alist-get 'names-delimiter (cpr-context-opts context)))
+      (when-let (names-delim (alist-get 'names-delimiter (citeproc-context-opts context)))
 	(push (cons 'delimiter names-delim) attrs)))
     (if present-vars
-	(cons (cpr-rt-join-formatted attrs
-				     (--map (cpr-name--render-var it name-attrs name-part-attrs
-								  et-al-attrs with-label
-								  label-before-names
-								  label-attrs
-								  context
-								  ed-trans)
-					    present-vars)
-				     context)
+	(cons (citeproc-rt-join-formatted
+	       attrs
+	       (--map (citeproc-name--render-var it name-attrs name-part-attrs
+						 et-al-attrs with-label
+						 label-before-names
+						 label-attrs
+						 context
+						 ed-trans)
+		      present-vars)
+	       context)
 	      'present-var)
       (cons nil 'empty-vars))))
 
-(defun cpr-name--render-var (var attrs name-part-attrs et-al-attrs with-label label-before-names
-				 label-attrs context &optional ed-trans)
+(defun citeproc-name--render-var (var attrs name-part-attrs et-al-attrs with-label
+				      label-before-names
+				      label-attrs context &optional ed-trans)
   "Render the value of csl name variable VAR according to given attrs.
 VAR is a symbol.
 
@@ -81,12 +85,13 @@ standard, so can be considered an extension. It's supported
 because some styles rely on it, notably that of the journal
 Nature."
   ;; Push the current add-names offset for VAR to the ATTRS
-  (when-let (add-names-alist (cpr-var-value 'add-names context))
+  (when-let (add-names-alist (citeproc-var-value 'add-names context))
     (when-let (add-names-val (alist-get var add-names-alist))
       (push `(add-names . ,add-names-val) attrs)))
-  (let* ((var-value (cpr-var-value var context))
-	 (rendered-names (cpr-name--render-names var-value attrs et-al-attrs name-part-attrs
-						 context)))
+  (let* ((var-value (citeproc-var-value var context))
+	 (rendered-names (citeproc-name--render-names
+			  var-value attrs et-al-attrs name-part-attrs
+			  context)))
     (when (atom rendered-names) (setq rendered-names (list nil rendered-names)))
     (push (list 'rendered-names) (car rendered-names))
     (push `(variable . ,(if ed-trans "editortranslator" (symbol-name var))) label-attrs)
@@ -95,31 +100,31 @@ Nature."
 	(push `(plural . ,(if (> (length var-value) 1) "always" "never")) label-attrs)))
     (if with-label
 	(let ((form (alist-get 'form label-attrs))
-	      (rendered-label (car (cpr--label label-attrs context))))
-	  (cpr-rt-join-formatted `((rendered-var . ,var))
-				 (if (or label-before-names
-					 (string= form "verb")
-					 (string= form "verb-short"))
-				     (list rendered-label rendered-names)
-				   (list rendered-names rendered-label))
-				 context))
+	      (rendered-label (car (citeproc--label label-attrs context))))
+	  (citeproc-rt-join-formatted `((rendered-var . ,var))
+				      (if (or label-before-names
+					      (string= form "verb")
+					      (string= form "verb-short"))
+					  (list rendered-label rendered-names)
+					(list rendered-names rendered-label))
+				      context))
       (push (cons 'rendered-var var) (car rendered-names))
       rendered-names)))
 
-(defun cpr-name--render-names (names attrs et-al-attrs name-part-attrs context)
+(defun citeproc-name--render-names (names attrs et-al-attrs name-part-attrs context)
   "Render NAMES according to the given attrs."
-  (let* ((all-attrs (-concat attrs (cpr-context-opts context)))
-	 (rmode (cpr-context-render-mode context))
+  (let* ((all-attrs (-concat attrs (citeproc-context-opts context)))
+	 (rmode (citeproc-context-render-mode context))
 	 (sort-o (if (eq rmode 'sort) "all" ;; special setting for sort mode
 		   (alist-get 'name-as-sort-order all-attrs)))
 	 (names-count (length names))
-	 (formatted-first (cpr-name--render (car names) attrs name-part-attrs
-					    sort-o context)))
+	 (formatted-first (citeproc-name--render (car names) attrs name-part-attrs
+						 sort-o context)))
     (if (= 1 names-count) formatted-first
       (let-alist all-attrs
 	(let ((delimiter (or .delimiter .name-delimiter ", "))
 	      (add-names (or .add-names 0))
-	      (position (cpr-var-value 'position context)))
+	      (position (citeproc-var-value 'position context)))
 	  (unless (or (null position) (eq position 'first))
 	    (setq .et-al-min (or .et-al-subsequent-min .et-al-min)
 		  .et-al-use-first (or .et-al-subsequent-use-first .et-al-use-first)))
@@ -127,26 +132,26 @@ Nature."
 		.et-al-use-first (or .names-use-first .et-al-use-first)
 		.et-al-use-last (or (string= .names-use-last "true")
 				    (string= .et-al-use-last "true")))
-	  (let* ((et-al-min-val (cpr-s-nil-or-s-to-num .et-al-min))
+	  (let* ((et-al-min-val (citeproc-s-nil-or-s-to-num .et-al-min))
 		 (et-al-use-first-val (+ add-names
-					 (cpr-s-nil-or-s-to-num .et-al-use-first)))
+					 (citeproc-s-nil-or-s-to-num .et-al-use-first)))
 		 (et-al (and .et-al-min .et-al-use-first
 			     (>= names-count et-al-min-val)
 			     (< et-al-use-first-val names-count)))
 		 (middle-end-pos (if et-al et-al-use-first-val (- names-count 1)))
 		 (sort-o-latters (string= sort-o "all"))
 		 (formatted-middle (if (< middle-end-pos 2) nil
-				     (cpr-rt-join-formatted
+				     (citeproc-rt-join-formatted
 				      `((delimiter . ,delimiter) (prefix . ,delimiter))
-				      (--map (cpr-name--render it attrs name-part-attrs
-							       sort-o-latters context)
+				      (--map (citeproc-name--render it attrs name-part-attrs
+								    sort-o-latters context)
 					     (-slice names 1 middle-end-pos))
 				      context)))
 		 (last-after-inverted (or sort-o-latters
 					  (and (string= sort-o "first")
 					       (null formatted-middle))))
-		 (last-delim (cpr-lib-intern (if et-al .delimiter-precedes-et-al
-					       .delimiter-precedes-last)))
+		 (last-delim (citeproc-lib-intern (if et-al .delimiter-precedes-et-al
+						    .delimiter-precedes-last)))
 		 (last-pref (if (or (and (or (not last-delim) (eq last-delim 'contextual))
 					 (> middle-end-pos 1))
 				    (eq last-delim 'always)
@@ -154,69 +159,72 @@ Nature."
 					 last-after-inverted))
 				delimiter
 			      " "))
-		 (formatted-last (cond (et-al (if .et-al-use-last
-						  (cpr-rt-join-formatted
-						   nil
-						   (list
-						    delimiter "… "
-						    (cpr-name--render (-last-item names)
-								      attrs name-part-attrs
-								      sort-o-latters context))
-						   context)
-						(cpr-name--render-et-al (cons `(prefix . ,last-pref)
-									      et-al-attrs)
-									context)))
-				       (.and
-					(let ((and-str (if (string= .and "text")
-							   (cpr-term-get-text "and" context)
-							 "&")))
-					  (cpr-rt-join-formatted
-					   `((prefix . ,last-pref))
-					   (list and-str " "
-						 (cpr-name--render
-						  (-last-item names) attrs
-						  name-part-attrs sort-o-latters context))
-					   context)))
-				       (t
-					(cpr-rt-join-formatted
-					 nil
-					 (list delimiter
-					       (cpr-name--render (-last-item names)
-								 attrs name-part-attrs
-								 sort-o-latters context))
-					 context)))))
-	    (cpr-rt-join-formatted (--remove (eq 'delimiter (car it)) attrs)
-				   (list formatted-first formatted-middle formatted-last)
-				   context)))))))
+		 (formatted-last
+		  (cond (et-al (if .et-al-use-last
+				   (citeproc-rt-join-formatted
+				    nil
+				    (list
+				     delimiter "… "
+				     (citeproc-name--render (-last-item names)
+							    attrs name-part-attrs
+							    sort-o-latters context))
+				    context)
+				 (citeproc-name--render-et-al (cons `(prefix . ,last-pref)
+								    et-al-attrs)
+							      context)))
+			(.and
+			 (let ((and-str (if (string= .and "text")
+					    (citeproc-term-get-text "and" context)
+					  "&")))
+			   (citeproc-rt-join-formatted
+			    `((prefix . ,last-pref))
+			    (list and-str " "
+				  (citeproc-name--render
+				   (-last-item names) attrs
+				   name-part-attrs sort-o-latters context))
+			    context)))
+			(t
+			 (citeproc-rt-join-formatted
+			  nil
+			  (list delimiter
+				(citeproc-name--render (-last-item names)
+						       attrs name-part-attrs
+						       sort-o-latters context))
+			  context)))))
+	    (citeproc-rt-join-formatted (--remove (eq 'delimiter (car it)) attrs)
+					(list formatted-first formatted-middle formatted-last)
+					context)))))))
 
-(defun cpr-name--render (name attrs name-part-attrs sort-o context)
+(defun citeproc-name--render (name attrs name-part-attrs sort-o context)
   "Render NAME according to the given attributes."
-  (let ((format-attrs (--filter (memq (car it) (-concat '(prefix suffix) cpr-rt-format-attrs))
-				attrs)))
-    (cpr-rt-format-single (cons `(name-id . ,(alist-get 'name-id name)) format-attrs)
-			  (cpr-name--render-formatted
-			   (cpr-name--format-nameparts name name-part-attrs context)
-			   attrs sort-o context)
-			  context)))
+  (let ((format-attrs
+	 (--filter (memq (car it) (-concat '(prefix suffix) citeproc-rt-format-attrs))
+		   attrs)))
+    (citeproc-rt-format-single (cons `(name-id . ,(alist-get 'name-id name)) format-attrs)
+			       (citeproc-name--render-formatted
+				(citeproc-name--format-nameparts name name-part-attrs context)
+				attrs sort-o context)
+			       context)))
 
-(defun cpr-name--parts-w-sep (c1 c2 sep context)
+(defun citeproc-name--parts-w-sep (c1 c2 sep context)
   "Join name-parts in lists C1 C2 with spaces and then with SEP."
-  (let ((joined-c1 (cpr-rt-join-formatted '((delimiter . " ")) c1 context)))
+  (let ((joined-c1 (citeproc-rt-join-formatted '((delimiter . " ")) c1 context)))
     (if (-none-p 'cadr c2)
 	joined-c1
-      (cpr-rt-join-formatted `((delimiter . ,sep))
-			     (list joined-c1
-				   (cpr-rt-join-formatted '((delimiter . " ")) c2 context))
-			     context))))
+      (citeproc-rt-join-formatted
+       `((delimiter . ,sep))
+       (list joined-c1
+	     (citeproc-rt-join-formatted '((delimiter . " ")) c2 context))
+       context))))
 
-(defun cpr-name--render-formatted (name-alist attrs sort-o context)
+(defun citeproc-name--render-formatted (name-alist attrs sort-o context)
   "Render formatted name described by NAME-ALIST according to ATTRS.
 NAME-ALIST is an alist with symbol keys corresponding to
 name-parts like 'family etc. and values are simple rich-text
 contents of the form (ATTRS CONTENT) where content must be a
 single string. SORT-O is a boolean determining whether to use
 sort order."
-  (-let* ((global-opts (cpr-context-opts context))
+  (-let* ((global-opts (citeproc-context-opts context))
 	  ((&alist 'family f
 		   'given g-uninited
 		   'suffix s
@@ -234,38 +242,45 @@ sort order."
 	  (init (if (string= init "false") nil t))
 	  (d-n-d (intern (alist-get 'demote-non-dropping-particle global-opts)))
 	  (id (cadr nid))
-	  (show-given (cpr-name-show-givenname-level id context))
+	  (show-given (citeproc-name-show-givenname-level id context))
 	  (form (if show-given 'long
 		  (intern (or form name-form "long"))))
-	  (rmode (cpr-context-render-mode context)))
-    (if (cpr-name--lat-cyr-greek-p name-alist)
-	(let ((g (cond ((and show-given (= show-given 2)) g-uninited)
-		       ((and init-with init)
-			(list (cpr-rt-attrs g-uninited)
-			      (cpr-name--initialize
-			       (cpr-rt-first-content g-uninited)
-			       init-with
-			       (string= "false"
-					(alist-get 'initialize-with-hyphen global-opts)))))
-		       (init-with
-			(list (cpr-rt-attrs g-uninited)
-			      (cpr-name--initials-add-suffix init-with
-							     (cpr-rt-first-content g-uninited))))
-		       (t g-uninited))))
+	  (rmode (citeproc-context-render-mode context)))
+    (if (citeproc-name--lat-cyr-greek-p name-alist)
+	(let ((g
+	       (cond ((and show-given (= show-given 2)) g-uninited)
+		     ((and init-with init)
+		      (list (citeproc-rt-attrs g-uninited)
+			    (citeproc-name--initialize
+			     (citeproc-rt-first-content g-uninited)
+			     init-with
+			     (string= "false"
+				      (alist-get 'initialize-with-hyphen global-opts)))))
+		     (init-with
+		      (list (citeproc-rt-attrs g-uninited)
+			    (citeproc-name--initials-add-suffix
+			     init-with
+			     (citeproc-rt-first-content g-uninited))))
+		     (t g-uninited))))
 	  (if (eq form 'long)
 	      (if sort-o
 		  (if (or (eq d-n-d 'never)
 			  (and (eq d-n-d 'sort-only) (eq rmode 'display)))
-		      (cpr-name--parts-w-sep (cpr-name--conc-nps n f) (list g d s) sort-sep context)
-		    (cpr-name--parts-w-sep (list f) (list g d n s) sort-sep context))
-		(cpr-rt-join-formatted '((delimiter . " ")) `(,g ,@(cpr-name--conc-nps d n f) ,s)
-				       context))
-	    (cpr-rt-join-formatted '((delimiter . " ")) (cpr-name--conc-nps n f) context)))
+		      (citeproc-name--parts-w-sep
+		       (citeproc-name--conc-nps n f) (list g d s) sort-sep
+		       context)
+		    (citeproc-name--parts-w-sep (list f) (list g d n s) sort-sep context))
+		(citeproc-rt-join-formatted
+		 '((delimiter . " ")) `(,g ,@(citeproc-name--conc-nps
+					      d n f) ,s)
+		 context))
+	    (citeproc-rt-join-formatted
+	     '((delimiter . " ")) (citeproc-name--conc-nps n f) context)))
       (if (eq form 'long)
-	  (cpr-rt-join-formatted '((delimiter . " ")) (list f g-uninited) context)
+	  (citeproc-rt-join-formatted '((delimiter . " ")) (list f g-uninited) context)
 	f))))
 
-(defun cpr-name--conc-nps (&rest nps)
+(defun citeproc-name--conc-nps (&rest nps)
   "Concatenate particles in name-parts NPS if they end with apostrophe."
   (let ((nonnils (delq nil nps)))
     (if (cdr nonnils)
@@ -280,9 +295,9 @@ sort order."
 	    nonnils))
       nonnils)))
 
-(defun cpr-name--lat-cyr-greek-p (name-alist)
+(defun citeproc-name--lat-cyr-greek-p (name-alist)
   "Return t if NAME-ALIST is cyrillic/latin/greek and nil otherwise.
-NAME-ALIST is like in `cpr-name--render-formatted'"
+NAME-ALIST is like in `citeproc-name--render-formatted'"
   (--all-p (or (not (stringp it)) (string-match "^\\(\\cl\\|\\cy\\|\\cg\\|ʼ\\)*$"
 						it))
 	   (-map (lambda (x)
@@ -292,7 +307,7 @@ NAME-ALIST is like in `cpr-name--render-formatted'"
 
 ;;NOTE: missing given names are currently dealt here by handling the names =
 ;;nil case there should be a more appropriate place.
-(defun cpr-name--initialize (names suffix &optional remove-hyphens)
+(defun citeproc-name--initialize (names suffix &optional remove-hyphens)
   "Initialize NAMES and add SUFFIX.
 NAMES is a string containing one or more space-separated names,
 while SUFFIX is either nil or a string (e.g. \".\"). If the
@@ -301,14 +316,16 @@ between initalized given names, e.g., initialize Jean-Paul to
 J.P. instead of the default J.-P."
   (if (not names) nil
     (let ((trimmed-suffix (s-trim suffix)))
-      (s-concat (s-join suffix
-			(--map (if (s-match "-" it)
-				   (cpr-name--initialize-hyphenated it suffix remove-hyphens)
-				 (s-left 1 it))
-			       (s-split " +" names)))
+      (s-concat (s-join
+		 suffix
+		 (--map
+		  (if (s-match "-" it)
+		      (citeproc-name--initialize-hyphenated it suffix remove-hyphens)
+		    (s-left 1 it))
+		  (s-split " +" names)))
 		trimmed-suffix))))
 
-(defun cpr-name--initialize-hyphenated (name suffix &optional remove-hyphens)
+(defun citeproc-name--initialize-hyphenated (name suffix &optional remove-hyphens)
   "Initialize space-less but hyphenated NAME with SUFFIX.
 If the optional REMOVE-HYPHENS is non-nil then don't keep hyphens
 between the initalized given names, e.g., initialize Jean-Paul to
@@ -319,7 +336,7 @@ J.P. instead of the default J.-P."
 	    (--map (s-left 1 it)
 		   (s-split "-" name)))))
 
-(defun cpr-name--initials-add-suffix (suffix names)
+(defun citeproc-name--initials-add-suffix (suffix names)
   "Add SUFFIX to initials in NAMES.
 NAMES is a string containing one or more space-separated names,
 while SUFFIX is a string (e.g. \".\")."
@@ -328,10 +345,10 @@ while SUFFIX is a string (e.g. \".\")."
 		 (if (and (cdr x) (s-match "^[[:alpha:]]$" (car x)))
 		     (concat (car x) suffix)
 		   (car x)))
-	       (cpr-s-slice-by-matches names "[ \\-]" 0 t)
+	       (citeproc-s-slice-by-matches names "[ \\-]" 0 t)
 	       "")))
 
-(defun cpr-name--format-nameparts (name-alist name-part-attrs context)
+(defun citeproc-name--format-nameparts (name-alist name-part-attrs context)
   "Format nameparts in NAME-ALIST according to NAME-PART-ATTRS.
 Return a new name alist containg the same keys with formatted
 contents."
@@ -342,37 +359,37 @@ contents."
 	     (cons n-part
 		   (cond ((and given-attrs
 			       (memq n-part '(given dropping-particle)))
-			  (cpr-rt-format-single given-attrs content context))
+			  (citeproc-rt-format-single given-attrs content context))
 			 ((and family-attrs
 			       (memq n-part '(family non-dropping-particle)))
-			  (cpr-rt-format-single family-attrs content context))
+			  (citeproc-rt-format-single family-attrs content context))
 			 (t (list nil content)))))
 	   name-alist)))
 
-(defun cpr-name--render-et-al (attrs context)
+(defun citeproc-name--render-et-al (attrs context)
   "Render the `et al' part of a name acc. to ATTRS."
-  (let ((rmode (cpr-context-render-mode context)))
+  (let ((rmode (citeproc-context-render-mode context)))
     (if (eq rmode 'sort) ""
       (let ((term (or (alist-get 'term attrs)
 		      "et-al")))
-	(cpr-rt-format-single attrs
-			      (cpr-term-get-text term context)
-			      context)))))
+	(citeproc-rt-format-single attrs
+				   (citeproc-term-get-text term context)
+				   context)))))
 
-(defun cpr-name-show-givenname-level (id context)
+(defun citeproc-name-show-givenname-level (id context)
   "Return the disambiguation level of name with ID."
-  (alist-get id (alist-get 'show-given-names (cpr-context-vars context))))
+  (alist-get id (alist-get 'show-given-names (citeproc-context-vars context))))
 
-(defun cpr--var-plural-p (var context)
+(defun citeproc--var-plural-p (var context)
   "Return whether the content of variable VAR is plural.
 VAR is a symbol."
-  (let ((content (cpr-var-value var context)))
+  (let ((content (citeproc-var-value var context)))
     (if (or (string= var "number-of-pages")
 	    (string= var "number-of-volumes"))
 	(> (string-to-number content) 1)
       (> (length (s-split "[^[:digit:]]+" content t)) 1))))
 
-(defun cpr--label (attrs context &rest _body)
+(defun citeproc--label (attrs context &rest _body)
   "Render a CSL label element with the given ATTRS in CONTEXT."
   (-let* (((&alist 'variable variable
 		   'form form
@@ -381,21 +398,24 @@ VAR is a symbol."
 	  (label (intern variable))
 	  (number nil))
     (if (or (eq label 'editortranslator)
-	    (and label (cpr-var-value label context)))
+	    (and label (citeproc-var-value label context)))
 	(progn
 	  (if form (setq form (intern form))
 	    (setq form 'long))
 	  (when (string= variable "locator")
-	    (setq variable (cpr-locator-label context)))
+	    (setq variable (citeproc-locator-label context)))
 	  (cond ((string= plural "never") (setq number 'single))
 		((string= plural "always") (setq number 'multiple))
-		(t (setq number (if (cpr--var-plural-p label context) 'multiple 'single))))
-	  (cons (cpr-rt-format-single attrs (cpr-term-inflected-text
-					     variable form number context)
-				      context)
+		(t (setq number
+			 (if (citeproc--var-plural-p label context)
+			     'multiple
+			   'single))))
+	  (cons (citeproc-rt-format-single attrs (citeproc-term-inflected-text
+						  variable form number context)
+					   context)
 		'text-only))
       (cons nil 'text-only))))
 
-(provide 'cpr-name)
+(provide 'citeproc-name)
 
-;;; cpr-name.el ends here
+;;; citeproc-name.el ends here

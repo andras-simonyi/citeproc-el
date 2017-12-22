@@ -1,0 +1,98 @@
+
+## Variables
+div {
+  
+  ## All variables
+  variables =
+    variables.dates
+    | variables.names
+    | variables.numbers
+    | variables.strings
+  
+  ## Standard variables
+  variables.standard = variables.numbers | variables.strings
+  
+  ## Date variables
+  variables.dates =
+    "accessed"
+    | "container"
+    | "event-date"
+    | "issued"
+    | "original-date"
+    | "submitted"
+  
+  ## Name variables
+  variables.names =
+    "author"
+    | "collection-editor"
+    | "composer"
+    | "container-author"
+    | "director"
+    | "editor"
+    | "editorial-director"
+    | "illustrator"
+    | "interviewer"
+    | "original-author"
+    | "recipient"
+    | "reviewed-author"
+    | "translator"
+  
+  ## Number variables
+  variables.numbers =
+    "chapter-number"
+    | "collection-number"
+    | "edition"
+    | "issue"
+    | "number"
+    | "number-of-pages"
+    | "number-of-volumes"
+    | "volume"
+  
+  ## String variables
+  variables.strings =
+    "abstract"
+    | "annote"
+    | "archive"
+    | "archive_location"
+    | "archive-place"
+    | "authority"
+    | "call-number"
+    | "citation-label"
+    | "citation-number"
+    | "collection-title"
+    | "container-title"
+    | "container-title-short"
+    | "dimensions"
+    | "DOI"
+    | "event"
+    | "event-place"
+    | "first-reference-note-number"
+    | "genre"
+    | "ISBN"
+    | "ISSN"
+    | "jurisdiction"
+    | "keyword"
+    | "locator"
+    | "medium"
+    | "note"
+    | "original-publisher"
+    | "original-publisher-place"
+    | "original-title"
+    | "page"
+    | "page-first"
+    | "PMID"
+    | "PMCID"
+    | "publisher"
+    | "publisher-place"
+    | "references"
+    | "reviewed-title"
+    | "scale"
+    | "section"
+    | "source"
+    | "status"
+    | "title"
+    | "title-short"
+    | "URL"
+    | "version"
+    | "year-suffix"
+}

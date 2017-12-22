@@ -1,4 +1,4 @@
-;;; cpr-s.el --- citeproc-el string functions -*- lexical-binding: t; -*-
+;;; citeproc-s.el --- citeproc-el string functions -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -27,14 +27,14 @@
 
 (require 'thingatpt)
 
-(defun cpr-s-camelcase-p (s)
+(defun citeproc-s-camelcase-p (s)
   "Return whether string S is in camel case."
   (let ((case-fold-search nil))
     (and (< 1 (length s))
 	 (s-matches-p "[[:upper:]]" (substring s 1))
 	 (s-matches-p "[[:lower:]]" s))))
 
-(defun cpr-s-fill-copy (s1 s2)
+(defun citeproc-s-fill-copy (s1 s2)
   "Return a copy of string S1 filled by characters from string S2.
 If string S1 is shorter than string S2 then prepend enough
 characters from to beginning of S2 to the beginning of a copy of
@@ -42,31 +42,31 @@ S2 to make their length equal, and return the filled copy."
   (if (>= (length s1) (length s2)) s1
     (concat (substring s2 0 (- (length s2) (length s1))) s1)))
 
-(defun cpr-s-fill-left-to-len (s len &optional char)
+(defun citeproc-s-fill-left-to-len (s len &optional char)
   "Fill string S to length LEN with CHAR from left."
   (let ((len-s (length s))
 	(char (or char ?0)))
     (if (>= len-s len) s
       (concat (make-string (- len len-s) char) s))))
 
-(defun cpr-s-nil-or-s-to-num (s)
+(defun citeproc-s-nil-or-s-to-num (s)
   "Convert S, which is a string or nil to a number.
 A nil value is converted to 0."
   (if s (string-to-number s) 0))
 
-(defun cpr-s-from-num-or-s (x)
+(defun citeproc-s-from-num-or-s (x)
   "Return the content of string or number X as a number."
   (if (numberp x) (number-to-string x) x))
 
-(defun cpr-s-content (s)
+(defun citeproc-s-content (s)
   "Return the string content of string or symbol or nil S.
 The string content of nil is defined as \"\"."
   (pcase s
-    (`nil "")
+    ((\` nil) "")
     ((pred symbolp) (symbol-name s))
     (_ s)))
 
-(defun cpr-s-slice-by-matches (s regexp &optional start annot)
+(defun citeproc-s-slice-by-matches (s regexp &optional start annot)
   "Slice S up at the boundaries of each REGEXP match.
 Optionally start from index START. Matches are also included
 among the slices, but all zero-length slices are omitted. If
@@ -80,8 +80,9 @@ is a separating REGEXP match and t otherwise."
 	(if begin
 	    (let ((end (match-end 0)))
 	      (if (and (= begin start) (= end start))
-		  (cpr-s-slice-by-matches s regexp (1+ start) annot)
-		(let ((result (cpr-s-slice-by-matches (substring s end) regexp 0 annot)))
+		  (citeproc-s-slice-by-matches s regexp (1+ start) annot)
+		(let ((result (citeproc-s-slice-by-matches (substring s end)
+							   regexp 0 annot)))
 		  (when (not (= begin end))
 		    (let ((slice (substring s begin end)))
 		      (push (if annot (list slice) slice) result)))
@@ -91,7 +92,7 @@ is a separating REGEXP match and t otherwise."
 		  result)))
 	  (list (if annot (cons s t) s)))))))
 
-(defun cpr-s-tail (s length)
+(defun citeproc-s-tail (s length)
   "Return the closing substring of string S with length LENGTH.
 Return S if LENGTH is nil or not less than the length of S."
   (let ((l (length s)))
@@ -99,7 +100,7 @@ Return S if LENGTH is nil or not less than the length of S."
 	(substring s (- l length))
       s)))
 
-(defun cpr-s-capitalize-first (s)
+(defun citeproc-s-capitalize-first (s)
   "Capitalize the first word in string S.
 Return the capitalized version of S. If S contains no word or the
 first word is not in lowercase then return S."
@@ -115,7 +116,7 @@ first word is not in lowercase then return S."
 	(buffer-string))
     s))
 
-(defun cpr-s-capitalize-all (s)
+(defun citeproc-s-capitalize-all (s)
   "Capitalize all lowercase words in string S.
 Return the capitalized version of S. If S contains no word or the
 first word is not in lowercase then return S."
@@ -130,7 +131,7 @@ first word is not in lowercase then return S."
 	(buffer-string))
     s))
 
-(defun cpr-s-sentence-case (s)
+(defun citeproc-s-sentence-case (s)
   "Return a sentence-cased version of string S."
   (if (s-present-p s)
       (with-temp-buffer
@@ -145,12 +146,12 @@ first word is not in lowercase then return S."
 	(buffer-string))
     s))
 
-(defconst cpr-s-english-stopwords '("a" "an" "and" "as" "at" "but" "by" "down"
-				    "for" "from" "in" "into" "nor" "of" "on"
-				    "onto" "or" "over" "so" "the" "till" "to" "up"
-				    "via" "with" "yet"))
+(defconst citeproc-s-english-stopwords '("a" "an" "and" "as" "at" "but" "by" "down"
+					 "for" "from" "in" "into" "nor" "of" "on"
+					 "onto" "or" "over" "so" "the" "till" "to" "up"
+					 "via" "with" "yet"))
 
-(defun cpr-s-title-case (s)
+(defun citeproc-s-title-case (s)
   "Return a title-cased version of string S."
   (if (s-present-p s)
       (with-temp-buffer
@@ -161,7 +162,7 @@ first word is not in lowercase then return S."
 	  (while (forward-word)
 	    (let ((word (word-at-point)))
 	      (cond ((and (not (or first after-colon))
-			  (member (downcase word) cpr-s-english-stopwords)
+			  (member (downcase word) citeproc-s-english-stopwords)
 			  ;; Don't downcase A before a period:
 			  (or (not (string= word "A"))
 			      (= (point) (point-max))
@@ -178,7 +179,7 @@ first word is not in lowercase then return S."
 	(buffer-string))
     s))
 
-(defun cpr-s-smart-quotes (s oq cq)
+(defun citeproc-s-smart-quotes (s oq cq)
   "Replace dumb quotes in string S with smart ones OQ and CQ.
 OQ is the opening quote, CQ is the closing quote to use."
   (with-temp-buffer
@@ -190,13 +191,13 @@ OQ is the opening quote, CQ is the closing quote to use."
 	(insert (if w-a-p oq cq))))
     (buffer-string)))
 
-(defun cpr-s-smart-apostrophes (s)
+(defun citeproc-s-smart-apostrophes (s)
   "Replace dumb apostophes in string S with smart ones.
 The replacement character used is the unicode character 'modifier
 letter apostrophe.'"
   (s-replace-all '(("'" . "ʼ") ("’" . "ʼ")) s))
 
-(defun cpr-s-cull-spaces-puncts (s)
+(defun citeproc-s-cull-spaces-puncts (s)
   "Replace unnecessary characters with delete chars in string S."
   (let ((result (s-replace-all '(("  " . " ") (";;" . ";") ("..." . ".")
 				 (",," . ",") (".." . "."))
@@ -212,6 +213,6 @@ letter apostrophe.'"
 					     (cdr match-rep)
 					     result)))))
 
-(provide 'cpr-s)
+(provide 'citeproc-s)
 
-;;; cpr-s.el ends here
+;;; citeproc-s.el ends here

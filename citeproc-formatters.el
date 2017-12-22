@@ -1,4 +1,4 @@
-;; cpr-formatters.el --- output formatters -*- lexical-binding: t; -*-
+;; citeproc-formatters.el --- output formatters -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -32,7 +32,7 @@
 (require 's)
 (require 'cl-lib)
 
-(cl-defstruct (cpr-formatter (:constructor cpr-formatter-create))
+(cl-defstruct (citeproc-formatter (:constructor citeproc-formatter-create))
   "Output formatter struct with slots RT, CITE, BIB-ITEM and BIB.
 RT is a one-argument function mapping a rich-text to its
   formatted version,
@@ -48,7 +48,7 @@ BIB is a two-argument function mapping a list of formatted
   rt (cite #'identity) (bib-item (lambda (x _) x))
   (bib (lambda (x _) (mapconcat #'identity x "\n"))))
 
-(defun cpr-formatter-fun-create (fmt-alist)
+(defun citeproc-formatter-fun-create (fmt-alist)
   "Return a rich-text formatter function based on FMT-ALIST.
 FMT-ALIST is an alist with some or all of the following symbols
 as keys:
@@ -117,7 +117,7 @@ item as a string."
 
 ;; Org
 
-(defconst cpr-fmt--org-alist
+(defconst citeproc-fmt--org-alist
   `((unformatted . identity)
     (cited-item-no . ,(lambda (x y) (concat "[[citeproc_bib_item_" y "][" x "]]")))
     (bib-item-no . ,(lambda (x y) (concat "<<citeproc_bib_item_" y ">>" x)))
@@ -132,15 +132,15 @@ item as a string."
 
 ;; HTML
 
-(defun cpr-fmt--xml-escape (s)
+(defun citeproc-fmt--xml-escape (s)
   "Return the xml-escaped version of string S.
 Only '&', '<' and '>' are escaped to keep compatibility with the
 CSL tests."
   (s-replace-all '(("&" . "&#38;") ("<" . "&#60;") (">" . "&#62;"))
 		 s))
 
-(defconst cpr-fmt--html-alist
-  `((unformatted . cpr-fmt--xml-escape)
+(defconst citeproc-fmt--html-alist
+  `((unformatted . citeproc-fmt--xml-escape)
     (cited-item-no . ,(lambda (x y) (concat "<a href=\"#citeproc_bib_item_" y "\">"
 					    x "</a>")))
     (bib-item-no . ,(lambda (x y) (concat "<a name=\"citeproc_bib_item_" y "\"></a>"
@@ -152,9 +152,10 @@ CSL tests."
 				  (concat
 				   "<span style=\"font-variant:small-caps;\">" x "</span>")))
     (font-weight-bold . ,(lambda (x) (concat "<b>" x "</b>")))
-    (text-decoration-underline . ,(lambda (x)
-				    (concat
-				     "<span style=\"text-decoration:underline;\">" x "</span>")))
+    (text-decoration-underline .
+     ,(lambda (x)
+	(concat
+	 "<span style=\"text-decoration:underline;\">" x "</span>")))
     (rendered-var-url . ,(lambda (x) (concat "<a href=\"" x "\">" x "</a>")))
     (vertical-align-sub . ,(lambda (x) (concat "<sub>" x "</sub>")))
     (vertical-align-sup . ,(lambda (x) (concat "<sup>" x "</sup>")))
@@ -167,8 +168,8 @@ CSL tests."
 					  x "</div>\n")))
     (display-indent . ,(lambda (x) (concat "<div class=\"csl-indent\">" x "</div>\n  ")))))
 
-(defconst cpr-fmt--csl-test-alist
-  `((unformatted . cpr-fmt--xml-escape)
+(defconst citeproc-fmt--csl-test-alist
+  `((unformatted . citeproc-fmt--xml-escape)
     (cited-item-no . ,(lambda (x y) (concat "<a href=\"#citeproc_bib_item_" y "\">"
 					    x "</a>")))
     (bib-item-no . ,(lambda (x y) (concat "<a name=\"citeproc_bib_item_" y "\"></a>"
@@ -180,9 +181,10 @@ CSL tests."
 				  (concat
 				   "<span style=\"font-variant:small-caps;\">" x "</span>")))
     (font-weight-bold . ,(lambda (x) (concat "<b>" x "</b>")))
-    (text-decoration-underline . ,(lambda (x)
-				    (concat
-				     "<span style=\"text-decoration:underline;\">" x "</span>")))
+    (text-decoration-underline .
+     ,(lambda (x)
+	(concat
+	 "<span style=\"text-decoration:underline;\">" x "</span>")))
     (vertical-align-sub . ,(lambda (x) (concat "<sub>" x "</sub>")))
     (vertical-align-sup . ,(lambda (x) (concat "<sup>" x "</sup>")))
     (vertical-align-baseline . ,(lambda (x) (concat "<span style=\"baseline\">" x "</span>")))
@@ -194,7 +196,7 @@ CSL tests."
 					  x "</div>\n")))
     (display-indent . ,(lambda (x) (concat "<div class=\"csl-indent\">" x "</div>\n  ")))))
 
-(defun cpr-fmt--html-bib-formatter (items _bib-format)
+(defun citeproc-fmt--html-bib-formatter (items _bib-format)
   "Return a html bibliography from already formatted ITEMS."
   (concat "<div class=\"csl-bib-body\">\n"
 	  (mapconcat (lambda (i)
@@ -205,12 +207,12 @@ CSL tests."
 
 ;; LaTeX
 
-(defun cpr-fmt--latex-escape (s)
+(defun citeproc-fmt--latex-escape (s)
   "Return the LaTeX-escaped version of string S."
   (s-replace-all '(("_" . "\\_") ("{" . "\\{") ("}" . "\\}") ("&" . "\\&")) s))
 
-(defconst cpr-fmt--latex-alist
-  `((unformatted . cpr-fmt--latex-escape)
+(defconst citeproc-fmt--latex-alist
+  `((unformatted . citeproc-fmt--latex-escape)
     (font-style-italic . ,(lambda (x) (concat "\\textit{" x "}")))
     (font-weight-bold . ,(lambda (x) (concat "\\textbf{" x "}")))
     (cited-item-no . ,(lambda (x y) (concat "\\hyperlink{citeproc_bib_item_" y "}{"
@@ -227,26 +229,30 @@ CSL tests."
 
 ;; Define the formatters alist
 
- (defvar cpr-fmt--formatters-alist
-   `((html . ,(cpr-formatter-create :rt (cpr-formatter-fun-create cpr-fmt--html-alist)
-				    :bib #'cpr-fmt--html-bib-formatter))
-     (csl-test . ,(cpr-formatter-create :rt (cpr-formatter-fun-create cpr-fmt--csl-test-alist)
-					:bib #'cpr-fmt--html-bib-formatter))
-     (raw . ,(cpr-formatter-create :rt #'identity :bib (lambda (x _) x)))
-     (org . ,(cpr-formatter-create :rt (cpr-formatter-fun-create cpr-fmt--org-alist)
-				   :bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
-     (latex . ,(cpr-formatter-create :rt (cpr-formatter-fun-create cpr-fmt--latex-alist)
-				     :bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
-     (plain . ,(cpr-formatter-create :rt #'cpr-rt-to-plain)))
+ (defvar citeproc-fmt--formatters-alist
+   `((html . ,(citeproc-formatter-create
+	       :rt (citeproc-formatter-fun-create citeproc-fmt--html-alist)
+	       :bib #'citeproc-fmt--html-bib-formatter))
+     (csl-test . ,(citeproc-formatter-create
+		   :rt (citeproc-formatter-fun-create citeproc-fmt--csl-test-alist)
+		   :bib #'citeproc-fmt--html-bib-formatter))
+     (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
+     (org . ,(citeproc-formatter-create
+	      :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)
+	      :bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
+     (latex . ,(citeproc-formatter-create
+		:rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)
+		:bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
+     (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain)))
    "Alist mapping supported output formats to formatter structs.")
 
-(defun cpr-formatter-for-format (format)
+(defun citeproc-formatter-for-format (format)
   "Return the formatter struct belonging to FORMAT.
 FORMAT is a symbol"
-  (if-let (formatter (alist-get format cpr-fmt--formatters-alist))
+  (if-let (formatter (alist-get format citeproc-fmt--formatters-alist))
       formatter
     (error "No formatter for citeproc format `%s'" format)))
 
-(provide 'cpr-formatters)
+(provide 'citeproc-formatters)
 
-;;; cpr-formatters.el ends here
+;;; citeproc-formatters.el ends here

@@ -1,4 +1,4 @@
-;;; cpr-prange.el --- page-range rendering -*- lexical-binding: t; -*-
+;;; citeproc-prange.el --- page-range rendering -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(defun cpr-prange--end-significant (start end len)
+(defun citeproc-prange--end-significant (start end len)
   "Return the significant digits of the end in page range START END.
 START and END are strings of equal length containing integers. If
 the significant part of END is shorter than LEN then add
@@ -35,29 +35,29 @@ there are no more digits left."
 		    (abs (compare-strings start nil nil end nil nil)))))
     (substring end (1- first))))
 
-(defun cpr-prange--end-complete (start end len)
+(defun citeproc-prange--end-complete (start end len)
   "Complete the closing form of a START END pagerange to LEN."
-  (cpr-prange--end-significant start (cpr-s-fill-copy end start) len))
+  (citeproc-prange--end-significant start (citeproc-s-fill-copy end start) len))
 
-(defun cpr-prange--end-expanded (_start end end-pref)
+(defun citeproc-prange--end-expanded (_start end end-pref)
   "Render the end of range _START END in `expanded' format.
 END-PREF is an optional non-numeric prefix preceding END. All
 arguments are strings, END has the same length as START."
   (concat end-pref end))
 
-(defun cpr-prange--end-minimal (start end _end-pref)
+(defun citeproc-prange--end-minimal (start end _end-pref)
   "Render the end of range START END in `minimal' format.
 END-PREFIX is an optional non-numeric prefix preceding END. All
 arguments are strings, END has the same length as START."
-  (cpr-prange--end-significant start end 1))
+  (citeproc-prange--end-significant start end 1))
 
-(defun cpr-prange--end-minimal-two (start end _end-pref)
+(defun citeproc-prange--end-minimal-two (start end _end-pref)
   "Render the end of range START END in `minimal-two' format.
 END-PREFIX is an optional non-numeric prefix preceding END. All
 arguments are strings, END has the same length as START."
-  (cpr-prange--end-significant start end 2))
+  (citeproc-prange--end-significant start end 2))
 
-(defun cpr-prange--end-chicago (start end _end-pref)
+(defun citeproc-prange--end-chicago (start end _end-pref)
   "Render the end of range START END in `chicago' format.
 END-PREFIX is an optional non-numeric prefix preceding END. All
 arguments are strings, END has the same length as START."
@@ -65,19 +65,19 @@ arguments are strings, END has the same length as START."
     (cond ((or (< len 3) (string= (substring start -2) "00"))
 	   end)
 	  ((string= (substring start -2 -1) "0")
-	   (cpr-prange--end-significant start end 1))
+	   (citeproc-prange--end-significant start end 1))
 	  ((= 4 (length start))
-	   (let ((min-two (cpr-prange--end-significant start end 2)))
+	   (let ((min-two (citeproc-prange--end-significant start end 2)))
 	     (if (> (length min-two) 2) end min-two)))
-	  (t (cpr-prange--end-significant start end 2)))))
+	  (t (citeproc-prange--end-significant start end 2)))))
 
-(defconst cpr-prange-formatters-alist '((chicago . cpr-prange--end-chicago)
-					(minimal . cpr-prange--end-minimal)
-					(minimal-two . cpr-prange--end-minimal-two)
-					(expanded . cpr-prange--end-expanded))
+(defconst citeproc-prange-formatters-alist '((chicago . citeproc-prange--end-chicago)
+					     (minimal . citeproc-prange--end-minimal)
+					     (minimal-two . citeproc-prange--end-minimal-two)
+					     (expanded . citeproc-prange--end-expanded))
   "Alist mapping page range formats to formatter functions.")
 
-(defun cpr-prange-render (p format sep)
+(defun citeproc-prange-render (p format sep)
   "Render page range P in FORMAT with separator SEP."
   (with-temp-buffer
     (insert p)
@@ -101,17 +101,18 @@ arguments are strings, END has the same length as START."
 				   (concat orig-dash end))
 				  ((or (not format) (> (length end-num) (length start-num)))
 				   (concat sep end))
-				  (t (concat sep
-					     (funcall (alist-get format
-								 cpr-prange-formatters-alist)
-						      start-num
-						      (cpr-s-fill-copy end-num start-num)
-						      end-pref))))))
+				  (t (concat
+				      sep
+				      (funcall (alist-get format
+							  citeproc-prange-formatters-alist)
+					       start-num
+					       (citeproc-s-fill-copy end-num start-num)
+					       end-pref))))))
 	(when (not (string-equal new-sep-w-end old-sep-w-end))
 	  (delete-char (- (length old-sep-w-end)))
 	  (insert new-sep-w-end))))
     (buffer-string)))
 
-(provide 'cpr-prange)
+(provide 'citeproc-prange)
 
-;;; cpr-prange.el ends here
+;;; citeproc-prange.el ends here

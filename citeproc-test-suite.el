@@ -1,4 +1,4 @@
-;; cpr-test-suite.el --- tests from the official CSL test suite -*- lexical-binding: t; -*-
+;; citeproc-test-suite.el --- CSL test suite tests -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -33,9 +33,9 @@
 
 (require 'citeproc)
 
-(defvar cpr-test-suite-locale-dir "./test/locales")
+(defvar citeproc-test-suite-locale-dir "./test/locales")
 
-(defun cpr-test-suite-parse-testfile (file)
+(defun citeproc-test-suite-parse-testfile (file)
   "Return a parsed form of CSL test FILE."
   (let (result
 	(json-array-type 'list)
@@ -61,46 +61,46 @@
 		result))))
     result))
 
-(defun cpr-test-suite-create-getter (items)
+(defun citeproc-test-suite-create-getter (items)
   "Return a getter function for ITEMS.
 ITEMS is the parsed representation of the `INPUT' section of a
 CSL test."
   (let (result)
     (lambda (itemids)
       (dolist (item items result)
-	(let ((id (cpr-s-from-num-or-s (alist-get 'id item))))
+	(let ((id (citeproc-s-from-num-or-s (alist-get 'id item))))
 	  (when (member id itemids)
 	    (push (cons id item) result)))))))
 
-(defun cpr-test-suite-proc-from-style (style parsed-input)
+(defun citeproc-test-suite-proc-from-style (style parsed-input)
   "Create a processor from STYLE and PARSED-INPUT."
   (citeproc-create style
-		   (cpr-test-suite-create-getter parsed-input)
-		   (cpr-locale-getter-from-dir cpr-test-suite-locale-dir)))
+		   (citeproc-test-suite-create-getter parsed-input)
+		   (citeproc-locale-getter-from-dir citeproc-test-suite-locale-dir)))
 
-(defun cpr-test-suite-proc-from-testfile (file)
+(defun citeproc-test-suite-proc-from-testfile (file)
   "Create an (itemless) processor from a test FILE."
-  (let ((style-string (alist-get 'CSL (cpr-test-suite-parse-testfile file)))
-	(locale-getter (cpr-locale-getter-from-dir cpr-test-suite-locale-dir)))
+  (let ((style-string (alist-get 'CSL (citeproc-test-suite-parse-testfile file)))
+	(locale-getter (citeproc-locale-getter-from-dir citeproc-test-suite-locale-dir)))
     (citeproc-create style-string nil locale-getter)))
 
-(defun cpr-test-suite-parse-citation (ct-desc &optional cites-only)
+(defun citeproc-test-suite-parse-citation (ct-desc &optional cites-only)
   "Parse test citations description CT-DESC.
 Return a list of citation structures. If CITES-ONLY is non-nil
 then the input is list of cites."
-  (cpr-citation-create
-   :cites (-map #'cpr-test-suite-normalize-cite
+  (citeproc-citation-create
+   :cites (-map #'citeproc-test-suite-normalize-cite
 		(if cites-only ct-desc (alist-get 'citationItems (car ct-desc))))
    :note-index (and (not cites-only)
 		    (alist-get 'noteIndex (alist-get 'properties (car ct-desc))))))
 
-(defun cpr-test-suite-normalize-cite (cite)
+(defun citeproc-test-suite-normalize-cite (cite)
   "Normalize a test CITE."
   (--map (let ((val (cdr it)))
 	   (if (numberp val) (cons (car it) (number-to-string val)) it))
 	 cite))
 
-(defun cpr-test-suite-run-parsed (parsed)
+(defun citeproc-test-suite-run-parsed (parsed)
   "Run the parsed CSL test PARSED.
 Return the resulting output."
   (-let* (((&alist 'CSL style
@@ -109,27 +109,27 @@ Return the resulting output."
 		   'CITATION-ITEMS citation-items
 		   'CITATIONS citations)
 	   parsed)
-	  (proc (cpr-test-suite-proc-from-style style input)))
+	  (proc (citeproc-test-suite-proc-from-style style input)))
     (--each input
-      (cpr-proc-put-item-by-id proc
-			       (cpr-s-from-num-or-s (alist-get 'id it))))
+      (citeproc-proc-put-item-by-id proc
+				    (citeproc-s-from-num-or-s (alist-get 'id it))))
     (when (string= mode "citation")
       (cond
        (citation-items
-	(citeproc-append-citations (--map (cpr-test-suite-parse-citation it t)
+	(citeproc-append-citations (--map (citeproc-test-suite-parse-citation it t)
 					  citation-items)
 				   proc))
        (citations
-	(citeproc-append-citations (mapcar #'cpr-test-suite-parse-citation citations)
+	(citeproc-append-citations (mapcar #'citeproc-test-suite-parse-citation citations)
 				   proc))
-       (t (citeproc-append-citations (list (cpr-test-suite-parse-citation input t))
+       (t (citeproc-append-citations (list (citeproc-test-suite-parse-citation input t))
 				     proc))))
     (let ((output (if (string= mode "citation")
 		      (citeproc-render-citations proc 'csl-test t)
 		    (car (citeproc-render-bib proc 'csl-test t)))))
       (if (string= mode "citation") (s-join "\n" output) output))))
 
-(defun cpr-test-suite-expected-from-parsed (parsed)
+(defun citeproc-test-suite-expected-from-parsed (parsed)
   "Return the expected output of parsed CSL test PARSED."
   (let ((expected (alist-get 'RESULT parsed)))
     (if (or (string= (s-left 5 expected) "..[0]")
@@ -138,22 +138,22 @@ Return the resulting output."
 			    (split-string expected "\n")))
       expected)))
 
-(defun cpr-test-suite-create-test-from-file (file expected-fails)
+(defun citeproc-test-suite-create-test-from-file (file expected-fails)
   "Create an ERT test from a CSL test FILE."
-  (let* ((parsed (cpr-test-suite-parse-testfile file))
-	 (expected (cpr-test-suite-expected-from-parsed parsed))
+  (let* ((parsed (citeproc-test-suite-parse-testfile file))
+	 (expected (citeproc-test-suite-expected-from-parsed parsed))
 	 (file-name (f-filename file))
 	 (test-name (intern
-		     (concat "cpr-"
+		     (concat "citeproc-"
 			     (string-inflection-kebab-case-function
 			      (substring file-name 0 -4)))))
 	 (expected-fail (memq test-name expected-fails)))
     (eval `(ert-deftest ,test-name ()
 	     :expected-result ,(if expected-fail :failed :passed)
-	     (let ((cpr-disambiguation-cite-pos 'subsequent))
-	       (should (string= ,expected (cpr-test-suite-run-parsed ',parsed))))))))
+	     (let ((citeproc-disambiguation-cite-pos 'subsequent))
+	       (should (string= ,expected (citeproc-test-suite-run-parsed ',parsed))))))))
 
-(defun cpr-test-suite-read-expected-fails (expected-fails-file)
+(defun citeproc-test-suite-read-expected-fails (expected-fails-file)
   "Read the list of tests expected to fail from EXPECTED-FAILS-FILE."
   (let* ((list-as-str (with-temp-buffer
 			(insert-file-contents expected-fails-file)
@@ -161,22 +161,22 @@ Return the resulting output."
 	 (split (split-string list-as-str "\n")))
     (--map (intern it) (butlast split))))
 
-(defun cpr-test-suite-create-from-dir (dir &optional expected-fails-file)
+(defun citeproc-test-suite-create-from-dir (dir &optional expected-fails-file)
   "Create all CSL suite tests from DIR.
 Each file in DIR having the `txt' extension is read as a
 human-readable CSL test, and a corresponding ERT test is created.
 The created test's name will be constructed by prefixing the
-test's filename (without the extension) with `cpr-'. If the
+test's filename (without the extension) with `citeproc-'. If the
 optional EXPECTED-FAILS-FILE is non-nil then read that file as a
 list of tests whose failure is expected. The file should contain
-one test-name per line (together with the `cpr-' prefix)."
+one test-name per line (together with the `citeproc-' prefix)."
   (let ((expected-fails
 	 (if expected-fails-file
-	     (cpr-test-suite-read-expected-fails expected-fails-file)
+	     (citeproc-test-suite-read-expected-fails expected-fails-file)
 	   nil)))
     (dolist (test-file (f-glob (concat dir "/*.txt")))
-      (cpr-test-suite-create-test-from-file test-file expected-fails))))
+      (citeproc-test-suite-create-test-from-file test-file expected-fails))))
 
-(provide 'cpr-test-suite)
+(provide 'citeproc-test-suite)
 
-;;; cpr-test-suite.el ends here
+;;; citeproc-test-suite.el ends here

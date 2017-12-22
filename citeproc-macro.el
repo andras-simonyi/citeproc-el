@@ -1,4 +1,4 @@
-;; cpr-macro.el --- functions to render CSL macros -*- lexical-binding: t; -*-
+;; citeproc-macro.el --- functions to render CSL macros -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -25,34 +25,34 @@
 
 ;;; Code:
 
-(require 'cpr-lib)
-(require 'cpr-rt)
-(require 'cpr-context)
+(require 'citeproc-lib)
+(require 'citeproc-rt)
+(require 'citeproc-context)
 
 ;;; For macro evaluation
-(defun cpr--macro (attrs context &rest body)
+(defun citeproc--macro (attrs context &rest body)
   "Render the content of a macro element with ATTRS and BODY."
-  (setq body (cpr-lib-splice-into body 'splice))
-  (let ((val (cpr-rt-typed-join attrs body context)))
+  (setq body (citeproc-lib-splice-into body 'splice))
+  (let ((val (citeproc-rt-typed-join attrs body context)))
     (if (eq 'empty-vars (cdr val))
 	(cons nil 'text-only)
       val)))
 
-(defun cpr-macro-output (macro context)
+(defun citeproc-macro-output (macro context)
   "Return the output of MACRO.
 MACRO is the macro's name as a string and the returned value is a
 (RICH-TEXT-CONTENT . CONTENT-TYPE) cons cell."
-  (let ((macro-fun (assoc-default macro (cpr-context-macros context))))
+  (let ((macro-fun (assoc-default macro (citeproc-context-macros context))))
     (if macro-fun
 	(funcall macro-fun context)
       (error "There is no macro called `%s' in style" macro))))
 
-(defun cpr-macro-output-as-text (macro context)
+(defun citeproc-macro-output-as-text (macro context)
   "Return the output of MACRO as plain text.
 MACRO is the macro's name as a string."
-  (cpr-rt-to-plain (cpr-rt-render-affixes
-		   (car (cpr-macro-output macro context)))))
+  (citeproc-rt-to-plain (citeproc-rt-render-affixes
+			 (car (citeproc-macro-output macro context)))))
 
-(provide 'cpr-macro)
+(provide 'citeproc-macro)
 
-;;; cpr-macro.el ends here
+;;; citeproc-macro.el ends here

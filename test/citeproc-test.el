@@ -1,8 +1,8 @@
 ;;; citeproc-test.el --- Tests for citeproc
 
-(require 'cpr-test-suite)
+(require 'citeproc-test-suite)
 
-(cpr-test-suite-create-from-dir "./test/suite/processor-tests/humans" "./test/expected_fails.lst")
+(citeproc-test-suite-create-from-dir "./test/suite/processor-tests/humans" "./test/expected_fails.lst")
 
 (provide 'citeproc-test)
 

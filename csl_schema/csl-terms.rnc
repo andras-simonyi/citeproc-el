@@ -1,0 +1,138 @@
+
+## Terms
+div {
+  terms =
+    terms.gender-assignable
+    | terms.gender-variants
+    | terms.locator
+    | 
+      ## Contributor roles
+      variables.names
+    | "editortranslator"
+    | 
+      ## Miscellaneous terms
+      "accessed"
+    | "ad"
+    | "and"
+    | "and others"
+    | "anonymous"
+    | "at"
+    | "available at"
+    | "bc"
+    | "by"
+    | "circa"
+    | "cited"
+    | "et-al"
+    | "forthcoming"
+    | "from"
+    | "ibid"
+    | "in"
+    | "in press"
+    | "internet"
+    | "interview"
+    | "letter"
+    | "no date"
+    | "online"
+    | "presented at"
+    | "reference"
+    | "retrieved"
+    | "scale"
+    | "version"
+    | 
+      ## Punctuation
+      "open-quote"
+    | "close-quote"
+    | "open-inner-quote"
+    | "close-inner-quote"
+    | "page-range-delimiter"
+    | 
+      ## Seasons
+      "season-01"
+    | "season-02"
+    | "season-03"
+    | "season-04"
+    |
+      ## (legacy; remove in CSL 1.1)
+      category.field
+  
+  ## Terms to which a gender may be assigned
+  terms.gender-assignable =
+    
+    ## Months
+    "month-01"
+    | "month-02"
+    | "month-03"
+    | "month-04"
+    | "month-05"
+    | "month-06"
+    | "month-07"
+    | "month-08"
+    | "month-09"
+    | "month-10"
+    | "month-11"
+    | "month-12"
+    | terms.non-locator-number-variables
+    | terms.locator-number-variables
+  
+  ## Terms for which gender variants may be specified
+  terms.gender-variants =
+    terms.ordinals
+    | terms.long-ordinals
+  
+  terms.ordinals =
+    
+    ## Ordinals
+    xsd:string { pattern = "ordinal(-\d{2})?" }
+  
+  terms.long-ordinals =
+    
+    ## Long ordinals
+    "long-ordinal-01"
+    | "long-ordinal-02"
+    | "long-ordinal-03"
+    | "long-ordinal-04"
+    | "long-ordinal-05"
+    | "long-ordinal-06"
+    | "long-ordinal-07"
+    | "long-ordinal-08"
+    | "long-ordinal-09"
+    | "long-ordinal-10"
+  
+  ## Locators
+  terms.locator =
+    terms.locator.testable
+    | 
+      ## "sub verbo" is recognized as "sub" & "verbo" in attribute lists; term
+      ## should be renamed to "sub-verbo"
+      "sub verbo"
+    
+  ## Locator terms that can be tested with the "locator" conditional
+  ## ("sub verbo" can be tested with "sub-verbo")
+  terms.locator.testable =
+    "book"
+    | "chapter"
+    | "column"
+    | "figure"
+    | "folio"
+    | "line"
+    | "note"
+    | "opus"
+    | "page"
+    | "paragraph"
+    | "part"
+    | "section"
+    | "verse"
+    | terms.locator-number-variables
+  
+  ## Locator terms with matching number variables
+  terms.locator-number-variables = "issue" | "volume"
+  
+  ## Non-locator terms accompanying number variables
+  terms.non-locator-number-variables =
+    "chapter-number"
+    | "collection-number"
+    | "edition"
+    | "number"
+    | "number-of-pages"
+    | "number-of-volumes"
+}

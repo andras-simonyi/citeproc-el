@@ -1,4 +1,4 @@
-;; cpr-itemgetters.el --- functions for constructing itemgetters -*- lexical-binding: t; -*-
+;; citeproc-itemgetters.el --- functions for constructing itemgetters -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -21,9 +21,9 @@
 
 ;;; Commentary:
 
-;; Functions for constructing various types of bibliographic itemgetter functions. The
-;; returned itemgetter functions can, in turn, be used to create `cpr-style' and
-;; `cpr-proc' structures.
+;; Functions for constructing various types of bibliographic itemgetter
+;; functions. The returned itemgetter functions can, in turn, be used to create
+;; `citeproc-style' and `citeproc-proc' structures.
 
 ;;; Code:
 
@@ -31,9 +31,9 @@
 
 (require 'json)
 (require 'bibtex)
-(require 'cpr-bibtex)
+(require 'citeproc-bibtex)
 
-(defun cpr-hash-itemgetter-from-csl-json (file)
+(defun citeproc-hash-itemgetter-from-csl-json (file)
   "Return a hash-based getter for csl json bibliography FILE."
   (let* ((json-array-type 'list)
 	 (json-key-type 'symbol)
@@ -44,7 +44,7 @@
     (lambda (itemids) (--map (cons it (gethash it hash))
 			     itemids))))
 
-(defun cpr-itemgetter-from-csl-json (file)
+(defun citeproc-itemgetter-from-csl-json (file)
   "Return an item-getter for csl json bibliography FILE."
   (lambda (itemids)
     (let* ((json-array-type 'list)
@@ -56,7 +56,7 @@
 	  (when (member id itemids)
 	    (push (cons id item) result)))))))
 
-(defun cpr-itemgetter-from-bibtex (file)
+(defun citeproc-itemgetter-from-bibtex (file)
   "Return a getter for a BibTeX bibliography FILE."
   (lambda (itemids)
     (let (result)
@@ -67,10 +67,10 @@
 	(bibtex-map-entries
 	 (lambda (key _beg _end)
 	   (when (member key itemids)
-	     (push (cons key (cpr-bt-entry-to-csl (bibtex-parse-entry)))
+	     (push (cons key (citeproc-bt-entry-to-csl (bibtex-parse-entry)))
 		   result)))))
       result)))
 
-(provide 'cpr-itemgetters)
+(provide 'citeproc-itemgetters)
 
-;;; cpr-itemgetters.el ends here
+;;; citeproc-itemgetters.el ends here

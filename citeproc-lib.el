@@ -1,4 +1,4 @@
-;;; cpr-lib.el --- misc functions and variables for citeproc-el -*- lexical-binding: t; -*-
+;;; citeproc-lib.el --- misc functions and variables for citeproc-el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -27,21 +27,21 @@
 
 (require 'dash)
 
-(defconst cpr--number-vars
+(defconst citeproc--number-vars
   '(chapter-number collection-number edition issue number number-of-pages
 		   number-of-volumes volume citation-number first-reference-note-number)
   "CLS number variables.")
 
-(defconst cpr--date-vars
+(defconst citeproc--date-vars
   '(accessed container event-date issued original-date submitted)
   "CLS date variables.")
 
-(defconst cpr--name-vars
+(defconst citeproc--name-vars
   '(author collection-editor composer container-author director editor editorial-director
 	   illustrator interviewer original-author recipient reviewed-author translator)
   "CLS name variables.")
 
-(defun cpr-lib-parse-xml-file (file)
+(defun citeproc-lib-parse-xml-file (file)
   "Return the parsed xml representation of FILE."
   (with-temp-buffer
     (insert-file-contents file)
@@ -49,7 +49,7 @@
 
 ;; TODO: Remove uses of this when the libxml discard comments option will be
 ;; operational
-(defun cpr-lib-remove-xml-comments (tree)
+(defun citeproc-lib-remove-xml-comments (tree)
   "Remove comments from xml TREE."
   (let ((head (car tree))
 	(attrs (cadr tree))
@@ -59,22 +59,22 @@
       (pcase (car body)
 	((pred atom) (push (pop body) result))
 	(`(comment . ,_) (pop body))
-	(_ (push (cpr-lib-remove-xml-comments (pop body)) result))))
+	(_ (push (citeproc-lib-remove-xml-comments (pop body)) result))))
     (cons head (cons attrs (nreverse result)))))
 
-(defun cpr-lib-parse-html-frag (s)
+(defun citeproc-lib-parse-html-frag (s)
   "Return the parsed representation of html in string S."
   (with-temp-buffer
     (insert s)
     (libxml-parse-html-region (point-min) (point-max) nil t)))
 
-(defun cpr-lib-intern (s)
+(defun citeproc-lib-intern (s)
   "Intern S if it is a string, return nil if it is nil."
   (cond ((not s) nil)
 	((stringp s) (intern s))
-	(t (error "Function cpr-lib-intern was called with an argument that is neither string nor nil"))))
+	(t (error "Function citeproc-lib-intern was called with an argument that is neither string nor nil"))))
 
-(defun cpr-lib-named-parts-to-alist (e)
+(defun citeproc-lib-named-parts-to-alist (e)
   "Collect the attrs of parsed xml element E's enclosed elements.
 The attributes are collected into an alist consisting
 of (PARTNAME . ATTRS) pairs, where PARTNAME is the value of the
@@ -83,12 +83,12 @@ enclosed element's `name' attr"
 	       (assq-delete-all 'name it))
 	 (mapcar #'cadr (-remove #'stringp (cddr e)))))
 
-(defun cpr-lib-lex-compare (l1 l2 cmp-fun sort-orders)
+(defun citeproc-lib-lex-compare (l1 l2 cmp-fun sort-orders)
   "Whether list L1 lexicographically precedes list L2.
 CMP-FUN is a three-valued (1, 0, -1) comparator function,
 SORT-ORDERS is a list of sort orders (see the bib- and
-cite-sort-orders slots of `cpr-style' for details). Return t iff
-L1 is strictly ordered before L2, nil otherwise."
+cite-sort-orders slots of `citeproc-style' for details). Return t
+iff L1 is strictly ordered before L2, nil otherwise."
   (when (null sort-orders)
     (setq sort-orders (make-list (length l1) t)))
   (let (result)
@@ -99,7 +99,7 @@ L1 is strictly ordered before L2, nil otherwise."
 	  (setq result comp))))
     (equal result 1)))
 
-(defun cpr-lib-splice-into (list tag)
+(defun citeproc-lib-splice-into (list tag)
   "Splice elements with car TAG into LIST."
   (let (result)
     (dolist (elt list)
@@ -109,11 +109,11 @@ L1 is strictly ordered before L2, nil otherwise."
 	(push elt result)))
     (nreverse result)))
 
-(defun cpr-lib-add-splice-tag (list tag)
+(defun citeproc-lib-add-splice-tag (list tag)
   "Add TAG as car if LIST is not a singleton."
   (if (cdr list) (cons tag list) (car list)))
 
-(defun cpr-lib-numeric-p (val)
+(defun citeproc-lib-numeric-p (val)
   "Return whether VAL is numeric content.
 VAL has numeric content if it is a number or a string containing
 numeric content."
@@ -122,6 +122,6 @@ numeric content."
 	   (s-matches-p "\\`[[:alpha:]]?[[:digit:]]+[[:alpha:]]*\\(\\( *\\([,&-]\\|--\\) *\\)?[[:alpha:]]?[[:digit:]]+[[:alpha:]]*\\)?\\'"
 			val))))
 
-(provide 'cpr-lib)
+(provide 'citeproc-lib)
 
-;;; cpr-lib.el ends here
+;;; citeproc-lib.el ends here

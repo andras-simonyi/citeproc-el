@@ -1,4 +1,4 @@
-;;; cpr-itemdata.el --- represent and access bibliography items -*- lexical-binding: t; -*-
+;;; citeproc-itemdata.el --- represent and access bibliography items -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -25,9 +25,9 @@
 
 ;;; Code:
 
-(require 'cpr-rt)
+(require 'citeproc-rt)
 
-(cl-defstruct (cpr-itemdata (:constructor cpr-itemdata-create))
+(cl-defstruct (citeproc-itemdata (:constructor citeproc-itemdata-create))
   "Struct for storing bibliography item data.
 VARVALS is an alist containg variable-name symbols as keys and
   their values for the item as values,
@@ -45,40 +45,40 @@ DISAMB-POS contains the position on which cite disambiguation is
   (sort-key nil) (occurred-before nil)
   (disamb-pos nil))
 
-(defun cpr-itd-getvar (itd var)
+(defun citeproc-itd-getvar (itd var)
   "Return itemdata ITD's value for VAR ."
-  (alist-get var (cpr-itemdata-varvals itd)))
+  (alist-get var (citeproc-itemdata-varvals itd)))
 
-(defun cpr-itd-setvar (itd var val)
+(defun citeproc-itd-setvar (itd var val)
   "Set itemdata ITD's value for VAR to VAL."
-  (setf (alist-get var (cpr-itemdata-varvals itd) nil t) val
-	(cpr-itemdata-rc-uptodate itd) nil))
+  (setf (alist-get var (citeproc-itemdata-varvals itd) nil t) val
+	(citeproc-itemdata-rc-uptodate itd) nil))
 
-(defun cpr-itd-rt-cite (itd style)
+(defun citeproc-itd-rt-cite (itd style)
   "Return the rich-text cite of itemdata ITD using STYLE."
-  (if (cpr-itemdata-rc-uptodate itd)
-      (cpr-itemdata-rawcite itd)
-    (let ((rc (cpr-render-varlist-in-rt
-	       (cons (cons 'position (cpr-itemdata-disamb-pos itd))
-		     (cpr-itemdata-varvals itd))
+  (if (citeproc-itemdata-rc-uptodate itd)
+      (citeproc-itemdata-rawcite itd)
+    (let ((rc (citeproc-render-varlist-in-rt
+	       (cons (cons 'position (citeproc-itemdata-disamb-pos itd))
+		     (citeproc-itemdata-varvals itd))
 	       style
 	       'cite 'display)))
-      (setf (cpr-itemdata-rawcite itd) rc
-	    (cpr-itemdata-rc-uptodate itd) t)
+      (setf (citeproc-itemdata-rawcite itd) rc
+	    (citeproc-itemdata-rc-uptodate itd) t)
       rc)))
 
-(defun cpr-itd-plain-cite (itd style)
+(defun citeproc-itd-plain-cite (itd style)
   "Return the plain text cite of itemdata ITD using STYLE."
-  (cpr-rt-to-plain (cpr-itd-rt-cite itd style)))
+  (citeproc-rt-to-plain (citeproc-itd-rt-cite itd style)))
 
-(defun cpr-itd-namevars (itd style)
+(defun citeproc-itd-namevars (itd style)
   "Rendered namevars in the cite of itemdata ITD using STYLE."
-  (cpr-rt-rendered-name-vars (cpr-itd-rt-cite itd style)))
+  (citeproc-rt-rendered-name-vars (citeproc-itd-rt-cite itd style)))
 
-(defun cpr-itd-nameids (itd style)
+(defun citeproc-itd-nameids (itd style)
   "Rendered name ids in the cite of itemdata ITD using STYLE."
-  (cpr-rt-rendered-name-ids (cpr-itd-rt-cite itd style)))
+  (citeproc-rt-rendered-name-ids (citeproc-itd-rt-cite itd style)))
 
-(provide 'cpr-itemdata)
+(provide 'citeproc-itemdata)
 
-;;; cpr-itemdata.el ends here
+;;; citeproc-itemdata.el ends here

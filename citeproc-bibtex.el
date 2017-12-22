@@ -1,4 +1,4 @@
-;;; cpr-bibtex.el --- convert BibTeX entries to CSL -*- lexical-binding: t; -*-
+;;; citeproc-bibtex.el --- convert BibTeX entries to CSL -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -30,9 +30,9 @@
 (require 'bibtex)
 (require 'cl-lib)
 
-(require 'cpr-s)
+(require 'citeproc-s)
 
-(defconst cpr-bt--to-csl-types-alist
+(defconst citeproc-bt--to-csl-types-alist
   '(("article" . "article-journal") ("book" . "book") ("proceedings" . "book")
     ("manual" . "book") ("periodical" . "book") ("booklet" . "pamphlet")
     ("inbook" . "chapter") ("incollection" . "chapter") ("inproceedings" . "paper-conference")
@@ -42,7 +42,7 @@
     ("unpublished" . "manuscript") ("online" . "article-journal"))
   "Alist mapping BibTeX item types to CSL item types.")
 
-(defconst cpr-bt--to-csl-keys-alist
+(defconst citeproc-bt--to-csl-keys-alist
   '(("=key=" . citation-label) ("address" . publisher-place)
     ("booktitle" . container-title) ("journal" . container-title)
     ("chapter" . title) ("location" . event-place) ("series" . collection-title)
@@ -50,19 +50,19 @@
     ("pages" . page) ("organization" . publisher) ("url" . URL))
   "Alist mapping BibTeX keys to CSL keys with different names.")
 
-(defconst cpr-bt--mon-to-num-alist
+(defconst citeproc-bt--mon-to-num-alist
   '(("jan" . 1) ("feb" . 2) ("mar" . 3) ("apr" . 4) ("may" . 5) ("jun" . 6)
     ("jul" . 7) ("aug" . 8) ("sep" . 9) ("oct" . 10) ("nov" . 11) ("dec" . 12))
   "Alist mapping LaTeX abbreviated month names to ordinals.")
 
-(defconst cpr-bt--pref-to-ucs-alist
+(defconst citeproc-bt--pref-to-ucs-alist
   '(("'" . "ACUTE") ("`" . "GRAVE") ("^" . "CIRCUMFLEX") ("~" . "TILDE")
     ("=" . "MACRON") ("." . "WITH DOT ABOVE") ("\"" . "DIAERESIS")
     ("''" . "DIAERESIS") ("H" . "DOUBLE ACUTE") ("r" . "WITH RING ABOVE")
     ("u" . "BREVE") ("c" . "CEDILLA") ("k" . "OGONEK"))
   "Alist mapping LaTeX prefixes to unicode name endings.")
 
-(defconst cpr-bt--comm-letter-to-ucs-alist
+(defconst citeproc-bt--comm-letter-to-ucs-alist
   '((("`" . "A") . "À")
     (("'" . "A") . "Á")
     (("^" . "A") . "Â")
@@ -122,37 +122,38 @@
     (("H" . "U") . "Ű"))
   "Alist mapping LaTeX (SYMBOL-COMMAND . ASCII-CHAR) pairs to unicode characters.")
 
-(defconst cpr-bt--to-ucs-alist
+(defconst citeproc-bt--to-ucs-alist
   '(("l" . "ł") ("L" . "Ł") ("o" . "ø") ("O" . "Ø") ("AA" . "Å") ("aa" . "å")
     ("AE" . "Æ") ("ae" ly-raw string "\"æ\""))
   "Alist mapping LaTeX commands to characters")
 
-(defun cpr-bt--to-ucs (ltx char)
+(defun citeproc-bt--to-ucs (ltx char)
   "Return the unicode version of LaTeX command LTX applied to CHAR.
 LTX is a one-char LaTeX accenting command (e.g. \"'\"), CHAR is
 an ascii character. Return NIL if no corresponding unicode
 character was found."
-  (or (assoc-default (cons ltx char) cpr-bt--comm-letter-to-ucs-alist)
-      ;; If the combination is not in cpr-bt--comm-letter-to-ucs-alist then, as a
-      ;; last resort, we try to assemble the canonical unicode name of the requested
-      ;; character and look it up in (usc-names). This process is *very slow*!
+  (or (assoc-default (cons ltx char) citeproc-bt--comm-letter-to-ucs-alist)
+      ;; If the combination is not in citeproc-bt--comm-letter-to-ucs-alist then, as
+      ;; a last resort, we try to assemble the canonical unicode name of the
+      ;; requested character and look it up in (usc-names). This process is *very
+      ;; slow*!
       (if-let ((case-name (if (s-lowercase-p char) "SMALL" "CAPITAL"))
-	       (combining-name (assoc-default ltx cpr-bt--pref-to-ucs-alist))
+	       (combining-name (assoc-default ltx citeproc-bt--pref-to-ucs-alist))
 	       (name (concat "LATIN " case-name " LETTER " (upcase char) " " combining-name))
 	       (char-name (assoc-default name (ucs-names))))
 	  (char-to-string char-name)
 	nil)))
 
-(defun cpr-bt--to-csl (s)
+(defun citeproc-bt--to-csl (s)
   "Convert a BibTeX field S to a CSL one."
   (--> s
-       (cpr-bt--preprocess-for-decode it)
-       (cpr-bt--decode it)
+       (citeproc-bt--preprocess-for-decode it)
+       (citeproc-bt--decode it)
        (s-replace-all '(("{" . "") ("}" . "") ("\n" . " ")) it)
        (replace-regexp-in-string "[[:space:]]\\{2,\\}" " " it)
        (s-chomp it)))
 
-(defun cpr-bt--preprocess-for-decode (s)
+(defun citeproc-bt--preprocess-for-decode (s)
   "Preprocess field S before decoding.
 Remove flanking dumb quotes from string S and make some
 replacements."
@@ -161,11 +162,11 @@ replacements."
 		       (substring s 1 -1) s)))
     (s-replace "\\&" "&" wo-quotes)))
 
-(defun cpr-bt--to-csl-names (n)
+(defun citeproc-bt--to-csl-names (n)
   "Return a CSL version of BibTeX names field N."
-  (mapcar #'cpr--bt--to-csl-name (s-split "\\band\\b" n)))
+  (mapcar #'citeproc--bt--to-csl-name (s-split "\\band\\b" n)))
 
-(defun cpr-bt--parse-family (f)
+(defun citeproc-bt--parse-family (f)
   "Parse family name tokens F into a csl name-part alist."
   (let (family result particle)
     (if-let ((firsts (butlast f)))
@@ -179,12 +180,12 @@ replacements."
     (push `(family . ,family) result)
     result))
 
-(defun cpr--bt--to-csl-name (name)
+(defun citeproc--bt--to-csl-name (name)
   "Return a CSL version of BibTeX name string NAME."
   (let* (result
 	 family
 	 (tokens (-remove #'s-blank-str-p
-			  (cpr-s-slice-by-matches name "\\(,\\|[[:space:]]+\\)")))
+			  (citeproc-s-slice-by-matches name "\\(,\\|[[:space:]]+\\)")))
 	 (parts (-split-on "," tokens)))
     (pcase (length parts)
       ;; No commas in the name
@@ -203,11 +204,11 @@ replacements."
       (_ (setq family (car parts))
 	 (push `(suffix . ,(cadr parts)) result)
 	 (push `(given . ,(cl-caddr parts)) result)))
-    (setq result (nconc (cpr-bt--parse-family family) result))
+    (setq result (nconc (citeproc-bt--parse-family family) result))
     (--map (cons (car it) (s-join " " (cdr it)))
 	   result)))
 
-(defconst cpr-bt--decode-rx
+(defconst citeproc-bt--decode-rx
   (rx (or (seq "\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"")) (0+ space)
 	       (group-n 2 letter))
 	  (seq "\\" (group-n 1 (in "H" "r" "u" "c" "k")) (1+ space)
@@ -219,46 +220,46 @@ replacements."
 	       (0+ space) "}")))
   "Regular expression matching BibTeX special character commands.")
 
-(defun cpr-bt--decode (s)
+(defun citeproc-bt--decode (s)
   "Decode a BibTeX encoded string."
   (replace-regexp-in-string
-   cpr-bt--decode-rx
+   citeproc-bt--decode-rx
    (lambda (x)
      (let ((command (match-string 1 x))
 	   (letter (match-string 2 x)))
        (if letter
-	   (or (cpr-bt--to-ucs command letter) (concat "\\" x))
-	 (assoc-default command cpr-bt--to-ucs-alist))))
+	   (or (citeproc-bt--to-ucs command letter) (concat "\\" x))
+	 (assoc-default command citeproc-bt--to-ucs-alist))))
    s))
 
-(defun cpr--bt--to-csl-date (year month)
+(defun citeproc--bt--to-csl-date (year month)
   "Return a CSL version of the date given by YEAR and MONTH.
 YEAR and MONTH are the values of the corresponding BibTeX fields,
 MONTH might be nil."
   (let ((csl-year (string-to-number (car (s-match "[[:digit:]]+" year))))
 	(csl-month (when month
 		     (assoc-default (downcase month)
-				    cpr-bt--mon-to-num-alist)))
+				    citeproc-bt--mon-to-num-alist)))
 	date)
     (when csl-year
       (when csl-month (push csl-month date))
       (push csl-year date))
     (list (cons 'date-parts (list date)))))
 
-(defun cpr-bt-entry-to-csl (b)
+(defun citeproc-bt-entry-to-csl (b)
   "Return a CSL form of normalized parsed BibTeX entry B."
   (let ((type (assoc-default (downcase (assoc-default "=type=" b))
-			     cpr-bt--to-csl-types-alist))
+			     citeproc-bt--to-csl-types-alist))
 	result year month)
     (cl-loop for (key . value) in b do
 	     (let ((key (downcase key))
-		   (value (cpr-bt--to-csl value)))
-	       (if-let ((csl-key (assoc-default key cpr-bt--to-csl-keys-alist)))
+		   (value (citeproc-bt--to-csl value)))
+	       (if-let ((csl-key (assoc-default key citeproc-bt--to-csl-keys-alist)))
 		   ;; Vars mapped simply to a differently named CSL var
 		   (push (cons csl-key value) result)
 		 (pcase key
 		   ((or "author" "editor") ; Name vars
-		    (push (cons (intern key) (cpr-bt--to-csl-names value))
+		    (push (cons (intern key) (citeproc-bt--to-csl-names value))
 			  result))
 		   ("=type=" (push (cons 'type type) result))
 		   ("number" (push (cons (if (string= type "article-journal") 'issue
@@ -271,10 +272,10 @@ MONTH might be nil."
 		   ;; Remaining keys are mapped without change
 		   (_ (push (cons (intern key) value) result))))))
     (when year
-      (push (cons 'issued (cpr--bt--to-csl-date year month))
+      (push (cons 'issued (citeproc--bt--to-csl-date year month))
 	    result))
     result))
 
-(provide 'cpr-bibtex)
+(provide 'citeproc-bibtex)
 
-;;; cpr-bibtex.el ends here
+;;; citeproc-bibtex.el ends here

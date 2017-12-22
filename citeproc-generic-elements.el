@@ -1,4 +1,4 @@
-;;; cpr-generic-elements.el --- render generic CSL elements -*- lexical-binding: t; -*-
+;;; citeproc-generic-elements.el --- render generic CSL elements -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
@@ -22,37 +22,37 @@
 ;;; Commentary:
 
 ;; Functions corresponding to the generic CSL rendering elements cs:layout,
-;; cs:group and cs:text. With the exception of `cpr--layout' they return a
+;; cs:group and cs:text. With the exception of `citeproc--layout' they return a
 ;; (CONTENT . CONTENT-TYPE) pair, where CONTENT is the rendered rich-text output
 ;; and CONTENT-TYPE is one of the symbols `text-only', `empty-vars' and
-;; `present-var.' In contrast, `cpr--layout' returns only the rendered rich-text
-;; content.
+;; `present-var.' In contrast, `citeproc--layout' returns only the rendered
+;; rich-text content.
 
 ;;; Code:
 
 (require 'dash)
 (require 'let-alist)
 
-(require 'cpr-rt)
-(require 'cpr-context)
-(require 'cpr-macro)
+(require 'citeproc-rt)
+(require 'citeproc-context)
+(require 'citeproc-macro)
 
-(defun cpr--layout (attrs context &rest body)
+(defun citeproc--layout (attrs context &rest body)
   "Render the content of a layout element with ATTRS and BODY."
-  (setq body (cpr-lib-splice-into body 'splice))
-  (let* ((attrs (if (eq (cpr-context-mode context) 'bib) attrs
+  (setq body (citeproc-lib-splice-into body 'splice))
+  (let* ((attrs (if (eq (citeproc-context-mode context) 'bib) attrs
 		  nil)) ; No attrs if mode is cite -- they are used for citations
 	 (suffix (alist-get 'suffix attrs))
 	 (attrs-wo-suffix (--remove (eq (car it) 'suffix) attrs))
 	 (rendered-body (--map (car it) body)))
     ;; Handle second-field align
-    (when (and (alist-get 'second-field-align (cpr-context-opts context))
+    (when (and (alist-get 'second-field-align (citeproc-context-opts context))
 	       (> (length rendered-body) 1))
       (setq rendered-body `((((display . "left-margin")) ,(car rendered-body))
 			    (((display . "right-inline")) ,@(cdr rendered-body)))))
-    (let* ((affix-rendered (cpr-rt-render-affixes
-			    (cpr-rt-dedup (cpr-rt-join-formatted attrs-wo-suffix rendered-body
-								 context))))
+    (let* ((affix-rendered (citeproc-rt-render-affixes
+			    (citeproc-rt-dedup (citeproc-rt-join-formatted attrs-wo-suffix rendered-body
+									   context))))
 	   (last-elt (and (listp affix-rendered) (-last-item affix-rendered)))
 	   (last-display (and (consp last-elt) (car last-elt)
 			      (--any-p (eq (car it) 'display) (car last-elt)))))
@@ -68,9 +68,9 @@
 	    (concat affix-rendered suffix))))
       affix-rendered)))
 
-(defun cpr--group (attrs context &rest body)
+(defun citeproc--group (attrs context &rest body)
   "Render the content of a group element with ATTRS and BODY."
-  (setq body (cpr-lib-splice-into body 'splice))
+  (setq body (citeproc-lib-splice-into body 'splice))
   (-let* ((types (--map (cdr it) body))
 	  (type (cond ((--all? (eq it 'text-only) types)
 		       'text-only)
@@ -79,33 +79,35 @@
 		      (t 'empty-vars))))
     (cons (if (or (eq type 'text-only)
 		  (eq type 'present-var))
-	      (cpr-rt-join-formatted attrs (--map (car it) body) context)
+	      (citeproc-rt-join-formatted attrs (--map (car it) body) context)
 	    nil)
 	  type)))
 
-(defun cpr--text (attrs context &rest _body)
+(defun citeproc--text (attrs context &rest _body)
   "Render the content of a text element with ATTRS and BODY."
   (let-alist attrs
-   (let ((content nil)
-	 (type 'text-only))
-     (cond (.value (setq content .value))
-	   (.variable (let ((val (cpr-var-value (intern .variable) context (cpr-lib-intern .form))))
-		       (setq content val)
-		       (if val
-			   (progn
-			     (setq type 'present-var)
-			     (push `(rendered-var . ,(intern .variable)) attrs))
-			 (setq type 'empty-vars))))
-	   (.term (setq .form (if .form (intern .form) 'long)
-			.plural (if (or (not .plural)
-					(string= .plural "false"))
-				    'single 'multiple)
-			content (cpr-term-inflected-text .term .form .plural context)))
-	   (.macro (let ((macro-val (cpr-macro-output .macro context)))
-		     (setq content (car macro-val))
-		     (setq type (cdr macro-val)))))
-     (cons (cpr-rt-format-single attrs content context) type))))
+    (let ((content nil)
+	  (type 'text-only))
+      (cond (.value (setq content .value))
+	    (.variable
+	     (let ((val (citeproc-var-value (intern .variable) context (citeproc-lib-intern
+									.form))))
+	       (setq content val)
+	       (if val
+		   (progn
+		     (setq type 'present-var)
+		     (push `(rendered-var . ,(intern .variable)) attrs))
+		 (setq type 'empty-vars))))
+	    (.term (setq .form (if .form (intern .form) 'long)
+			 .plural (if (or (not .plural)
+					 (string= .plural "false"))
+				     'single 'multiple)
+			 content (citeproc-term-inflected-text .term .form .plural context)))
+	    (.macro (let ((macro-val (citeproc-macro-output .macro context)))
+		      (setq content (car macro-val))
+		      (setq type (cdr macro-val)))))
+      (cons (citeproc-rt-format-single attrs content context) type))))
 
-(provide 'cpr-generic-elements)
+(provide 'citeproc-generic-elements)
 
-;;; cpr-generic-elements.el ends here
+;;; citeproc-generic-elements.el ends here

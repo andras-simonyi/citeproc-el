@@ -1,0 +1,36 @@
+
+## Categories for style metadata
+div {
+  category.citation-format =
+    "author" | "author-date" | "label" | "note" | "numeric"
+  
+  ## Use "generic-base" for styles that are non-discipline specific, such as
+  ## APA, Harvard, etc.
+  category.field =
+    "anthropology"
+    | "astronomy"
+    | "biology"
+    | "botany"
+    | "chemistry"
+    | "communications"
+    | "engineering"
+    | "generic-base"
+    | "geography"
+    | "geology"
+    | "history"
+    | "humanities"
+    | "law"
+    | "linguistics"
+    | "literature"
+    | "math"
+    | "medicine"
+    | "philosophy"
+    | "physics"
+    | "political_science"
+    | "psychology"
+    | "science"
+    | "social_science"
+    | "sociology"
+    | "theology"
+    | "zoology"
+}
