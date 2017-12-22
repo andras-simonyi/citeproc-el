@@ -33,7 +33,7 @@
 (require 'bibtex)
 (require 'cpr-bibtex)
 
-(defun cpr-hash-itgetter-from-csl-json (file)
+(defun cpr-hash-itemgetter-from-csl-json (file)
   "Return a hash-based getter for csl json bibliography FILE."
   (let* ((json-array-type 'list)
 	 (json-key-type 'symbol)
@@ -44,7 +44,7 @@
     (lambda (itemids) (--map (cons it (gethash it hash))
 			     itemids))))
 
-(defun cpr-itgetter-from-csl-json (file)
+(defun cpr-itemgetter-from-csl-json (file)
   "Return an item-getter for csl json bibliography FILE."
   (lambda (itemids)
     (let* ((json-array-type 'list)
@@ -56,7 +56,7 @@
 	  (when (member id itemids)
 	    (push (cons id item) result)))))))
 
-(defun cpr-itgetter-from-bibtex (file)
+(defun cpr-itemgetter-from-bibtex (file)
   "Return a getter for a BibTeX bibliography FILE."
   (lambda (itemids)
     (let (result)
