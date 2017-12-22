@@ -60,16 +60,18 @@ simply the result of upcasing.")
 If the requested locale couldn't be read then return the parsed
 en-US locale, which must exist."
   (let ((default-loc-file (f-join dir "locales-en-US.xml")))
-    (if (not (f-readable-p default-loc-file))
-	(error "The default CSL locale file %s doesn't exist or is unreadable"
-	       default-loc-file)
-      (lambda (loc)
-	(let* ((ext-loc (if (s-contains-p "-" loc) loc (citeproc-locale--extend loc)))
-	       (loc-file (concat dir "/locales-" ext-loc ".xml"))
-	       (loc-available (f-readable-p loc-file)))
-	  (citeproc-lib-remove-xml-comments
-	   (citeproc-lib-parse-xml-file
-	    (if loc-available loc-file default-loc-file))))))))
+    (lambda (loc)
+      (let* ((ext-loc (if (s-contains-p "-" loc) loc (citeproc-locale--extend loc)))
+	     (loc-file (concat dir "/locales-" ext-loc ".xml"))
+	     (loc-available (f-readable-p loc-file)))
+	(citeproc-lib-remove-xml-comments
+	 (citeproc-lib-parse-xml-file
+	  (if loc-available loc-file
+	   (if (not (f-readable-p default-loc-file))
+	       (error
+		"The default CSL locale file %s doesn't exist or is unreadable"
+		      default-loc-file)   
+	     default-loc-file))))))))
 
 (defun citeproc-locale-termlist-from-xml-frag (frag)
   "Transform xml FRAG representing citeproc--terms into a citeproc-term list."
