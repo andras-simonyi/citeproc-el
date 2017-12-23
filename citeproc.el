@@ -81,7 +81,7 @@ If optional FORCE-LOC is non-nil then use locale LOC even if
 Return a list of formatted citations. If optional NO-LINKS is
 non-nil then don't link cites to the referred items."
   (when (not (citeproc-proc-finalized proc))
-    (citeproc-proc--finalize proc))
+    (citeproc--finalize proc))
   (--map (citeproc-citation--render-formatted-citation it proc format no-links)
 	 (queue-head (citeproc-proc-citations proc))))
 
@@ -159,7 +159,7 @@ be rendered with hanging-indents."
   (if (null (citeproc-style-bib-layout (citeproc-proc-style proc)))
       "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
     (when (not (citeproc-proc-finalized proc))
-      (citeproc-proc--finalize proc))
+      (citeproc--finalize proc))
     (let* ((formatter (citeproc-formatter-for-format format))
 	   (rt-formatter (citeproc-formatter-rt formatter))
 	   (bib-formatter (citeproc-formatter-bib formatter))
@@ -195,9 +195,16 @@ be rendered with hanging-indents."
 		       format-params)
 	      format-params)))))
 
+(defun citeproc-clear (proc)
+  "Remove all bibliographic and citation data from PROC."
+  (clrhash (citeproc-proc-itemdata proc))
+  (clrhash (citeproc-proc-names proc))
+  (queue-clear (citeproc-proc-citations proc))
+  (setf (citeproc-proc-finalized proc) t))
+
 ;;; Helpers 
 
-(defun citeproc-proc--finalize (proc)
+(defun citeproc--finalize (proc)
   "Finalize processor PROC by sorting and disambiguating items."
   (unless (citeproc-proc-finalized proc)
     (citeproc-proc-update-sortkeys proc)

@@ -49,13 +49,6 @@ FINALIZED is non-nil iff the processor is finalized
   updated etc)."
   style getter itemdata citations names finalized)
 
-(defun citeproc-proc-clear (proc)
-  "Remove all bibliographic and citation data from PROC."
-  (clrhash (citeproc-proc-itemdata proc))
-  (clrhash (citeproc-proc-names proc))
-  (queue-clear (citeproc-proc-citations proc))
-  (setf (citeproc-proc-finalized proc) t))
-
 (defun citeproc-proc--internalize-name (name proc)
   "Find or add name-alist NAME in/to the names stored in PROC.
 Return an internalized version which contains the name-id, and is
