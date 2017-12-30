@@ -63,8 +63,8 @@ IT-GETTER is an item-getter function that takes a list of itemid
   are symbols, arrays and hashes should be represented as lists
   and alists, respecively).
 LOC-GETTER is a function that takes a locale string (e.g.
-  \"en_GB\") as an argument and returns a corresponding parsed
-  CSL locale (in the same format as IT-GETTER).
+  \"en-GB\") as an argument and returns a corresponding parsed
+  CSL locale (as parsed by Emacs's ``libxml-parse-xml-region').
 Optional LOC is the locale to use if the style doesn't specify a
   default one. Defaults to \"en-US\".
 If optional FORCE-LOC is non-nil then use locale LOC even if
