@@ -21,10 +21,10 @@ the latest release as a package from this link, and install it using the
 
 The central use-case of `citeproc-el` is that of feeding all citations occurring
 in a document into a citation processor, and rendering the complete list of
-references and the bibliography with it. In order to do that, firstly a citation
+references and bibliography with it. In order to do that, firstly a citation
 processor object has to be created using the `citeproc-create` function.
-Inspired by the [citeproc-js](https://github.com/Juris-M/citeproc-js) API,
-the signature of this function is
+Inspired by the [citeproc-js](https://github.com/Juris-M/citeproc-js) API, the
+signature of this function is
 
 #### citeproc-create `(style item-getter locale-getter &optional locale force-locale)`
 
@@ -40,7 +40,7 @@ where
     descriptions of the corresponding bibliography items as parsed by Emacs's
     built in JSON parser (keys are symbols, arrays and hashes should be
     represented as lists and alists, respectively);
-  * `locale-getter` is a function that takes a CSL locale tag (e.g. `"en-GB"`)
+  * `locale-getter` is a function that takes a CSL locale tag (e.g., `"fr-FR"`)
 	as an argument and returns a corresponding CSL locale as parsed by Emacs's
 	`libxml-parse-xml-region`function or nil, with the exception of the default
 	`"en-US"` argument for which it must return the corresponding parsed locale;
