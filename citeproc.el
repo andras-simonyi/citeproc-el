@@ -76,46 +76,6 @@ If optional FORCE-LOC is non-nil then use locale LOC even if
     (citeproc-proc--create :style style :getter it-getter :names names
 			   :itemdata itemdata :citations citations :finalized t)))
 
-(defun citeproc-render-citations (proc format &optional no-links)
-  "Render all citations in PROC in the given FORMAT.
-Return a list of formatted citations. If optional NO-LINKS is
-non-nil then don't link cites to the referred items."
-  (when (not (citeproc-proc-finalized proc))
-    (citeproc--finalize proc))
-  (--map (citeproc-citation--render-formatted-citation it proc format no-links)
-	 (queue-head (citeproc-proc-citations proc))))
-
-(defun citeproc-create-style (style locale-getter &optional locale force-locale)
-  "Compile style in STYLE into a citeproc-style struct.
-STYLE is either a path to a CSL style file, or a style as a string.
-LOCALE-GETTER is a getter function for locales, the optional
-LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
-  LOCALE even if the style's default locale is different."
-  (-let* (((year-suffix . parsed-style) (citeproc-style-parse style))
-	  (default-locale (alist-get 'default-locale (cadr parsed-style)))
-	  (preferred-locale (if force-locale locale (or default-locale
-							locale
-							"en-US")))
-	  (act-parsed-locale (funcall locale-getter preferred-locale))
-	  (act-locale (alist-get 'lang (cadr act-parsed-locale)))
-	  (style (citeproc-create-style-from-locale
-		  parsed-style
-		  (not (not year-suffix)) act-locale)))
-    (citeproc-style--update-locale style act-parsed-locale)
-    (citeproc-style--set-opt-defaults style)
-    style))
-
-;; REVIEW: this should be rethought -- should we apply the specific wrappers as
-;; well?
-(defun citeproc-render-varlist (var-alist style mode format)
-  "Render an item described by VAR-ALIST with STYLE.
-MODE is one of the symbols `bib' or `cite',
-FORMAT is a symbol representing a supported output format."
-  (funcall (citeproc-formatter-rt (citeproc-formatter-for-format format))
-	   (citeproc-rt-cull-spaces-puncts
-	    (citeproc-rt-finalize
-	     (citeproc-render-varlist-in-rt var-alist style mode 'display t)))))
-
 (defun citeproc-append-citations (citations proc)
   "Append CITATIONS to the list of citations in PROC.
 CITATIONS is a list of `citeproc-citation' structures."
@@ -136,6 +96,15 @@ CITATIONS is a list of `citeproc-citation' structures."
 		     (citeproc-citation-cites citation)))
 	(queue-append (citeproc-proc-citations proc) citation))
       (setf (citeproc-proc-finalized proc) nil))))
+
+(defun citeproc-render-citations (proc format &optional no-links)
+  "Render all citations in PROC in the given FORMAT.
+Return a list of formatted citations. If optional NO-LINKS is
+non-nil then don't link cites to the referred items."
+  (when (not (citeproc-proc-finalized proc))
+    (citeproc--finalize proc))
+  (--map (citeproc-citation--render-formatted-citation it proc format no-links)
+	 (queue-head (citeproc-proc-citations proc))))
 
 (defun citeproc-render-bib (proc format &optional no-link-targets)
   "Render a bibliography of items in PROC in FORMAT.
@@ -195,12 +164,54 @@ be rendered with hanging-indents."
 		       format-params)
 	      format-params)))))
 
+;; For one-off renderings
+
 (defun citeproc-clear (proc)
   "Remove all bibliographic and citation data from PROC."
   (clrhash (citeproc-proc-itemdata proc))
   (clrhash (citeproc-proc-names proc))
   (queue-clear (citeproc-proc-citations proc))
   (setf (citeproc-proc-finalized proc) t))
+
+(defun citeproc-create-style (style locale-getter &optional locale force-locale)
+  "Compile style in STYLE into a citeproc-style struct.
+STYLE is either a path to a CSL style file, or a style as a string.
+LOCALE-GETTER is a getter function for locales, the optional
+LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
+  LOCALE even if the style's default locale is different."
+  (-let* (((year-suffix . parsed-style) (citeproc-style-parse style))
+	  (default-locale (alist-get 'default-locale (cadr parsed-style)))
+	  (preferred-locale (if force-locale locale (or default-locale
+							locale
+							"en-US")))
+	  (act-parsed-locale (funcall locale-getter preferred-locale))
+	  (act-locale (alist-get 'lang (cadr act-parsed-locale)))
+	  (style (citeproc-create-style-from-locale
+		  parsed-style
+		  (not (not year-suffix)) act-locale)))
+    (citeproc-style--update-locale style act-parsed-locale)
+    (citeproc-style--set-opt-defaults style)
+    style))
+
+;; REVIEW: this should be rethought -- should we apply the specific wrappers as
+;; well?
+(defun citeproc-render-varlist (var-alist style mode format)
+  "Render an item described by VAR-ALIST with STYLE.
+VAR-ALIST is either the parsed form of a bibliography item
+  description in CSL-JSON format, or a one- or two-element list
+  of `citeproc-date' structures,
+STYLE is a `citeproc-style' structure,
+MODE is one of the symbols `bib' or `cite',
+FORMAT is a symbol representing a supported output format."
+  (let ((internal-varlist (--map-when (and (memq (car it) citeproc--date-vars)
+					   (not (citeproc-date-p (cadr it))))
+				      (cons (car it)
+					    (citeproc-date-parse (cdr it)))
+				      var-alist)))
+    (funcall (citeproc-formatter-rt (citeproc-formatter-for-format format))
+	     (citeproc-rt-cull-spaces-puncts
+	      (citeproc-rt-finalize
+	       (citeproc-render-varlist-in-rt internal-varlist style mode 'display t))))))
 
 ;;; Helpers 
 
