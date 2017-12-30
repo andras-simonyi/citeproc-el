@@ -7,24 +7,16 @@ A CSL 1.01 Citation Processor for Emacs.
 **Table of Contents**
 
 - [Installation](#installation)
-    - [Using Cask (recommended)](#using-cask-recommended)
-	- [Manual installation](#manual-installation)
 - [Usage](#usage)
 - [License](#license)
 
 ## Installation
 
-### Using Cask (recommended)
-
 The long-term plan is to make __citeproc-el__ available as a
 [MELPA](https://melpa.org) package, but until then the recommended method of
-installation is using the [Cask](https://github.com/cask/cask) project
-management tool.
-
-  0.  Install Cask if you don't already have it
-  
-### Manual installation
-
+installation is to download the latest release as a package from this link, and
+install it using the `package-install-file` Emacs command.
+ 
 ## Usage
 
 ## License
