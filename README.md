@@ -1,10 +1,29 @@
 # citeproc-el
 
-[![Build Status](https://travis-ci.org/andras-simonyi/citeproc-el.svg?branch=master)](https://travis-ci.org/andras-simonyi/citeproc-el)
+[![Build Status](https://travis-ci.org/andras-simonyi/citeproc-el.svg?branch=master)](https://travis-ci.org/andras-simonyi/citeproc-el) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-A  CSL 1.01 Citation Processor for Emacs.
+A CSL 1.01 Citation Processor for Emacs.
+
+**Table of Contents**
+
+- [Installation](#installation)
+    - [Using Cask (recommended)](#using-cask-recommended)
+	- [Manual installation](#manual-installation)
+- [Usage](#usage)
+- [License](#license)
 
 ## Installation
+
+### Using Cask (recommended)
+
+The long-term plan is to make __citeproc-el__ available as a
+[MELPA](https://melpa.org) package, but until then the recommended method of
+installation is using the [Cask](https://github.com/cask/cask) project
+management tool.
+
+  0.  Install Cask if you don't already have it
+  
+### Manual installation
 
 ## Usage
 
@@ -12,7 +31,7 @@ A  CSL 1.01 Citation Processor for Emacs.
 
 Copyright (C) 2017 András Simonyi
 
-Author: András Simonyi andras.simonyi@gmail.com
+Authors: András Simonyi andras.simonyi@gmail.com
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
