@@ -20,9 +20,19 @@ the latest release as a package from this link, and install it using the
 ## Usage
 
 The central use-case of `citeproc-el` is that of feeding all citations occurring
-in a document into a citation processor, and rendering the complete list of
-references and bibliography with it. In order to do that, firstly a citation
-processor object has to be created using the `citeproc-create` function.
+in a document into a citation processor and rendering the complete list of
+references and bibliography with it. This requires the following steps:
+
+  1. Creating a citation processor object,
+  2. collecting the document's citations into a list of `citeproc-citation`
+     structures,
+  3. loading this list into the processor's citation queue, and 
+  3. rendering the loaded citations and the corresponding bibliography with the
+     processor.
+
+### Creating a citation processor
+
+Citation processor objects are created using the `citeproc-create` function.
 Inspired by the [citeproc-js](https://github.com/Juris-M/citeproc-js) API, the
 signature of this function is
 
@@ -48,6 +58,23 @@ where
 	specify a default one (defaults to `"en-US"`); and
   * if the optional `force-locale` is non-nil then the specified `locale` is
     used even if the given `style` specifies a different one as default.
+
+The function returns a `citeproc-proc` structure.
+
+`citeproc-el` integrators are free to implement their own special item-getter
+and locale-getter functions (e.g., to provide item descriptions and locales from
+a centralized source on a network) but `citeproc-el` provides some convenience
+functions to create typical item- and locale-getters:
+
+#### citeproc-itemgetter-from-csl-json `(file)`
+
+#### citeproc-hash-itemgetter-from-csl-json `(file)`
+
+#### citeproc-itemgetter-from-bibtex `(file)`
+
+#### citeproc-locale-getter-from-dir `(dir)`
+
+### Citation structures
 
 ## License
 
