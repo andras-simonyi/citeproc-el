@@ -6,14 +6,28 @@ A CSL 1.01 Citation Processor for Emacs.
 
 **Table of Contents**
 
+- [Introduction](#introduction)
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
     - [Creating a citation processor](#creating-a-citation-processor)
     - [Creating citation structures](#creating-citation-structures)
-    - [Managing the processor's citation list](#managing-the-processors-citation-list)
+    - [Managing the processor’s citation list](#managing-the-processors-citation-list)
     - [Rendering citations and bibliographies](#rendering-citations-and-bibliographies)
 	- [Supported output formats](#supported-output-formats)
 - [License](#license)
+
+## Introduction
+
+`citeproc-el` is an Emacs Lisp library for rendering citations and
+bibliographies in styles described in the Citation Style Language (CSL), an
+XML-based format to describe the formatting of bibliographic references.
+
+
+
+## Requirements
+
+Emacs 25 or later.
 
 ## Installation
 
@@ -31,7 +45,7 @@ in a document into a citation processor and rendering the complete list of
 references and bibliography with it. This requires
 
   1. creating a citation processor object,
-  2. collecting the document's citations into a list of citation structures,
+  2. collecting the document’s citations into a list of citation structures,
   3. loading this list into the processor, and
   3. rendering the loaded citations and the corresponding bibliography with the
      processor in one of the supported formats.
@@ -51,14 +65,14 @@ signature of which was inspired by the
     as its sole argument and returns an alist in which the given item ids are
     the keys and the values are the
     [CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
-    descriptions of the corresponding bibliography items as parsed by Emacs's
+    descriptions of the corresponding bibliography items as parsed by Emacs’s
     built in JSON parser (keys are symbols, arrays and hashes should be
     represented as lists and alists, respectively);
   * `locale-getter` is a function that takes a CSL locale tag (e.g., `"fr-FR"`)
-	as an argument and returns a corresponding CSL locale as parsed by Emacs's
+	as an argument and returns a corresponding CSL locale as parsed by Emacs’s
 	`libxml-parse-xml-region`function or nil, with the exception of the default
 	`"en-US"` argument for which it must return the corresponding parsed locale;
-  * the optional `locale` is the CSL locale tag to use if the style doesn't
+  * the optional `locale` is the CSL locale tag to use if the style doesn’t
 	specify a default one (defaults to `"en-US"`); and
   * if the optional `force-locale` is non-nil then the specified `locale` is
     used even if the given `style` specifies a different one as default.
@@ -116,7 +130,7 @@ Citation structures are created with
   * `suppress-affixes` is non-nil if the prefix and the suffix of the citation
     (e.g., opening and closing brackets) have to be suppressed.
   
-### Managing a processor's citation list
+### Managing a processor’s citation list
 
 Processor objects maintain a list of citations which can be manipulated with the
 following two functions:
@@ -135,17 +149,18 @@ Clear the citation list of citation processor `proc`.
 #### citeproc-render-citations `(proc format &optional no-links)`
 
 Render all citations in citation processor `proc` in the given `format`. Return
-a list of formatted citations. `format` is one of supported output formats (see
-below) as a symbol. If the optional `no-links` is non-nil then don't link cites
-to the referred items.
+a list of formatted citations. `format` is one of the [supported output
+formats](#supported-output-formats) as a symbol. If the optional `no-links` is
+non-nil then don’t link cites to the referred items.
 
 #### citeproc-render-bib `(proc format &optional no-link-targets)`
 
-Render a bibliography of items in `proc` in the given`format`. `format` is one
-of supported output formats (see below) as a symbol. If optional
-`no-link-targets` is non-nil then don't generate targets for citation links.
+Render a bibliography of the citations in citation processor `proc` in the
+given`format`. `format` is one of the [supported output
+formats](#supported-output-formats) as a symbol. If optional `no-link-targets`
+is non-nil then don’t generate targets for citation links.
 
-Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` cons cell, in which
+Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
 `FORMATTING-PARAMETERS` is an alist containing the values of the following
 formatting parameters keyed to the parameter names as symbols:
 
@@ -162,10 +177,10 @@ formatting parameters keyed to the parameter names as symbols:
 
 ### Supported output formats
 
-Currently `html`, `org`, `plain` (plain text), `latex`, `csl-test` (special html
-for the CSL test suite) and `raw` (internal rich-text format, for debugging) are
-supported as output formats. New ones can be easily added — see
-`citeproc-formatters.el` for more information and examples.
+Currently `html`, `org`, `plain` (plain text), `latex`, `csl-test` (for the CSL
+test suite) and `raw` (internal rich-text format, for debugging) are supported
+as output formats. New ones can easily be added — see `citeproc-formatters.el`
+for examples.
 
 -------------------------------------------------------------------------------
 
