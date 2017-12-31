@@ -26,9 +26,9 @@ XML-based, open format to describe the formatting of bibliographic references
 
 The library implements most of the [CSL 1.01
 specification](http://docs.citationstyles.org/en/stable/specification.html),
-including such features as citation disambiguation, cite collapsing and
-subsequent author substitution, and passes more than 75% of the tests in the CSL
-test suite.
+including such advanced features as citation disambiguation, cite collapsing and
+subsequent author substitution, and passes more than 75% of the tests in the [CSL
+Test Suite](https://github.com/citation-style-language/test-suite).
 
 ## Requirements
 
