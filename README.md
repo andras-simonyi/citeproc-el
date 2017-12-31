@@ -8,37 +8,41 @@ A CSL 1.01 Citation Processor for Emacs.
 
 - [Installation](#installation)
 - [Usage](#usage)
+    - [Creating a citation processor](#creating-a-citation-processor)
+    - [Creating citation structures](#creating-citation-structures)
+    - [Managing the processor's citation list](#managing-the-processors-citation-list)
+    - [Rendering citations and bibliographies](#rendering-citations-and-bibliographies)
+	- [Supported output formats](#supported-output-formats)
 - [License](#license)
 
 ## Installation
 
-The long-term plan is to make `citeproc-el` available as a [MELPA](https://melpa.org)
-package, but until then the recommended method of installation is to download
-the latest release as a package from this link, and install it using the
-`package-install-file` Emacs command.
- 
+Hopefully, `citeproc-el` will be available as a [MELPA](https://melpa.org)
+package in the near future but until then the recommended method of installation
+is to download the latest release as a package from this link, and install it
+using the `package-install-file` Emacs command.
+
+-------------------------------------------------------------------------------
+
 ## Usage
 
 The central use-case of `citeproc-el` is that of feeding all citations occurring
 in a document into a citation processor and rendering the complete list of
-references and bibliography with it. This requires the following steps:
+references and bibliography with it. This requires
 
-  1. Creating a citation processor object,
-  2. collecting the document's citations into a list of `citeproc-citation`
-     structures,
-  3. loading this list into the processor's citation queue, and 
+  1. creating a citation processor object,
+  2. collecting the document's citations into a list of citation structures,
+  3. loading this list into the processor, and
   3. rendering the loaded citations and the corresponding bibliography with the
-     processor.
+     processor in one of the supported formats.
 
 ### Creating a citation processor
 
-Citation processor objects are created using the `citeproc-create` function.
-Inspired by the [citeproc-js](https://github.com/Juris-M/citeproc-js) API, the
-signature of this function is
+Citation processor objects are created using the `citeproc-create` function (the
+signature of which was inspired by the
+[citeproc-js](https://github.com/Juris-M/citeproc-js) API):
 
 #### citeproc-create `(style item-getter locale-getter &optional locale force-locale)`
-
-where 
 
   * `style` is a CSL style file (e.g.,
     `"/usr/local/csl_styles/chicago-author-date.csl"`) to use for rendering the
@@ -58,8 +62,7 @@ where
 	specify a default one (defaults to `"en-US"`); and
   * if the optional `force-locale` is non-nil then the specified `locale` is
     used even if the given `style` specifies a different one as default.
-
-The function returns a `citeproc-proc` structure.
+  * Returns a citation processor with an empty citation list.
 
 `citeproc-el` integrators are free to implement their own special item-getter
 and locale-getter functions (e.g., to provide item descriptions and locales from
@@ -70,11 +73,101 @@ functions to create typical item- and locale-getters:
 
 #### citeproc-hash-itemgetter-from-csl-json `(file)`
 
+Both functions return an item-getter function getting bibliography item
+descriptions from a
+[CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
+file. The difference between them is that an item-getter produced by
+`citeproc-itemgetter-from-csl-json` opens and reads directly from `file` each
+time it is called, while `citeproc-hash-itemgetter-from-csl-json` reads the
+content of `file` into a hash-table and the created function reads item
+descriptions from this hash-table when called. As a consequence, functions
+created with `citeproc-hash-itemgetter-from-csl-json` can perform better but
+ignore changes in `file` between calls.
+
 #### citeproc-itemgetter-from-bibtex `(file)`
 
-#### citeproc-locale-getter-from-dir `(dir)`
+Return an item-getter function getting bibliography item descriptions from a
+BibTeX file. Similarly to `citeproc-itemgetter-from-csl-json`, this function
+opens and reads directly from `file` each time it is called.
 
-### Citation structures
+#### citeproc-locale-getter-from-dir `(directory)`
+
+Return a locale-getter function getting CSL locales from `directory`. The
+directory must contain the CSL locale files under their canonical names (as
+found at the [Official CSL locale
+repository](https://github.com/citation-style-language/locales)), and must
+contain at least the default `en-US` locale file.
+
+### Creating citation structures
+
+Citation structures are created with
+
+#### citeproc-citation-create `(&key cites note-index capitalize-first suppress-affixes)`
+
+  * `cites` is a list of alists describing cites. Each alist must contain the
+     `id` symbol as key coupled with an item id string as value, and can
+     optionally contain additional information with the symbol keys
+     `suppress-author` (with a boolean value), `prefix`, `suffix`, `locator`,
+     `label` (all with string values);
+  * `note-index` is the note index of the citation if it occurs in a note and
+     `nil` otherwise;
+  * `capitalize-first` is non-nil if the first word of the citation has to be
+    capitalized;
+  * `suppress-affixes` is non-nil if the prefix and the suffix of the citation
+    (e.g., opening and closing brackets) have to be suppressed.
+  
+### Managing a processor's citation list
+
+Processor objects maintain a list of citations which can be manipulated with the
+following two functions:
+
+#### citeproc-append-citations `(citations proc)`
+
+Append `citations`, a list of citation structures, to the citation list of
+citation processor `proc`.
+
+#### citeproc-clear `(proc)`
+
+Clear the citation list of citation processor `proc`.
+
+### Rendering citations and bibliographies
+
+#### citeproc-render-citations `(proc format &optional no-links)`
+
+Render all citations in citation processor `proc` in the given `format`. Return
+a list of formatted citations. `format` is one of supported output formats (see
+below) as a symbol. If the optional `no-links` is non-nil then don't link cites
+to the referred items.
+
+#### citeproc-render-bib `(proc format &optional no-link-targets)`
+
+Render a bibliography of items in `proc` in the given`format`. `format` is one
+of supported output formats (see below) as a symbol. If optional
+`no-link-targets` is non-nil then don't generate targets for citation links.
+
+Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` cons cell, in which
+`FORMATTING-PARAMETERS` is an alist containing the values of the following
+formatting parameters keyed to the parameter names as symbols:
+
+  * `max-offset` (integer): The width of the widest first field in the
+    bibliography, measured in characters.
+  * `line-spacing` (integer): Vertical line distance specified as a multiple of
+    standard line height.
+  * `entry-spacing` (integer): Vertical distance between bibliographic entries,
+    specified as a multiple of standard line height.
+  * `second-field-align` (`flush` or `margin`): The position of second-field
+    alignment.
+  * `hanging-indent` (boolean): Whether the bibliography items should
+    be rendered with hanging-indents.
+
+### Supported output formats
+
+Currently `html`, `org`, `plain` (plain text), `latex`, `csl-test` (special html
+for the CSL test suite) and `raw` (internal rich-text format, for debugging) are
+supported as output formats. New ones can be easily added — see
+`citeproc-formatters.el` for more information and examples.
+
+-------------------------------------------------------------------------------
 
 ## License
 

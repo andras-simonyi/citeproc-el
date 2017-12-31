@@ -109,7 +109,7 @@ non-nil then don't link cites to the referred items."
 (defun citeproc-render-bib (proc format &optional no-link-targets)
   "Render a bibliography of items in PROC in FORMAT.
 If optional NO-LINK-TARGETS is non-nil then don't generate
-targets for citatation links.
+targets for citation links.
   Returns a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons
 cell, in which FORMATTING-PARAMETERS is an alist containing the
 following formatting parameters keyed to the parameter names as
