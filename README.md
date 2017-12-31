@@ -21,9 +21,14 @@ A CSL 1.01 Citation Processor for Emacs.
 
 `citeproc-el` is an Emacs Lisp library for rendering citations and
 bibliographies in styles described in the Citation Style Language (CSL), an
-XML-based format to describe the formatting of bibliographic references.
+XML-based, open format to describe the formatting of bibliographic references
+(see http://citationstyles.org/ for further information on CSL).
 
-
+The library implements most of the [CSL 1.01
+specification](http://docs.citationstyles.org/en/stable/specification.html),
+including such features as citation disambiguation, cite collapsing and
+subsequent author substitution, and passes more than 75% of the tests in the CSL
+test suite.
 
 ## Requirements
 
