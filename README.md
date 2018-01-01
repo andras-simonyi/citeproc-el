@@ -24,11 +24,17 @@ bibliographies in styles described in the Citation Style Language (CSL), an
 XML-based, open format to describe the formatting of bibliographic references
 (see http://citationstyles.org/ for further information on CSL).
 
-The library implements most of the [CSL 1.01
+`citeproc-el` implements most of the [CSL 1.01
 specification](http://docs.citationstyles.org/en/stable/specification.html),
 including such advanced features as citation disambiguation, cite collapsing and
-subsequent author substitution, and passes more than 75% of the tests in the [CSL
-Test Suite](https://github.com/citation-style-language/test-suite).
+subsequent author substitution, and passes more than 72% of the tests in the
+[CSL Test Suite](https://github.com/citation-style-language/test-suite). In
+addition to the standard
+[CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
+data format, `citeproc-el` has rudimentary support for reading bibliographic
+data from BibTeX bibliographies and can produce output in several formats
+including HTML and org-mode (see [Supported output
+formats](#supported-output-formats) for the full list).
 
 ## Requirements
 
@@ -163,9 +169,8 @@ non-nil then don’t link cites to the referred items.
 Render a bibliography of the citations in citation processor `proc` in the
 given`format`. `format` is one of the [supported output
 formats](#supported-output-formats) as a symbol. If optional `no-link-targets`
-is non-nil then don’t generate targets for citation links.
-
-Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
+is non-nil then don’t generate targets for citation links. Return a
+`(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
 `FORMATTING-PARAMETERS` is an alist containing the values of the following
 formatting parameters keyed to the parameter names as symbols:
 
@@ -193,7 +198,7 @@ for examples.
 
 Copyright (C) 2017 András Simonyi
 
-Authors: András Simonyi andras.simonyi@gmail.com
+Authors: András Simonyi
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
