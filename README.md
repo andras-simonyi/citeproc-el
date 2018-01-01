@@ -43,10 +43,9 @@ Emacs 25 or later. The library has been tested on Emacs 25.1, 25.2 and 25.3.
 
 ## Installation
 
-Hopefully, `citeproc-el` will be available as a [MELPA](https://melpa.org)
-package in the near future but until then the recommended method of installation
-is to download the latest release as a package from this link, and install it
-using the `package-install-file` Emacs command.
+The recommended method of installing `citeproc-el` is to download the latest
+release as a package from this link, and install it using the
+`package-install-file` Emacs command.
 
 -------------------------------------------------------------------------------
 
