@@ -195,19 +195,17 @@ LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
 
 ;; REVIEW: this should be rethought -- should we apply the specific wrappers as
 ;; well?
-(defun citeproc-render-varlist (var-alist style mode format)
-  "Render an item described by VAR-ALIST with STYLE.
-VAR-ALIST is either the parsed form of a bibliography item
-  description in CSL-JSON format, or a one- or two-element list
-  of `citeproc-date' structures,
+(defun citeproc-render-item (item-data style mode format)
+  "Render a bibliography item described by ITEM-DATA with STYLE.
+ITEM-DATA is the parsed form of a bibliography item description
+  in CSL-JSON format,
 STYLE is a `citeproc-style' structure,
 MODE is one of the symbols `bib' or `cite',
 FORMAT is a symbol representing a supported output format."
-  (let ((internal-varlist (--map-when (and (memq (car it) citeproc--date-vars)
-					   (not (citeproc-date-p (cadr it))))
+  (let ((internal-varlist (--map-when (memq (car it) citeproc--date-vars)
 				      (cons (car it)
 					    (citeproc-date-parse (cdr it)))
-				      var-alist)))
+				      item-data)))
     (funcall (citeproc-formatter-rt (citeproc-formatter-for-format format))
 	     (citeproc-rt-cull-spaces-puncts
 	      (citeproc-rt-finalize
