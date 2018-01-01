@@ -208,7 +208,7 @@ After the creation of a style object references can be rendered by
 
 #### citeproc-render-item `(item-data style mode format)`
 Render an item described by `item-data` with `style`. `item-data` is the parsed
-form of an item description in
+form of a bibliographic item description in
 [CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
 format, `style` is a `citeproc-style` style object, `mode` is one of the symbols
 `bib` or `cite`, `format` is a supported output format (see next section) as a
