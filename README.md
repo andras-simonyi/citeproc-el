@@ -33,7 +33,7 @@ addition to the standard
 [CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
 data format, `citeproc-el` has rudimentary support for reading bibliographic
 data from BibTeX bibliographies and can produce output in several formats
-including HTML and org-mode (see [Supported output
+including HTML and org-mode markup (see [Supported output
 formats](#supported-output-formats) for the full list).
 
 ## Requirements
