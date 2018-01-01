@@ -192,8 +192,8 @@ Reference rendering is typically context-dependent, as the rendered form can
 depend on the position of the reference and the presence of other references may
 make it necessary to add disambiguating information. Since computing the
 context-dependent form might be too time-consuming or unnecessary for some
-applications (e.g., for generating citation previews), `citeproc-el` provides
-functions to render isolated references. 
+applications (e.g., for generating previews), `citeproc-el` provides functions
+to render isolated references.
 
 Isolated rendering requires only the creation of a `citeproc-style` object (as
 opposed to a full-blown citation processor) with the function
