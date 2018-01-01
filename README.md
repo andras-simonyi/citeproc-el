@@ -20,7 +20,7 @@ A CSL 1.01 Citation Processor for Emacs.
 
 ## Introduction
 
-`citeproc-el` is an Emacs Lisp library for rendering citations and
+citeproc-el is an Emacs Lisp library for rendering citations and
 bibliographies in styles described in the Citation Style Language (CSL), an
 XML-based, open format to describe the formatting of bibliographic references
 (see http://citationstyles.org/ for further information on CSL).
@@ -32,7 +32,7 @@ subsequent author substitution, and passes more than 70% of the tests in the
 [CSL Test Suite](https://github.com/citation-style-language/test-suite). In
 addition to the standard
 [CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
-data format, `citeproc-el` has rudimentary support for reading bibliographic
+data format, citeproc-el has rudimentary support for reading bibliographic
 data from BibTeX bibliographies and can produce output in several formats
 including HTML and org-mode markup (see [Supported output
 formats](#supported-output-formats) for the full list).
@@ -43,7 +43,7 @@ Emacs 25 or later. The library has been tested on Emacs 25.1, 25.2 and 25.3.
 
 ## Installation
 
-The recommended method of installing `citeproc-el` is to download the latest
+The recommended method of installing citeproc-el is to download the latest
 release as a package from this link, and install it using the
 `package-install-file` Emacs command.
 
@@ -51,7 +51,7 @@ release as a package from this link, and install it using the
 
 ## Usage
 
-The central use-case of `citeproc-el` is that of feeding all citations occurring
+The central use-case of citeproc-el is that of feeding all citations occurring
 in a document into a citation processor and rendering the complete list of
 references and bibliography with it. This requires
 
@@ -89,9 +89,9 @@ signature of which was inspired by the
     used even if the given `style` specifies a different one as default.
   * Returns a citation processor with an empty citation list.
 
-`citeproc-el` integrators are free to implement their own special item-getter
+citeproc-el integrators are free to implement their own special item-getter
 and locale-getter functions (e.g., to provide item descriptions and locales from
-a centralized source on a network) but `citeproc-el` provides some convenience
+a centralized source on a network) but citeproc-el provides some convenience
 functions to create typical item- and locale-getters:
 
 #### citeproc-itemgetter-from-csl-json `(file)`
@@ -191,7 +191,7 @@ Reference rendering is typically context-dependent, as the rendered form can
 depend on the position of the reference and the presence of other references may
 make it necessary to add disambiguating information. Since computing the
 context-dependent form might be too time-consuming or unnecessary for some
-applications (e.g., for generating previews), `citeproc-el` provides functions
+applications (e.g., for generating previews), citeproc-el provides functions
 to render isolated references.
 
 Isolated rendering requires only the creation of a `citeproc-style` object (as
