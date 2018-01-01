@@ -201,7 +201,7 @@ opposed to a full-blown citation processor) with the function
 #### citeproc-create-style `(style locale-getter &optional locale force-locale)`
 
 Create a `citeproc-style` object. See the documentation of
-[citeproc-create](#citeproc-create) for the description of the arguments.
+[citeproc-create](#citeproc-create-style-item-getter-locale-getter-optional-locale-force-locale) for the description of the arguments.
 
 After the creation of a style object references can be rendered by
 
