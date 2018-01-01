@@ -14,6 +14,7 @@ A CSL 1.01 Citation Processor for Emacs.
     - [Creating citation structures](#creating-citation-structures)
     - [Managing the processor’s citation list](#managing-the-processors-citation-list)
     - [Rendering citations and bibliographies](#rendering-citations-and-bibliographies)
+	- [Rendering isolated references](#rendering-isolated-references)
 	- [Supported output formats](#supported-output-formats)
 - [License](#license)
 
@@ -24,10 +25,10 @@ bibliographies in styles described in the Citation Style Language (CSL), an
 XML-based, open format to describe the formatting of bibliographic references
 (see http://citationstyles.org/ for further information on CSL).
 
-`citeproc-el` implements most of the [CSL 1.01
+The library implements most of the [CSL 1.01
 specification](http://docs.citationstyles.org/en/stable/specification.html),
 including such advanced features as citation disambiguation, cite collapsing and
-subsequent author substitution, and passes more than 72% of the tests in the
+subsequent author substitution, and passes more than 70% of the tests in the
 [CSL Test Suite](https://github.com/citation-style-language/test-suite). In
 addition to the standard
 [CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
@@ -184,6 +185,33 @@ formatting parameters keyed to the parameter names as symbols:
     alignment.
   * `hanging-indent` (boolean): Whether the bibliography items should
     be rendered with hanging-indents.
+
+### Rendering isolated references
+
+Reference rendering is typically context-dependent, as the rendered form can
+depend on the position of the reference and the presence of other references may
+make it necessary to add disambiguating information. Since computing the
+context-dependent form might be too time-consuming or unnecessary for some
+applications (e.g., for generating citation previews), `citeproc-el` provides
+functions to render isolated references. 
+
+Isolated rendering requires only the creation of a `citeproc-style` object (as
+opposed to a full-blown citation processor) with the function
+
+#### citeproc-create-style `(style locale-getter &optional locale force-locale)`
+
+Create a `citeproc-style` object. See the documentation of
+[citeproc-create](#citeproc-create) for the description of the arguments.
+
+After the creation of a style object references can be rendered by
+
+#### citeproc-render-item `(item-data style mode format)`
+Render a bibliography item described by `item-data` with `style`. `item-data` is
+the parsed form of a bibliography item description in
+[CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
+format, `style` is a `citeproc-style` style object, `mode` is one of the symbols
+`bib` or `cite`, `format` is a supported output format (see next section) as a
+symbol.
 
 ### Supported output formats
 
