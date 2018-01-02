@@ -224,7 +224,7 @@ for examples.
 
 ## License
 
-Copyright (C) 2017 András Simonyi
+Copyright (C) 2018 András Simonyi
 
 Authors: András Simonyi
 
