@@ -57,7 +57,7 @@ LABEL-ATTRS) if WITH-LABEL is t."
       (setq present-vars '(editor)
 	    ed-trans t))
     (when (not (alist-get 'delimiter attrs))
-      (when-let (names-delim (alist-get 'names-delimiter (citeproc-context-opts context)))
+      (-when-let (names-delim (alist-get 'names-delimiter (citeproc-context-opts context)))
 	(push (cons 'delimiter names-delim) attrs)))
     (if present-vars
 	(cons (citeproc-rt-join-formatted
@@ -86,8 +86,8 @@ standard, so can be considered an extension. It's supported
 because some styles rely on it, notably that of the journal
 Nature."
   ;; Push the current add-names offset for VAR to the ATTRS
-  (when-let (add-names-alist (citeproc-var-value 'add-names context))
-    (when-let (add-names-val (alist-get var add-names-alist))
+  (-when-let (add-names-alist (citeproc-var-value 'add-names context))
+    (-when-let (add-names-val (alist-get var add-names-alist))
       (push `(add-names . ,add-names-val) attrs)))
   (let* ((var-value (citeproc-var-value var context))
 	 (rendered-names (citeproc-name--render-names

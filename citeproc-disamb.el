@@ -239,7 +239,7 @@ disambiguation methods should be used."
       (let ((act-set (pop amb-itds)))
 	(citeproc-disamb-amb-itds act-set style name given yearsuff)
 	(when (citeproc-disamb--different-cites-p act-set style)
-	  (when-let (new-ambs (citeproc-amb-itds act-set style))
+	  (-when-let (new-ambs (citeproc-amb-itds act-set style))
 	    (setq amb-itds (nconc new-ambs amb-itds))))))))
 
 (provide 'citeproc-disamb)

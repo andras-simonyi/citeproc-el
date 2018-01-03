@@ -104,9 +104,9 @@ VARIABLE is a symbol."
 	 (suffix
 	  (citeproc-term-text
 	   (if (not matches)
-	       (when-let (ordinal-matches
-			  (--filter (string= (citeproc-term-name it) "ordinal")
-				    terms))
+	       (-when-let (ordinal-matches
+			   (--filter (string= (citeproc-term-name it) "ordinal")
+				     terms))
 		 (-if-let (match (--first (eq (citeproc-term-gender-form it) gender)
 					  ordinal-matches))
 		     match

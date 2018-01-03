@@ -224,13 +224,13 @@ the span."
   (let* ((cites (citeproc-citation-cites citation))
 	 (cites-length (length cites)))
     (when (> cites-length 2)
-      (when-let (collapsed
-		 (citeproc-cites--collapse-indexed
-		  cites
-		  (lambda (x)
-		    (string-to-number
-		     (alist-get 'citation-number (citeproc-cite--varlist x))))
-		  (lambda (x) (alist-get 'locator (citeproc-cite--varlist x)))))
+      (-when-let (collapsed
+		  (citeproc-cites--collapse-indexed
+		   cites
+		   (lambda (x)
+		     (string-to-number
+		      (alist-get 'citation-number (citeproc-cite--varlist x))))
+		   (lambda (x) (alist-get 'locator (citeproc-cite--varlist x)))))
 	(setf (citeproc-citation-cites citation) collapsed
 	      (citeproc-citation-grouped citation) t)))))
 

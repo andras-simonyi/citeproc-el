@@ -78,7 +78,7 @@ sorted."
 			 orig-var))
 		  (value (citeproc-proc--parse-csl-var-val (cdr it) var proc)))
 	     (pcase var
-	       ('page (when-let ((page-first-match (s-match "[[:digit:]]+" value)))
+	       ('page (-when-let (page-first-match (s-match "[[:digit:]]+" value))
 			(setq page-first (car page-first-match))))
 	       ('label (setq label t)))
 	     (cons var value))

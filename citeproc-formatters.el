@@ -83,9 +83,9 @@ item as a string."
 	     (dolist (attr attrs)
 	       (let ((key (car attr)))
 		 (if (or (eq key 'cited-item-no) (eq key 'bib-item-no))
-		     (when-let (fmt-fun (alist-get key fmt-alist))
+		     (-when-let (fmt-fun (alist-get key fmt-alist))
 		       (setq result (funcall fmt-fun result (cdr attr))))
-		   (when-let
+		   (-when-let
 		       (fmt-fun
 			(alist-get
 			 (pcase attr
