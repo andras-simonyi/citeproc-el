@@ -41,16 +41,16 @@
   "Compare terms T1 and T2.
 The comparison is based on the term fields except the last one,
 and relies on the alphabetical ordering of fields' string
-content (see the function `citeproc--lib-string-content'). Return
-1, -1 or 0 iff T1 precedes, succeeds or is equal according to the
+content (see the function `citeproc-lib-s-content'). Return 1, -1
+or 0 iff T1 precedes, succeeds or is equal according to the
 ordering."
   (cond ((not t2) 1)
 	((not t1) -1)
 	(t (let ((idx 1)
 		 (result 0))
 	     (while (and (= result 0) (< idx 7))
-	       (let ((s1 (citeproc-s-content (elt t1 idx)))
-		     (s2 (citeproc-s-content (elt t2 idx))))
+	       (let ((s1 (citeproc-s-content (aref t1 idx)))
+		     (s2 (citeproc-s-content (aref t2 idx))))
 		 (cond ((string< s1 s2) (setq result 1))
 		       ((string> s1 s2) (setq result -1))))
 	       (cl-incf idx)) result))))
