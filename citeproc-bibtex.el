@@ -137,10 +137,11 @@ character was found."
       ;; a last resort, we try to assemble the canonical unicode name of the
       ;; requested character and look it up in (usc-names). This process is *very
       ;; slow*!
-      (if-let ((case-name (if (s-lowercase-p char) "SMALL" "CAPITAL"))
-	       (combining-name (assoc-default ltx citeproc-bt--pref-to-ucs-alist))
-	       (name (concat "LATIN " case-name " LETTER " (upcase char) " " combining-name))
-	       (char-name (assoc-default name (ucs-names))))
+      (-if-let* ((case-name (if (s-lowercase-p char) "SMALL" "CAPITAL"))
+		 (combining-name (assoc-default ltx citeproc-bt--pref-to-ucs-alist))
+		 (name (concat "LATIN " case-name " LETTER "
+			       (upcase char) " " combining-name))
+		 (char-name (assoc-default name (ucs-names))))
 	  (char-to-string char-name)
 	nil)))
 
@@ -169,7 +170,7 @@ replacements."
 (defun citeproc-bt--parse-family (f)
   "Parse family name tokens F into a csl name-part alist."
   (let (family result particle)
-    (if-let ((firsts (butlast f)))
+    (-if-let (firsts (butlast f))
 	(progn
 	  (while (and firsts (s-lowercase-p (car firsts)))
 	    (push (pop firsts) particle))
@@ -190,7 +191,7 @@ replacements."
     (pcase (length parts)
       ;; No commas in the name
       (1 (let ((name (car parts)))
-	   (if-let ((1st-downcased-idx (-find-index #'s-lowercase-p name)))
+	   (-if-let (1st-downcased-idx (-find-index #'s-lowercase-p name))
 	       (progn (setq family (-slice name 1st-downcased-idx))
 		      (when (> 1st-downcased-idx 0)
 			(push `(given . ,(-slice name 0 1st-downcased-idx)) result)))
@@ -254,7 +255,7 @@ MONTH might be nil."
     (cl-loop for (key . value) in b do
 	     (let ((key (downcase key))
 		   (value (citeproc-bt--to-csl value)))
-	       (if-let ((csl-key (assoc-default key citeproc-bt--to-csl-keys-alist)))
+	       (-if-let (csl-key (assoc-default key citeproc-bt--to-csl-keys-alist))
 		   ;; Vars mapped simply to a differently named CSL var
 		   (push (cons csl-key value) result)
 		 (pcase key

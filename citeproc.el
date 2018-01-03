@@ -146,8 +146,8 @@ be rendered with hanging-indents."
 			    punct-in-quote)
 			   sorted))
 	   (substituted
-	    (if-let (subs-auth-subst
-		     (alist-get 'subsequent-author-substitute bib-opts))
+	    (-if-let (subs-auth-subst
+		      (alist-get 'subsequent-author-substitute bib-opts))
 		(citeproc-rt-subsequent-author-substitute raw-bib subs-auth-subst)
 	      raw-bib))
 	   (max-offset (if (alist-get 'second-field-align bib-opts)

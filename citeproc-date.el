@@ -140,11 +140,11 @@ element (used for date range rendering)."
 			 ('month (citeproc-date--render-month d (cdr it) context))
 			 ('day (citeproc-date--render-day d (cdr it) context)))
 		       part-attrs)))
-    (if-let ((n-l-s no-last-suffix)
-	     (last (car (last result)))
-	     (wo-suffix (and (consp last)
-			     (cons (--remove (eq 'suffix (car it)) (car last))
-				   (cdr last)))))
+    (-if-let* ((n-l-s no-last-suffix)
+	       (last (car (last result)))
+	       (wo-suffix (and (consp last)
+			       (cons (--remove (eq 'suffix (car it)) (car last))
+				     (cdr last)))))
 	(-snoc (butlast result) wo-suffix)
       result)))
 
@@ -229,7 +229,7 @@ D is a citeproc-date structure. Return a rich-text content."
 (defun citeproc-date--render-month (d attrs context)
   "Render the month in date D according to formatting in ATTRS.
 D is a citeproc-date structure. Return a rich-text content."
-  (if-let (month (citeproc-date-month d))
+  (-if-let (month (citeproc-date-month d))
       (let ((form (alist-get 'form attrs))
 	    (term-pref (if (citeproc-date-season d)
 			   "season-" "month-")))
@@ -250,7 +250,7 @@ D is a citeproc-date structure. Return a rich-text content."
 (defun citeproc-date--render-day (d attrs context)
   "Render the day in date D according to formatting in ATTRS.
 D is a citeproc-date structure. Return a rich-text content."
-  (if-let (day (citeproc-date-day d))
+  (-if-let (day (citeproc-date-day d))
       (let ((form (alist-get 'form attrs))
 	    (month (citeproc-date-month d)))
 	(citeproc-rt-format-single

@@ -107,12 +107,12 @@ VARIABLE is a symbol."
 	       (when-let (ordinal-matches
 			  (--filter (string= (citeproc-term-name it) "ordinal")
 				    terms))
-		 (if-let (match (--first (eq (citeproc-term-gender-form it) gender)
-					 ordinal-matches))
+		 (-if-let (match (--first (eq (citeproc-term-gender-form it) gender)
+					  ordinal-matches))
 		     match
 		   (car ordinal-matches)))
 	     (let ((first-term (car matches)))
-	       (if-let (second-term (cadr matches))
+	       (-if-let (second-term (cadr matches))
 		   (if (= (elt (citeproc-term-name first-term) 8) ?0)
 		       second-term
 		     first-term)

@@ -278,8 +278,8 @@ on any dominated branch for which PRED holds."
 (defun citeproc-rt-from-html (h)
   "Convert simple html H to rich text."
   (if (listp h)
-      (cons (if-let (attr (assoc-default (cons (car h) (cadr h))
-					 citeproc-rt-from-html-alist))
+      (cons (-if-let (attr (assoc-default (cons (car h) (cadr h))
+					  citeproc-rt-from-html-alist))
 		(list attr)
 	      '(nil))
 	    (mapcar #'citeproc-rt-from-html (cddr h)))
@@ -316,7 +316,7 @@ The positions are in decreasing order."
 
 (defun citeproc-rt-punct-in-quote (rt)
   "Put commas and periods inside quotes in rich text RT."
-  (if-let ((pstns (citeproc-rt--cquote-pstns rt)))
+  (-if-let (pstns (citeproc-rt--cquote-pstns rt))
       (let ((plain (citeproc-rt-to-plain rt)))
 	(citeproc-rt-update-from-plain
 	 rt

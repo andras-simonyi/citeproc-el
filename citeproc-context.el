@@ -65,8 +65,8 @@ MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
 VAR is a symbol, GLOBALS is a `citeproc-context' struct, and the
 optional FORM can be nil, 'short or 'long."
   (if (eq form 'short)
-      (if-let ((short-var (alist-get var citeproc--short-long-var-alist))
-	       (short-var-val (alist-get short-var (citeproc-context-vars context))))
+      (-if-let* ((short-var (alist-get var citeproc--short-long-var-alist))
+		 (short-var-val (alist-get short-var (citeproc-context-vars context))))
 	  short-var-val
 	(alist-get var (citeproc-context-vars context)))
     (let ((var-val (alist-get var (citeproc-context-vars context))))
@@ -163,11 +163,11 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
 
 (defun citeproc-term-get-gender (term context)
   "Return the gender of TERM or nil if none is given."
-  (if-let (match
-	   (--first (and (string= (citeproc-term-name it) term)
-			 (citeproc-term-gender it)
-			 (eq (citeproc-term-form it) 'long))
-		    (citeproc-context-terms context)))
+  (-if-let (match
+	    (--first (and (string= (citeproc-term-name it) term)
+			  (citeproc-term-gender it)
+			  (eq (citeproc-term-form it) 'long))
+		     (citeproc-context-terms context)))
       (citeproc-term-gender match)
     nil))
 
@@ -176,7 +176,7 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
 Does NOT finalize the rich-text rendering. MODE is either `bib'
 or `cite', RENDER-MODE is `display' or `sort'. If NO-ITEM-NO is
 non-nil then don't add item-no information."
-  (if-let ((unprocessed-id (alist-get 'unprocessed-with-id var-alist)))
+  (-if-let (unprocessed-id (alist-get 'unprocessed-with-id var-alist))
       ;; Itemid received no associated csl fields from the getter!
       (list nil (concat "NO_ITEM_DATA:" unprocessed-id))
     (let* ((context (citeproc-context-create var-alist style mode render-mode))

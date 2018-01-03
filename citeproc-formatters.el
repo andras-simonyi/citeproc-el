@@ -249,7 +249,7 @@ CSL tests."
 (defun citeproc-formatter-for-format (format)
   "Return the formatter struct belonging to FORMAT.
 FORMAT is a symbol"
-  (if-let (formatter (alist-get format citeproc-fmt--formatters-alist))
+  (-if-let (formatter (alist-get format citeproc-fmt--formatters-alist))
       formatter
     (error "No formatter for citeproc format `%s'" format)))
 

@@ -72,8 +72,8 @@ sorted."
 	 (result
 	  (--map
 	   (let* ((orig-var (car it))
-		  (var (if-let ((mapped (alist-get orig-var
-						   citeproc-proc--nonstd-csl-vars-alist)))
+		  (var (-if-let (mapped (alist-get orig-var
+						   citeproc-proc--nonstd-csl-vars-alist))
 			   mapped
 			 orig-var))
 		  (value (citeproc-proc--parse-csl-var-val (cdr it) var proc)))
