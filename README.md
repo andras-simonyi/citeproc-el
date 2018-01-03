@@ -39,7 +39,9 @@ formats](#supported-output-formats) for the full list).
 
 ## Requirements
 
-Emacs 25 or later. The library has been tested on Emacs 25.1, 25.2 and 25.3.
+Emacs 25 or later. The library has been tested on Emacs 25.1, 25.2 and 25.3. The
+[MELPA or MELPA stable](https://melpa.org) package repositories must be enabled
+for the installation.
 
 ## Installation
 

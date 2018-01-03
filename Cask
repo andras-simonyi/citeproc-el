@@ -3,7 +3,7 @@
 
 (package-file "citeproc.el")
 
-(files "*.el" (:exclude "cpr-test-suite.el"))
+(files "*.el" (:exclude "citeproc-test-suite.el"))
 
 (development
  (depends-on "ert-runner")
