@@ -63,9 +63,9 @@
 	    (setf (nth (1- (length affix-rendered)) affix-rendered)
 		  (-snoc (-last-item affix-rendered) suffix))
 	  ;; Else we simply append it to the already rendered content
-	  (if (listp affix-rendered)
-	      (setq affix-rendered (-snoc affix-rendered suffix))
-	    (concat affix-rendered suffix))))
+	  (setq affix-rendered (if (listp affix-rendered)
+				   (-snoc affix-rendered suffix)
+				 (concat affix-rendered suffix)))))
       affix-rendered)))
 
 (defun citeproc--group (attrs context &rest body)
