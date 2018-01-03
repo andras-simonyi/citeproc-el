@@ -46,8 +46,9 @@ enabled before installation.
 ## Installation
 
 The recommended method of installing citeproc-el is to download the latest
-release as a package from this link, and install it using the
-`package-install-file` Emacs command.
+release as a package from
+https://github.com/andras-simonyi/citeproc-el/releases/download/0.1.0/citeproc-0.1.tar
+and install it using the `package-install-file` Emacs command.
 
 -------------------------------------------------------------------------------
 
