@@ -6,5 +6,4 @@
 (files "*.el")
 
 (development
- (depends-on "ert-runner")
- (depends-on "string-inflection"))
+ (depends-on "ert-runner"))
