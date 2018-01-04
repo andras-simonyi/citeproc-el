@@ -192,7 +192,6 @@ D1 and D2. Return a list of rich-text contents."
 							      context)))
       (citeproc-rt-join-formatted attrs rendered-range context))))
 
-
 (defun citeproc-date--attrs-gran (d-attrs)
   "Return the granularity (smallest unit) of date-attrs alist D-ATTRS.
 The returned value is 0, 1 or 2, corresponding to a year, month
