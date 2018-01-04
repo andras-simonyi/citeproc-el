@@ -82,8 +82,9 @@ signature of which was inspired by the
     represented as lists and alists, respectively);
   * `locale-getter` is a function that takes a CSL locale tag (e.g., `"fr-FR"`)
 	as an argument and returns a corresponding CSL locale as parsed by Emacs’s
-	`libxml-parse-xml-region`function or nil, with the exception of the default
-	`"en-US"` argument for which it must return the corresponding parsed locale;
+	`libxml-parse-xml-region`function or `nil`, with the exception of the
+	default `"en-US"` argument for which it must return the corresponding parsed
+	locale (`nil` is not allowed);
   * the optional `locale` is the CSL locale tag to use if the style doesn’t
 	specify a default one (defaults to `"en-US"`); and
   * if the optional `force-locale` is non-nil then the specified `locale` is
