@@ -1,6 +1,9 @@
 # citeproc-el
 
-[![Build Status](https://travis-ci.org/andras-simonyi/citeproc-el.svg?branch=master)](https://travis-ci.org/andras-simonyi/citeproc-el) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Build
+Status](https://travis-ci.org/andras-simonyi/citeproc-el.svg?branch=master)](https://travis-ci.org/andras-simonyi/citeproc-el)
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 A CSL 1.01 Citation Processor for Emacs.
 
@@ -32,9 +35,9 @@ subsequent author substitution, and passes more than 70% of the tests in the
 [CSL Test Suite](https://github.com/citation-style-language/test-suite). In
 addition to the standard
 [CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
-data format, citeproc-el has rudimentary support for reading bibliographic
-data from BibTeX bibliographies and can produce output in several formats
-including HTML and org-mode markup (see [Supported output
+data format, citeproc-el has rudimentary support for reading bibliographic data
+from BibTeX bibliographies and can produce output in several formats including
+HTML and org-mode markup (see [Supported output
 formats](#supported-output-formats) for the full list).
 
 ## Requirements
@@ -46,7 +49,9 @@ repository must be enabled before installation.
 ## Installation
 
 The recommended method of installing citeproc-el is to download the [latest
-release as a package](https://github.com/andras-simonyi/citeproc-el/releases/download/0.1.0/citeproc-0.1.0.tar) and install it using the `package-install-file` Emacs command.
+release as a
+package](https://github.com/andras-simonyi/citeproc-el/releases/download/0.1.0/citeproc-0.1.0.tar)
+and install it using the `package-install-file` Emacs command.
 
 -------------------------------------------------------------------------------
 
