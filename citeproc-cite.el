@@ -440,7 +440,7 @@ Possible values are 'last, 'first and 'subsequent.")
 		    prev-loc locator
 		    prev-label label)
 	      (when (eq citeproc-disambiguation-cite-pos 'last)
-		(citeproc--itd-update-disamb-pos itd pos))
+		(citeproc-itd-update-disamb-pos itd pos))
 	      (let ((prev-occurrence (citeproc-itemdata-occurred-before itd)))
 		(if prev-occurrence
 		    (when (not (eq t prev-occurrence))
@@ -452,19 +452,6 @@ Possible values are 'last, 'first and 'subsequent.")
 	(unless single-cite
 	  (setq prev-itd nil prev-loc nil prev-label nil))
 	(when note-ind (queue-append near-note-ctns ctn))))))
-
-(defun citeproc--itd-update-disamb-pos (itd pos)
-  "Update the highest position of ITD with position POS."
-  (let ((old (citeproc-itemdata-disamb-pos itd)))
-    (when (not (eq old 'subsequent))
-      (let ((new (pcase pos
-		   ('first 'first)
-		   ((or 'ibid 'ibid-with-locator) 'ibid)
-		   (_ 'subsequent))))
-	(setf (citeproc-itemdata-disamb-pos itd)
-	      (cond ((memq old '(nil first)) new)
-		    ((eq new 'subsequent) 'subsequent)
-		    (t 'ibid)))))))
 
 (defun citeproc-cite--first-namevar-cont (cite proc)
   "Return the first raw name-var node of CITE rendered with PROC."

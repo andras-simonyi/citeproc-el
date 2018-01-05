@@ -79,6 +79,19 @@ DISAMB-POS contains the position on which cite disambiguation is
   "Rendered name ids in the cite of itemdata ITD using STYLE."
   (citeproc-rt-rendered-name-ids (citeproc-itd-rt-cite itd style)))
 
+(defun citeproc-itd-update-disamb-pos (itd pos)
+  "Update the highest position of ITD with position POS."
+  (let ((old (citeproc-itemdata-disamb-pos itd)))
+    (when (not (eq old 'subsequent))
+      (let ((new (pcase pos
+		   ('first 'first)
+		   ((or 'ibid 'ibid-with-locator) 'ibid)
+		   (_ 'subsequent))))
+	(setf (citeproc-itemdata-disamb-pos itd)
+	      (cond ((memq old '(nil first)) new)
+		    ((eq new 'subsequent) 'subsequent)
+		    (t 'ibid)))))))
+
 (provide 'citeproc-itemdata)
 
 ;;; citeproc-itemdata.el ends here
