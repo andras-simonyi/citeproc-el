@@ -92,12 +92,12 @@ evaluation, which is a generalized boolean, or nil if TYPE is
   "Return the content of the first element in BODY with t boolean value.
 Return the empty (nil . 'text-only) content if there is no such
 element."
-  (setq body (citeproc-lib-splice-into body 'splice))
-  `(let ((first-true
-	  (--first (car it) (list ,@body))))
-     (if first-true
-	 (cdr first-true)
-       (cons nil (quote text-only)))))
+  (let ((spliced-body (citeproc-lib-splice-into body 'splice)))
+    `(let ((first-true
+	    (--first (car it) (list ,@spliced-body))))
+       (if first-true
+	   (cdr first-true)
+	 (cons nil (quote text-only))))))
 
 (defmacro citeproc--if (attrs context &rest body)
   "If conditions in ATTRS eval to t return t with rendered BODY.
@@ -110,8 +110,8 @@ Return nil otherwise."
 
 (defun citeproc--else (_attrs _context &rest body)
   "Always return t boolean plus rendered BODY"
-  (setq body (citeproc-lib-splice-into body 'splice))
-  (cons t (citeproc-lib-add-splice-tag body 'splice)))
+  (let ((spliced-body (citeproc-lib-splice-into body 'splice)))
+    (cons t (citeproc-lib-add-splice-tag spliced-body 'splice))))
 
 (provide 'citeproc-choose)
 

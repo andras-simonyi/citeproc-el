@@ -110,7 +110,8 @@ iff L1 is strictly ordered before L2, nil otherwise."
     (nreverse result)))
 
 (defun citeproc-lib-add-splice-tag (list tag)
-  "Add TAG as car if LIST is not a singleton."
+  "Add TAG as car if LIST is not a singleton.
+Return the first element if LIST is singleton.E"
   (if (cdr list) (cons tag list) (car list)))
 
 (defun citeproc-lib-numeric-p (val)

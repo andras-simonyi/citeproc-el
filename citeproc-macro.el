@@ -32,8 +32,8 @@
 ;;; For macro evaluation
 (defun citeproc--macro (attrs context &rest body)
   "Render the content of a macro element with ATTRS and BODY."
-  (setq body (citeproc-lib-splice-into body 'splice))
-  (let ((val (citeproc-rt-typed-join attrs body context)))
+  (let* ((spliced-body (citeproc-lib-splice-into body 'splice))
+	 (val (citeproc-rt-typed-join attrs spliced-body context)))
     (if (eq 'empty-vars (cdr val))
 	(cons nil 'text-only)
       val)))

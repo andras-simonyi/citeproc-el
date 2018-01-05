@@ -39,12 +39,12 @@
 
 (defun citeproc--layout (attrs context &rest body)
   "Render the content of a layout element with ATTRS and BODY."
-  (setq body (citeproc-lib-splice-into body 'splice))
   (let* ((attrs (if (eq (citeproc-context-mode context) 'bib) attrs
 		  nil)) ; No attrs if mode is cite -- they are used for citations
+	 (spliced-body (citeproc-lib-splice-into body 'splice))
 	 (suffix (alist-get 'suffix attrs))
 	 (attrs-wo-suffix (--remove (eq (car it) 'suffix) attrs))
-	 (rendered-body (--map (car it) body)))
+	 (rendered-body (--map (car it) spliced-body)))
     ;; Handle second-field align
     (when (and (alist-get 'second-field-align (citeproc-context-opts context))
 	       (> (length rendered-body) 1))
@@ -70,8 +70,8 @@
 
 (defun citeproc--group (attrs context &rest body)
   "Render the content of a group element with ATTRS and BODY."
-  (setq body (citeproc-lib-splice-into body 'splice))
-  (-let* ((types (--map (cdr it) body))
+  (-let* ((spliced-body (citeproc-lib-splice-into body 'splice))
+	  (types (--map (cdr it) spliced-body))
 	  (type (cond ((--all? (eq it 'text-only) types)
 		       'text-only)
 		      ((--any? (eq it 'present-var) types)
@@ -79,7 +79,7 @@
 		      (t 'empty-vars))))
     (cons (if (or (eq type 'text-only)
 		  (eq type 'present-var))
-	      (citeproc-rt-join-formatted attrs (--map (car it) body) context)
+	      (citeproc-rt-join-formatted attrs (--map (car it) spliced-body) context)
 	    nil)
 	  type)))
 
