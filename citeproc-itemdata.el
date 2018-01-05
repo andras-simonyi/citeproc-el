@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'citeproc-rt)
+(require 'citeproc-context)
 
 (cl-defstruct (citeproc-itemdata (:constructor citeproc-itemdata-create))
   "Struct for storing bibliography item data.
