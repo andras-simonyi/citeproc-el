@@ -74,7 +74,7 @@ VARIABLE is a symbol."
 	       (let ((formatted-first
 		      (citeproc-number--format (car it) form variable context)))
 		 (if (> (length it) 1)
-		     (s-concat
+		     (concat
 		      formatted-first
 		      (assoc-default (cadr it) citeproc--format-numsep-alist)
 		      (citeproc-number--format (cl-caddr it) form variable context))
@@ -94,7 +94,7 @@ VARIABLE is a symbol."
   "Format numeric string S as ordinal agreeing with TERM."
   (let* ((terms (citeproc-context-terms context))
 	 (padded (if (= 1 (length s))
-		     (s-concat "0" s)
+		     (concat "0" s)
 		   s))
 	 (gender (citeproc-term-get-gender term context))
 	 (matches
@@ -117,7 +117,7 @@ VARIABLE is a symbol."
 		       second-term
 		     first-term)
 		 first-term))))))
-    (s-concat s suffix)))
+    (concat s suffix)))
 
 (defconst citeproc-number--ordinal-match-alist
   '((last-two-digits . 2)
@@ -144,8 +144,8 @@ VARIABLE is a symbol."
   (let ((num-val (string-to-number s)))
     (if (> num-val 10)
 	(citeproc-number--format-as-ordinal s term context)
-      (when (= 1 (length s)) (setq s (s-concat "0" s)))
-      (let* ((name (s-concat "long-ordinal-" s))
+      (when (= 1 (length s)) (setq s (concat "0" s)))
+      (let* ((name (concat "long-ordinal-" s))
 	     (gender (citeproc-term-get-gender term context))
 	     (match (--first (and (string= (citeproc-term-name it) name)
 				  (eq (citeproc-term-gender-form it) gender))

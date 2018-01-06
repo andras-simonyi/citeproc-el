@@ -69,7 +69,7 @@ VAR is a symbol."
   (-let* (((d1 d2) (citeproc-var-value var context))
 	  (rendered-first (citeproc-sort--date-as-key d1 context)))
     (if d2
-	(s-concat rendered-first "–" (citeproc-sort--date-as-key d2 context))
+	(concat rendered-first "–" (citeproc-sort--date-as-key d2 context))
       rendered-first)))
 
 (defun citeproc--key (attrs context &rest _body)

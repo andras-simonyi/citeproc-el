@@ -324,14 +324,14 @@ between initalized given names, e.g., initialize Jean-Paul to
 J.P. instead of the default J.-P."
   (if (not names) nil
     (let ((trimmed-suffix (s-trim suffix)))
-      (s-concat (s-join
-		 suffix
-		 (--map
-		  (if (s-match "-" it)
-		      (citeproc-name--initialize-hyphenated it suffix remove-hyphens)
-		    (s-left 1 it))
-		  (s-split " +" names)))
-		trimmed-suffix))))
+      (concat (s-join
+	       suffix
+	       (--map
+		(if (s-match "-" it)
+		    (citeproc-name--initialize-hyphenated it suffix remove-hyphens)
+		  (s-left 1 it))
+		(s-split " +" names)))
+	      trimmed-suffix))))
 
 (defun citeproc-name--initialize-hyphenated (name suffix &optional remove-hyphens)
   "Initialize space-less but hyphenated NAME with SUFFIX.
@@ -340,7 +340,7 @@ between the initalized given names, e.g., initialize Jean-Paul to
 J.P. instead of the default J.-P."
   (let ((inner-suffix (s-trim suffix)))
     (s-join (if remove-hyphens inner-suffix
-	      (s-concat inner-suffix "-"))
+	      (concat inner-suffix "-"))
 	    (--map (s-left 1 it)
 		   (s-split "-" name)))))
 
