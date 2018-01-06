@@ -15,7 +15,7 @@ A CSL 1.01 Citation Processor for Emacs.
 - [Usage](#usage)
     - [Creating a citation processor](#creating-a-citation-processor)
     - [Creating citation structures](#creating-citation-structures)
-    - [Managing the processor’s citation list](#managing-the-processors-citation-list)
+    - [Managing a processor’s citation list](#managing-a-processors-citation-list)
     - [Rendering citations and bibliographies](#rendering-citations-and-bibliographies)
 	- [Rendering isolated references](#rendering-isolated-references)
 	- [Supported output formats](#supported-output-formats)
