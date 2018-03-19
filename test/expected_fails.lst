@@ -20,9 +20,11 @@ citeproc-bugreports-undefined-str
 citeproc-bugreports-uri-wrapping
 citeproc-bugreports-year-suffix-in-harvard1
 citeproc-collapse-author-collapse-no-date-sorted
+citeproc-collapse-chicago-after-collapse
 citeproc-collapse-citation-number-ranges-insert
 citeproc-date-accessed
 citeproc-date-date-no-date-no-test
+citeproc-date-empty-strings
 citeproc-date-in-press
 citeproc-date-lone-japanese-month
 citeproc-date-lopsided-data-year-suffix-collapse
@@ -55,6 +57,7 @@ citeproc-disambiguate-primary-name-generally
 citeproc-disambiguate-primary-name-with-initials-limited-to-primary
 citeproc-disambiguate-to-initial-only
 citeproc-disambiguate-trigraph
+citeproc-disambiguate-disambiguate-true-in-bibliography-only
 citeproc-disambiguate-year-collapse-with-institution
 citeproc-disambiguate-year-suffix-fifty-two-entries
 citeproc-disambiguate-year-suffix-fifty-two-entries-by-cite
