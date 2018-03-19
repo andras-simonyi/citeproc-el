@@ -380,8 +380,8 @@ ranges."
   "Remove too distant citations from near-notes queue Q.
 INDEX is the actual note-index, NND is the near-note-distance."
   (while (and (queue-head q)
-	      (<= nnd (- index
-			 (citeproc-citation-note-index (queue-first q)))))
+	      (< nnd (- index
+			(citeproc-citation-note-index (queue-first q)))))
     (queue-dequeue q)))
 
 (defun citeproc-cite--loc-equal-p (s1 s2)
