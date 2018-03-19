@@ -50,7 +50,7 @@ repository must be enabled before installation.
 
 The recommended method of installing citeproc-el is to download the [latest
 release as a
-package](https://github.com/andras-simonyi/citeproc-el/releases/download/0.1.0/citeproc-0.1.0.tar)
+package](https://github.com/andras-simonyi/citeproc-el/releases/download/0.1.1/citeproc-0.1.1.tar)
 and install it using the `package-install-file` Emacs command.
 
 -------------------------------------------------------------------------------
