@@ -22,7 +22,7 @@
 ;;; Commentary:
 
 ;; Provides the `citeproc-context' CL-structure type to represent rendering
-;; contexts for CSL elements, and functions for accessing context-dependendt
+;; contexts for CSL elements, and functions for accessing context-dependent
 ;; information (variable and term values etc.). Also contains some functions
 ;; that perform context-dependent formatting (e.g., quoting).
 
