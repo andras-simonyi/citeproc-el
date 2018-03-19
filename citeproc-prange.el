@@ -99,6 +99,9 @@ arguments are strings, END has the same length as START."
 	     ;; sense to replace the dash as well.
 	     (new-sep-w-end (cond ((not (string= start-pref end-pref))
 				   (concat orig-dash end))
+				  ;; Deal with degenerate single page "ranges"
+				  ((string= start-num end-num)
+				   "")
 				  ((or (not format) (> (length end-num) (length start-num)))
 				   (concat sep end))
 				  (t (concat
