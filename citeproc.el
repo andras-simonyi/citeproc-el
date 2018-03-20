@@ -114,16 +114,16 @@ targets for citation links.
 cell, in which FORMATTING-PARAMETERS is an alist containing the
 following formatting parameters keyed to the parameter names as
 symbols:
-  max-offset (integer): The width of the widest first field in the
+  `max-offset' (integer): The width of the widest first field in the
 bibliography, measured in characters.
-  line-spacing (integer): Vertical line distance specified as a
+  `line-spacing' (integer): Vertical line distance specified as a
 multiple of standard line height.
-  entry-spacing (integer): Vertical distance between
+  `entry-spacing' (integer): Vertical distance between
 bibliographic entries, specified as a multiple of standard line
 height.
-  second-field-align (`flush' or `margin'): The position of
+  `second-field-align' (`flush' or `margin'): The position of
 second-field alignment.
-  hanging-indent (boolean): Whether the bibliography items should
+  `hanging-indent' (boolean): Whether the bibliography items should
 be rendered with hanging-indents."
   (if (null (citeproc-style-bib-layout (citeproc-proc-style proc)))
       "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
@@ -211,7 +211,7 @@ FORMAT is a symbol representing a supported output format."
 	      (citeproc-rt-finalize
 	       (citeproc-render-varlist-in-rt internal-varlist style mode 'display t))))))
 
-;;; Helpers 
+;;; Helpers
 
 (defun citeproc--finalize (proc)
   "Finalize processor PROC by sorting and disambiguating items."
