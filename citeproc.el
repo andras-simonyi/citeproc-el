@@ -109,10 +109,11 @@ non-nil then don't link cites to the referred items."
 If optional NO-LINK-TARGETS is non-nil then don't generate
 targets for citation links.
 
-Returns a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons
-cell, in which FORMATTING-PARAMETERS is an alist containing the
-following formatting parameters keyed to the parameter names as
-symbols:
+Returns an error message string if the style of PROC doesn't
+contain a bibliography section. Otherwise it returns
+a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons cell, in
+which FORMATTING-PARAMETERS is an alist containing the following
+formatting parameters keyed to the parameter names as symbols:
 `max-offset' (integer): The width of the widest first field in the
   bibliography, measured in characters.
 `line-spacing' (integer): Vertical line distance specified as a
