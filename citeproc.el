@@ -99,7 +99,7 @@ CITATIONS is a list of `citeproc-citation' structures."
   "Render all citations in PROC in the given FORMAT.
 Return a list of formatted citations. If optional NO-LINKS is
 non-nil then don't link cites to the referred items."
-  (when (not (citeproc-proc-finalized proc))
+  (unless (citeproc-proc-finalized proc)
     (citeproc--finalize proc))
   (--map (citeproc-citation--render-formatted-citation it proc format no-links)
 	 (queue-head (citeproc-proc-citations proc))))
@@ -125,7 +125,7 @@ second-field alignment.
 be rendered with hanging-indents."
   (if (null (citeproc-style-bib-layout (citeproc-proc-style proc)))
       "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
-    (when (not (citeproc-proc-finalized proc))
+    (unless (citeproc-proc-finalized proc)
       (citeproc--finalize proc))
     (let* ((formatter (citeproc-formatter-for-format format))
 	   (rt-formatter (citeproc-formatter-rt formatter))

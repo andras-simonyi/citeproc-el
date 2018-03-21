@@ -111,7 +111,7 @@ arguments are strings, END has the same length as START."
 					       start-num
 					       (citeproc-s-fill-copy end-num start-num)
 					       end-pref))))))
-	(when (not (string-equal new-sep-w-end old-sep-w-end))
+	(unless (string-equal new-sep-w-end old-sep-w-end)
 	  (delete-char (- (length old-sep-w-end)))
 	  (insert new-sep-w-end))))
     (buffer-string)))

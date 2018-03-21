@@ -67,7 +67,7 @@ SORTED-INPUT is non-nil then the term lists are supposed to be
 already sorted according to `citeproc-term--compare', otherwise
 they are sorted in-place."
   (let (result)
-    (when (not sorted-input)
+    (unless sorted-input
       (setq tl1 (citeproc-term-list--sort tl1)
 	    tl2 (citeproc-term-list--sort tl2)))
     (while (or tl1 tl2)

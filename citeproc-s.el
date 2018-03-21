@@ -73,7 +73,7 @@ among the slices, but all zero-length slices are omitted. If
 optional ANNOT is non-nil then slices are given as (S . B) cons
 cells where S is the slice string, while B is nil if the S slice
 is a separating REGEXP match and t otherwise."
-  (when (not start) (setq start 0))
+  (unless start (setq start 0))
   (if (= 0 (length s)) nil
     (save-match-data
       (let ((begin (string-match regexp s start)))
@@ -83,10 +83,10 @@ is a separating REGEXP match and t otherwise."
 		  (citeproc-s-slice-by-matches s regexp (1+ start) annot)
 		(let ((result (citeproc-s-slice-by-matches (substring s end)
 							   regexp 0 annot)))
-		  (when (not (= begin end))
+		  (unless (= begin end)
 		    (let ((slice (substring s begin end)))
 		      (push (if annot (list slice) slice) result)))
-		  (when (not (= 0 begin))
+		  (unless (= 0 begin)
 		    (let ((slice (substring s 0 begin)))
 		      (push (if annot (cons slice t) slice) result)))
 		  result)))

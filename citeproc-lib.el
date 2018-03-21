@@ -95,7 +95,7 @@ iff L1 is strictly ordered before L2, nil otherwise."
     (while (and l1 (not result))
       (let ((comp
 	     (funcall cmp-fun (pop l1) (pop l2) (not (pop sort-orders)))))
-	(when (not (= comp 0))
+	(unless (= comp 0)
 	  (setq result comp))))
     (equal result 1)))
 

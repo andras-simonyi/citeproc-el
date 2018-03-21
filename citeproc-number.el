@@ -130,7 +130,7 @@ VARIABLE is a symbol."
   (and (eq gender (citeproc-term-gender-form ord-term))
        (let ((match (citeproc-term-match ord-term))
 	     (term-num (s-right 2 (citeproc-term-name ord-term))))
-	 (when (not match)
+	 (unless match
 	   (setq match
 		 (if (= (elt (citeproc-term-name ord-term) 8) ?0)
 		     'last-digit

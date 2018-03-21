@@ -56,7 +56,7 @@ LABEL-ATTRS) if WITH-LABEL is t."
 			     (citeproc-var-value 'translator context))))
       (setq present-vars '(editor)
 	    ed-trans t))
-    (when (not (alist-get 'delimiter attrs))
+    (unless (alist-get 'delimiter attrs)
       (-when-let (names-delim (alist-get 'names-delimiter (citeproc-context-opts context)))
 	(push (cons 'delimiter names-delim) attrs)))
     (if present-vars

@@ -87,7 +87,7 @@ otherwise."
 	  (citeproc-itd-inc-disamb-level current-nid itd 'show-given-names)
 	  (unless (string= cite (citeproc-itd-plain-cite itd style))
 	    (setq success t)
-	    (when (not (or first-step current-level))
+	    (unless (or first-step current-level)
 	      (let ((ls (alist-get 'show-given-names vv)))
 		(setf (alist-get 'show-given-names vv)
 		      (cons (car ls) (cddr ls))))

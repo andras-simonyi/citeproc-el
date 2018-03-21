@@ -312,7 +312,7 @@ given then collapse the groups accordingly."
 	    (if g-ind
 		(push cite (nth g-ind groups))
 	      (push (list cite) groups))))
-	(when (not (= (length groups) (length cites)))
+	(unless (= (length groups) (length cites))
 	  (setf (citeproc-citation-cites c)
 		(nreverse
 		 (--map (if (cdr it)
@@ -404,7 +404,7 @@ Possible values are 'last, 'first and 'subsequent.")
 		   "5")))
 	 (near-note-ctns (make-queue))
 	 prev-itd prev-loc prev-label)
-    (when (not (eq citeproc-disambiguation-cite-pos 'last))
+    (unless (eq citeproc-disambiguation-cite-pos 'last)
       (dolist (itd (hash-table-values
 		    (citeproc-proc-itemdata proc)))
 	(setf (citeproc-itemdata-disamb-pos itd) citeproc-disambiguation-cite-pos)))
@@ -443,7 +443,7 @@ Possible values are 'last, 'first and 'subsequent.")
 		(citeproc-itd-update-disamb-pos itd pos))
 	      (let ((prev-occurrence (citeproc-itemdata-occurred-before itd)))
 		(if prev-occurrence
-		    (when (not (eq t prev-occurrence))
+		    (unless (eq t prev-occurrence)
 		      (setf (alist-get 'first-reference-note-number (car cites))
 			    (number-to-string prev-occurrence)))
 		  (setf (citeproc-itemdata-occurred-before itd) (or note-ind t))))

@@ -83,7 +83,7 @@ DISAMB-POS contains the position on which cite disambiguation is
 (defun citeproc-itd-update-disamb-pos (itd pos)
   "Update the highest position of ITD with position POS."
   (let ((old (citeproc-itemdata-disamb-pos itd)))
-    (when (not (eq old 'subsequent))
+    (unless (eq old 'subsequent)
       (let ((new (pcase pos
 		   ('first 'first)
 		   ((or 'ibid 'ibid-with-locator) 'ibid)
