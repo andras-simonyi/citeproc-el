@@ -43,7 +43,6 @@
 (require 'citeproc-context)
 (require 'citeproc-itemdata)
 (require 'citeproc-proc)
-
 (require 'citeproc-cite)
 (require 'citeproc-sort)
 (require 'citeproc-formatters)
