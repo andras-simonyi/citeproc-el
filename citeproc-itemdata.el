@@ -34,7 +34,7 @@ VARVALS is an alist containg variable-name symbols as keys and
   their values for the item as values,
 RAWCITE is the cached cite of the item in internal rich-text
   format,
-RC-UPDATE is t iff the RAWCITE field is up-to-date.
+RC-UPTODATE is t iff the RAWCITE field is up-to-date.
 SORT-KEY is the bibliography sort-key of the item,
 OCCURRED-BEFORE is used during bibliography generation to
   indicate whether the item was referred to earlier. If the first
