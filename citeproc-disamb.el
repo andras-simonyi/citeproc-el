@@ -36,7 +36,7 @@
 
 (defun citeproc-itd-inc-disamb-level (key itd type)
   "Increment the disambiguation level of KEY in itemdata ITD.
-TYPE is either 'add-names or 'show-given-names."
+TYPE is either `add-names' or `show-given-names.'"
   (let ((vv (citeproc-itemdata-varvals itd)))
     (if (alist-get type vv)
 	(let* ((cur-level (alist-get key (alist-get type vv)))
