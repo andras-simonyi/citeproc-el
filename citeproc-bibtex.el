@@ -165,7 +165,7 @@ replacements."
 
 (defun citeproc-bt--to-csl-names (n)
   "Return a CSL version of BibTeX names field N."
-  (mapcar #'citeproc--bt--to-csl-name (s-split "\\band\\b" n)))
+  (mapcar #'citeproc-bt--to-csl-name (s-split "\\band\\b" n)))
 
 (defun citeproc-bt--parse-family (f)
   "Parse family name tokens F into a csl name-part alist."
@@ -181,7 +181,7 @@ replacements."
     (push `(family . ,family) result)
     result))
 
-(defun citeproc--bt--to-csl-name (name)
+(defun citeproc-bt--to-csl-name (name)
   "Return a CSL version of BibTeX name string NAME."
   (let* (result
 	 family
@@ -233,7 +233,7 @@ replacements."
 	 (assoc-default command citeproc-bt--to-ucs-alist))))
    s))
 
-(defun citeproc--bt--to-csl-date (year month)
+(defun citeproc-bt--to-csl-date (year month)
   "Return a CSL version of the date given by YEAR and MONTH.
 YEAR and MONTH are the values of the corresponding BibTeX fields,
 MONTH might be nil."
@@ -273,7 +273,7 @@ MONTH might be nil."
 		   ;; Remaining keys are mapped without change
 		   (_ (push (cons (intern key) value) result))))))
     (when year
-      (push (cons 'issued (citeproc--bt--to-csl-date year month))
+      (push (cons 'issued (citeproc-bt--to-csl-date year month))
 	    result))
     result))
 
