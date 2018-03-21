@@ -108,21 +108,22 @@ non-nil then don't link cites to the referred items."
   "Render a bibliography of items in PROC in FORMAT.
 If optional NO-LINK-TARGETS is non-nil then don't generate
 targets for citation links.
-  Returns a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons
+
+Returns a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons
 cell, in which FORMATTING-PARAMETERS is an alist containing the
 following formatting parameters keyed to the parameter names as
 symbols:
-  `max-offset' (integer): The width of the widest first field in the
-bibliography, measured in characters.
-  `line-spacing' (integer): Vertical line distance specified as a
-multiple of standard line height.
-  `entry-spacing' (integer): Vertical distance between
-bibliographic entries, specified as a multiple of standard line
-height.
-  `second-field-align' (`flush' or `margin'): The position of
-second-field alignment.
-  `hanging-indent' (boolean): Whether the bibliography items should
-be rendered with hanging-indents."
+`max-offset' (integer): The width of the widest first field in the
+  bibliography, measured in characters.
+`line-spacing' (integer): Vertical line distance specified as a
+  multiple of standard line height.
+`entry-spacing' (integer): Vertical distance between
+  bibliographic entries, specified as a multiple of standard line
+  height.
+`second-field-align' (`flush' or `margin'): The position of
+  second-field alignment.
+`hanging-indent' (boolean): Whether the bibliography items should
+  be rendered with hanging-indents."
   (if (null (citeproc-style-bib-layout (citeproc-proc-style proc)))
       "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
     (unless (citeproc-proc-finalized proc)
@@ -173,10 +174,10 @@ be rendered with hanging-indents."
 
 (defun citeproc-create-style (style locale-getter &optional locale force-locale)
   "Compile style in STYLE into a citeproc-style struct.
-STYLE is either a path to a CSL style file, or a style as a string.
-LOCALE-GETTER is a getter function for locales, the optional
-LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil then use
-  LOCALE even if the style's default locale is different."
+STYLE is either a path to a CSL style file, or a style as a
+string. LOCALE-GETTER is a getter function for locales, the
+optional LOCALE is a locale to prefer. If FORCE-LOCALE is non-nil
+then use LOCALE even if the style's default locale is different."
   (-let* (((year-suffix . parsed-style) (citeproc-style-parse style))
 	  (default-locale (alist-get 'default-locale (cadr parsed-style)))
 	  (preferred-locale (if force-locale locale (or default-locale
