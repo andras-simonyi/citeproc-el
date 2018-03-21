@@ -164,14 +164,14 @@ formatting parameters keyed to the parameter names as symbols:
 		       format-params)
 	      format-params)))))
 
-;; For one-off renderings
-
 (defun citeproc-clear (proc)
   "Remove all bibliographic and citation data from PROC."
   (clrhash (citeproc-proc-itemdata proc))
   (clrhash (citeproc-proc-names proc))
   (queue-clear (citeproc-proc-citations proc))
   (setf (citeproc-proc-finalized proc) t))
+
+;; For one-off renderings
 
 (defun citeproc-create-style (style locale-getter &optional locale force-locale)
   "Compile style in STYLE into a citeproc-style struct.
