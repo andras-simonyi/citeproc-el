@@ -89,7 +89,7 @@ CMP-FUN is a three-valued (1, 0, -1) comparator function,
 SORT-ORDERS is a list of sort orders (see the bib- and
 cite-sort-orders slots of `citeproc-style' for details). Return t
 iff L1 is strictly ordered before L2, nil otherwise."
-  (when (null sort-orders)
+  (unless sort-orders
     (setq sort-orders (make-list (length l1) t)))
   (let (result)
     (while (and l1 (not result))

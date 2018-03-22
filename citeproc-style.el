@@ -214,7 +214,7 @@ default settings are interdependent.")
   (cl-loop
    for (slot option value) in citeproc-style--opt-defaults do
    (let ((slot-value (cl-struct-slot-value 'citeproc-style slot style)))
-     (when (null (alist-get option slot-value))
+     (unless (alist-get option slot-value)
        (setf (cl-struct-slot-value 'citeproc-style slot style)
 	     (cons (cons option value) slot-value)))))
   (let* ((cite-opts (citeproc-style-cite-opts style))
@@ -224,9 +224,9 @@ default settings are interdependent.")
 	     (alist-get 'delimiter (citeproc-style-cite-layout-attrs style)))
 	    (cite-group-dl
 	     (alist-get 'cite-group-delimiter cite-opts)))
-	(when (null cite-group-dl)
+	(unless cite-group-dl
 	  (citeproc-style--set-opt style 'cite-opts 'cite-group-delimiter ", "))
-	(when (null (alist-get 'after-collapse-delimiter cite-opts))
+	(unless (alist-get 'after-collapse-delimiter cite-opts)
 	  (citeproc-style--set-opt
 	   style 'cite-opts 'after-collapse-delimiter cite-layout-dl))
 	(when (and (member collapse '("year-suffix" "year-suffix-ranged"))
