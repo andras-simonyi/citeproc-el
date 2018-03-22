@@ -99,7 +99,7 @@ CITATIONS is a list of `citeproc-citation' structures."
   "Render all citations in PROC in the given FORMAT.
 Return a list of formatted citations. If optional NO-LINKS is
 non-nil then don't link cites to the referred items."
-  (citeproc--finalize proc)
+  (citeproc-proc-finalize proc)
   (--map (citeproc-citation--render-formatted-citation it proc format no-links)
 	 (queue-head (citeproc-proc-citations proc))))
 
@@ -126,7 +126,7 @@ formatting parameters keyed to the parameter names as symbols:
   be rendered with hanging-indents."
   (if (null (citeproc-style-bib-layout (citeproc-proc-style proc)))
       "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
-    (citeproc--finalize proc)
+    (citeproc-proc-finalize proc)
     (let* ((formatter (citeproc-formatter-for-format format))
 	   (rt-formatter (citeproc-formatter-rt formatter))
 	   (bib-formatter (citeproc-formatter-bib formatter))
@@ -208,19 +208,6 @@ FORMAT is a symbol representing a supported output format."
 	     (citeproc-rt-cull-spaces-puncts
 	      (citeproc-rt-finalize
 	       (citeproc-render-varlist-in-rt internal-varlist style mode 'display t))))))
-
-;;; Helpers
-
-(defun citeproc--finalize (proc)
-  "Finalize processor PROC by sorting and disambiguating items."
-  (unless (citeproc-proc-finalized proc)
-    (citeproc-proc-update-sortkeys proc)
-    (citeproc-proc-sort-itds proc)
-    (citeproc-proc-update-positions proc)
-    (citeproc-proc-disamb proc)
-    (citeproc-proc-sort-cites proc)
-    (citeproc-proc-group-and-collapse-cites proc)
-    (setf (citeproc-proc-finalized proc) t)))
 
 (provide 'citeproc)
 
