@@ -36,10 +36,6 @@
 (require 'citeproc-itemdata)
 (require 'citeproc-disamb)
 
-(declare-function citeproc-proc-update-positions "citeproc-cite.el" (proc))
-(declare-function citeproc-proc-sort-cites "citeproc-cite.el" (proc))
-(declare-function citeproc-proc-group-and-collapse-cites "citeproc-cite.el" (proc))
-
 (cl-defstruct (citeproc-proc (:constructor citeproc-proc--create))
   "Citation processor struct.
 STYLE is a `citeproc-style' struct,
@@ -196,17 +192,6 @@ Return the PROC-internal representation of REP."
 	  (byte-compile (citeproc-style-bib-layout style)))
     (when bib-sort (setf (citeproc-style-bib-sort style) (byte-compile bib-sort)))
     (when cite-sort (setf (citeproc-style-cite-sort style) (byte-compile cite-sort)))))
-
-(defun citeproc-proc-finalize (proc)
-  "Finalize processor PROC by sorting and disambiguating items."
-  (unless (citeproc-proc-finalized proc)
-    (citeproc-proc-update-sortkeys proc)
-    (citeproc-proc-sort-itds proc)
-    (citeproc-proc-update-positions proc)
-    (citeproc-proc-disamb proc)
-    (citeproc-proc-sort-cites proc)
-    (citeproc-proc-group-and-collapse-cites proc)
-    (setf (citeproc-proc-finalized proc) t)))
 
 (provide 'citeproc-proc)
 

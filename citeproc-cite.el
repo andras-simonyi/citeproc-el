@@ -453,6 +453,17 @@ Possible values are 'last, 'first and 'subsequent.")
 	  (setq prev-itd nil prev-loc nil prev-label nil))
 	(when note-ind (queue-append near-note-ctns ctn))))))
 
+(defun citeproc-proc-finalize (proc)
+  "Finalize processor PROC by sorting and disambiguating items."
+  (unless (citeproc-proc-finalized proc)
+    (citeproc-proc-update-sortkeys proc)
+    (citeproc-proc-sort-itds proc)
+    (citeproc-proc-update-positions proc)
+    (citeproc-proc-disamb proc)
+    (citeproc-proc-sort-cites proc)
+    (citeproc-proc-group-and-collapse-cites proc)
+    (setf (citeproc-proc-finalized proc) t)))
+
 (defun citeproc-cite--first-namevar-cont (cite proc)
   "Return the first raw name-var node of CITE rendered with PROC."
   (citeproc-rt-find-first-node
