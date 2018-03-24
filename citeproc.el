@@ -32,7 +32,6 @@
 ;;; Code:
 
 (require 'dash)
-(require 'cl-lib)
 (require 'queue)
 
 (require 'citeproc-rt)
