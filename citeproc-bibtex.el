@@ -130,7 +130,7 @@
 (defun citeproc-bt--to-ucs (ltx char)
   "Return the unicode version of LaTeX command LTX applied to CHAR.
 LTX is a one-char LaTeX accenting command (e.g. \"'\"), CHAR is
-an ascii character. Return NIL if no corresponding unicode
+an ascii character. Return nil if no corresponding unicode
 character was found."
   (or (assoc-default (cons ltx char) citeproc-bt--comm-letter-to-ucs-alist)
       ;; If the combination is not in citeproc-bt--comm-letter-to-ucs-alist then, as

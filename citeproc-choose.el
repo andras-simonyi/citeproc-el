@@ -72,9 +72,9 @@ Return the result of evaluation, which is a generalized boolean."
     ('is-numeric (let ((val (citeproc-var-value param context)))
 		   (citeproc-lib-numeric-p val)))
     ;; We return t iff the first date is uncertain. A more complicated alternative
-    ;; would be to to test the second date of date ranges as well.
-    ('is-uncertain-date (let ((dates (citeproc-var-value param context)))
-			  (if dates (citeproc-date-circa (car dates)) nil)))
+    ;; would be to test the second date of date ranges as well.
+    ('is-uncertain-date (-when-let (dates (citeproc-var-value param context))
+			  (citeproc-date-circa (car dates))))
     ('position (and (eq (citeproc-context-mode context) 'cite)
 		    (or (and (eq param 'near-note) (citeproc-var-value 'near-note context))
 			(let ((pos (citeproc-var-value 'position context)))
@@ -87,7 +87,7 @@ Return the result of evaluation, which is a generalized boolean."
 
 (defmacro citeproc--choose (_attrs _context &rest body)
   "Return the content of the first element in BODY with t boolean value.
-Return the empty (nil . 'text-only) content if there is no such
+Return the empty (nil . `text-only') content if there is no such
 element."
   (let ((spliced-body (citeproc-lib-splice-into body 'splice)))
     `(let ((first-true

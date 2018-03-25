@@ -171,10 +171,8 @@ first word is not in lowercase then return S."
 		     (capitalize-word -1))))
 	    (when first (setq first nil))
 	    (when (< (point) (point-max))
-	      (setq after-colon (if (or (= (char-after) ?:)
-					(= (char-after) ?.))
-				    t
-				  nil)))))
+	      (setq after-colon (or (= (char-after) ?:)
+				    (= (char-after) ?.))))))
 	(buffer-string))
     s))
 

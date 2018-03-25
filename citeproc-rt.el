@@ -219,9 +219,8 @@ on any dominated branch for which PRED holds."
 
 (defun citeproc-rt-in-italics-p (rt)
   "Whether rich text RT has italic font style as attribute."
-  (if (listp rt)
-      (string= (alist-get 'font-style (car rt)) "italic")
-    nil))
+  (and (listp rt)
+       (string= (alist-get 'font-style (car rt)) "italic")))
 
 (defun citeproc-rt-italics-flipflop (rt)
   "Return a flipflopped italics version of rich text RT."

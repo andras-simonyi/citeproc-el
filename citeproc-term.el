@@ -102,11 +102,10 @@ they are sorted in-place."
 
 (defun citeproc-term-text-from-terms (term terms)
   "Return the first text associated with TERM in TERMS."
-  (let ((match (--first (string= term (citeproc-term-name it))
-			terms)))
-    (if match
-	(citeproc-term-text match)
-      nil)))
+  (-if-let (match (--first (string= term (citeproc-term-name it))
+			   terms))
+      (citeproc-term-text match)
+    nil))
 
 (provide 'citeproc-term)
 
