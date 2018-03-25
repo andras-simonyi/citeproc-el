@@ -41,15 +41,15 @@
 (defun citeproc-choose-eval-conditions (attrs context)
   "Eval (possibly complex) boolean conditions in ATTRS."
   (-let* ((conditions (citeproc-choose--elementary-conditions attrs))
-	  (match (intern (or (alist-get 'match attrs) "all")))
+	  (match (or (alist-get 'match attrs) "all"))
 	  (values (--mapcat (citeproc-choose--eval-elementary-condition (car it)
 									(intern (cdr it))
 									context)
 			    conditions)))
     (pcase match
-      ('all (--all? it values))
-      ('any (--any? it values))
-      ('none (--none? it values)))))
+      ("all" (--all? it values))
+      ("any" (--any? it values))
+      ("none" (--none? it values)))))
 
 (defun citeproc-choose--elementary-conditions (attrs)
   "Expand complex conditions in ATTRS into elementary ones.

@@ -74,23 +74,22 @@ optional ANNOT is non-nil then slices are given as (S . B) cons
 cells where S is the slice string, while B is nil if the S slice
 is a separating REGEXP match and t otherwise."
   (unless start (setq start 0))
-  (if (= 0 (length s)) nil
-    (save-match-data
-      (let ((begin (string-match regexp s start)))
-	(if begin
-	    (let ((end (match-end 0)))
-	      (if (and (= begin start) (= end start))
-		  (citeproc-s-slice-by-matches s regexp (1+ start) annot)
-		(let ((result (citeproc-s-slice-by-matches (substring s end)
-							   regexp 0 annot)))
-		  (unless (= begin end)
-		    (let ((slice (substring s begin end)))
-		      (push (if annot (list slice) slice) result)))
-		  (unless (= 0 begin)
-		    (let ((slice (substring s 0 begin)))
-		      (push (if annot (cons slice t) slice) result)))
-		  result)))
-	  (list (if annot (cons s t) s)))))))
+  (save-match-data
+    (let ((begin (string-match regexp s start)))
+      (if begin
+	  (let ((end (match-end 0)))
+	    (if (and (= begin start) (= end start))
+		(citeproc-s-slice-by-matches s regexp (1+ start) annot)
+	      (let ((result (citeproc-s-slice-by-matches (substring s end)
+							 regexp 0 annot)))
+		(unless (= begin end)
+		  (let ((slice (substring s begin end)))
+		    (push (if annot (list slice) slice) result)))
+		(unless (= 0 begin)
+		  (let ((slice (substring s 0 begin)))
+		    (push (if annot (cons slice t) slice) result)))
+		result)))
+	(list (if annot (cons s t) s))))))
 
 (defun citeproc-s-tail (s length)
   "Return the closing substring of string S with length LENGTH.

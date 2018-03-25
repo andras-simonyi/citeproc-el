@@ -246,7 +246,7 @@ sort order."
 		   'name-form name-form)
 	   (-concat attrs global-opts))
 	  (sort-sep (or sort-sep ", "))
-	  (init (if (string= init "false") nil t))
+	  (init (not (string= init "false")))
 	  (d-n-d (intern (alist-get 'demote-non-dropping-particle global-opts)))
 	  (id (cadr nid))
 	  (show-given (citeproc-name-show-givenname-level id context))
