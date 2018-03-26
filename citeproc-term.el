@@ -101,7 +101,8 @@ they are sorted in-place."
 	  (list term multi-term))))))
 
 (defun citeproc-term-text-from-terms (term terms)
-  "Return the first text associated with TERM in TERMS."
+  "Return the first text associated with TERM in TERMS.
+Return nil if TERM is not in TERMS."
   (-if-let (match (--first (string= term (citeproc-term-name it))
 			   terms))
       (citeproc-term-text match)
