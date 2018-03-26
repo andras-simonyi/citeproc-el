@@ -1,8 +1,8 @@
 ;;; citeproc-test.el --- Tests for citeproc
 
-(require 'citeproc-test-suite)
+(require 'citeproc-suite-tests)
 
-(citeproc-test-suite-create-from-dir "./test/suite/processor-tests/humans" "./test/expected_fails.lst")
+(citeproc-suite-tests-create-from-dir "./test/suite/processor-tests/humans" "./test/expected_fails.lst")
 
 (provide 'citeproc-test)
 
