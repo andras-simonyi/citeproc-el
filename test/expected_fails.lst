@@ -66,6 +66,7 @@ citeproc-display-author-as-heading
 citeproc-etal-use-zero-first
 citeproc-flipflop-apostrophes
 citeproc-flipflop-boldface-node-level-markup
+citeproc-flipflop-complete-cite-in-prefix
 citeproc-flipflop-italics-flipped
 citeproc-flipflop-italics-simple
 citeproc-flipflop-italics-with-ok
