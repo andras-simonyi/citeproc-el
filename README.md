@@ -4,6 +4,9 @@
 Status](https://travis-ci.org/andras-simonyi/citeproc-el.svg?branch=master)](https://travis-ci.org/andras-simonyi/citeproc-el)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![MELPA](http://melpa.org/packages/citeproc-badge.svg)](http://melpa.org/#/citeproc)
+[![MELPA Stable](http://stable.melpa.org/packages/citeproc-badge.svg)](http://stable.melpa.org/#/citeproc)
+
 
 A CSL 1.01 Citation Processor for Emacs.
 
@@ -43,15 +46,12 @@ formats](#supported-output-formats) for the full list).
 ## Requirements
 
 Emacs 25 or later (the library has been tested on Emacs 25.1, 25.2 and 25.3)
-compiled with libxml2 support. The [MELPA or the MELPA stable](https://melpa.org) package
-repository must be enabled before installation.
+compiled with libxml2 support.
 
 ## Installation
 
-The recommended method of installing citeproc-el is to download the [latest
-release as a
-package](https://github.com/andras-simonyi/citeproc-el/releases/download/0.1.1/citeproc-0.1.1.tar)
-and install it using the `package-install-file` Emacs command.
+citeproc-el is available in the [MELPA package repository](https://melpa.org)
+and can be installed using Emacs’s built-in package manager, `package.el`.
 
 -------------------------------------------------------------------------------
 
