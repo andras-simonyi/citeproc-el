@@ -116,11 +116,14 @@ descriptions from this hash-table when called. As a consequence, functions
 created with `citeproc-hash-itemgetter-from-csl-json` can perform better but
 ignore changes in `file` between calls.
 
-#### citeproc-itemgetter-from-bibtex `(file)`
+#### citeproc-itemgetter-from-bibtex `(file-or-files)`
 
-Return an item-getter function getting bibliography item descriptions from a
-BibTeX file. Similarly to `citeproc-itemgetter-from-csl-json`, this function
-opens and reads directly from `file` each time it is called.
+#### citeproc-itemgetter-from-org-bibtex `(file-or-files)`
+
+Return an item-getter function getting bibliography item descriptions from
+BibTeX/org-bibtex files. Similarly to `citeproc-itemgetter-from-csl-json`, these
+functions open and read directly from the specified files each time they are
+called.
 
 #### citeproc-locale-getter-from-dir `(directory)`
 
