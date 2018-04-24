@@ -28,9 +28,11 @@
 ;;; Code:
 
 (require 'dash)
-
+(require 'org)
+(require 'org-bibtex)
 (require 'json)
 (require 'bibtex)
+
 (require 'citeproc-bibtex)
 
 (defun citeproc-hash-itemgetter-from-csl-json (file)
@@ -56,20 +58,40 @@
 	  (when (member id itemids)
 	    (push (cons id item) result)))))))
 
-(defun citeproc-itemgetter-from-bibtex (file)
-  "Return a getter for a BibTeX bibliography FILE."
-  (lambda (itemids)
-    (let (result)
-      (with-temp-buffer
-	(insert-file-contents file)
-	(goto-char (point-min))
-	(bibtex-set-dialect 'BibTeX t)
-	(bibtex-map-entries
-	 (lambda (key _beg _end)
-	   (when (member key itemids)
-	     (push (cons key (citeproc-bt-entry-to-csl (bibtex-parse-entry)))
-		   result)))))
-      result)))
+(defun citeproc-itemgetter-from-bibtex (file-or-files)
+  "Return a getter for a BibTeX bibliography FILE-OR-FILES."
+  (let ((files (if (listp file-or-files)
+		   file-or-files
+		 (list file-or-files))))
+   (lambda (itemids)
+     (let (result)
+       (dolist (file files)
+	(with-temp-buffer
+	  (insert-file-contents file)
+	  (goto-char (point-min))
+	  (bibtex-set-dialect 'BibTeX t)
+	  (bibtex-map-entries
+	   (lambda (key _beg _end)
+	     (when (member key itemids)
+	       (push (cons key (citeproc-bt-entry-to-csl (bibtex-parse-entry)))
+		     result))))))
+       result))))
+
+(defun citeproc-itemgetter-from-org-bibtex (file-or-files)
+  "Return a getter for org-bibtex bibliography FILE-OR-FILES."
+  (let ((files (if (listp file-or-files)
+		   file-or-files
+		 (list file-or-files))))
+   (lambda (itemids)
+     (let (result)
+       (org-map-entries
+	(lambda ()
+	  (-when-let (key-w-entry (citeproc-bt-from-org-headline itemids))
+	    (push (cons (car key-w-entry)
+			(citeproc-bt-entry-to-csl (cdr key-w-entry)))
+		  result)))
+	t files)
+       result))))
 
 (provide 'citeproc-itemgetters)
 

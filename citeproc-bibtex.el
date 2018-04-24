@@ -29,6 +29,8 @@
 (require 'subr-x)
 (require 'bibtex)
 (require 'cl-lib)
+(require 'org)
+(require 'org-bibtex)
 
 (require 'citeproc-s)
 
@@ -276,6 +278,56 @@ MONTH might be nil."
       (push (cons 'issued (citeproc-bt--to-csl-date year month))
 	    result))
     result))
+
+;; This function is based on the function `org-bibtex-headline' in org-bibtex,
+;; written by Bastien Guerry <bzg@gnu.org>, Carsten Dominik <carsten dot dominik
+;; at gmail dot com> and Eric Schulte <schulte dot eric at gmail dot com>.
+;; Copyright (C) 2007-2017 Free Software Foundation, Inc.
+(defun citeproc-bt-from-org-headline (&optional itemids)
+  "Return a (KEY . BIBTEX-ENTRY) pair from the headline at point.
+The returned BibTeX entry has the same form as produced by
+`bibtex-parse-entry'. Return nil if the headline has no
+associated bibtex data. If optional ITEMIDS is given then also
+return nil if the entry's key is not in ITEMIDS."
+  (letrec ((val (lambda (key lst) (cdr (assoc key lst))))
+	   (to (lambda (string) (intern (concat ":" string))))
+	   (from (lambda (key) (substring (symbol-name key) 1)))
+	   (flatten (lambda (&rest lsts)
+		      (apply #'append (mapcar
+				       (lambda (e)
+					 (if (listp e) (apply flatten e) (list e)))
+				       lsts))))
+	   (id (org-bibtex-get org-bibtex-key-property))
+	   (type (org-bibtex-get org-bibtex-type-property-name)))
+    (when (and type (or (null itemids) (member id itemids)))
+      `(,id . 
+	    (("=type=" . ,type)
+	     ,@(remove
+		nil
+		(if (and org-bibtex-export-arbitrary-fields
+			 org-bibtex-prefix)
+		    (mapcar
+		     (lambda (kv)
+		       (let ((key (car kv)) (val0 (cdr kv)))
+			 (when (and
+				(string-match org-bibtex-prefix key)
+				(not (string=
+				      (downcase (concat org-bibtex-prefix
+							org-bibtex-type-property-name))
+				      (downcase key))))
+			   (cons (downcase (replace-regexp-in-string
+					    org-bibtex-prefix "" key))
+				 val0))))
+		     (org-entry-properties nil 'standard))
+		  (mapcar
+		   (lambda (field)
+		     (let ((value (or (org-bibtex-get (funcall from field))
+				      (and (eq :title field)
+					   (nth 4 (org-heading-components))))))
+		       (when value (cons (funcall from field) value))))
+		   (funcall flatten
+			    (funcall val :required (funcall val (funcall to type) org-bibtex-types))
+			    (funcall val :optional (funcall val (funcall to type) org-bibtex-types)))))))))))
 
 (provide 'citeproc-bibtex)
 
