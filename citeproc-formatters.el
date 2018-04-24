@@ -46,7 +46,7 @@ BIB is a two-argument function mapping a list of formatted
   `citeproc-render-bib' for details) to a fully formatted
   bibliography."
   rt (cite #'identity) (bib-item (lambda (x _) x))
-  (bib (lambda (x _) (mapconcat #'identity x "\n"))))
+  (bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
 
 (defun citeproc-formatter-fun-create (fmt-alist)
   "Return a rich-text formatter function based on FMT-ALIST.
@@ -238,11 +238,9 @@ CSL tests."
 		   :bib #'citeproc-fmt--html-bib-formatter))
      (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
      (org . ,(citeproc-formatter-create
-	      :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)
-	      :bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
+	      :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)))
      (latex . ,(citeproc-formatter-create
-		:rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)
-		:bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
+		:rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
      (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain)))
    "Alist mapping supported output formats to formatter structs.")
 
