@@ -102,10 +102,14 @@ non-nil then don't link cites to the referred items."
   (--map (citeproc-citation--render-formatted-citation it proc format no-links)
 	 (queue-head (citeproc-proc-citations proc))))
 
-(defun citeproc-render-bib (proc format &optional no-link-targets)
+(defun citeproc-render-bib (proc format &optional no-link-targets
+				 bib-formatter-fun)
   "Render a bibliography of items in PROC in FORMAT.
 If optional NO-LINK-TARGETS is non-nil then don't generate
-targets for citation links.
+targets for citation links. If the optional BIB-FORMATTER-FUN is
+given then it will be used to join the bibliography items instead
+of the content of the chosen formatter's `bib' slot (see
+`citeproc-formatter' for details).
 
 Returns an error message string if the style of PROC doesn't
 contain a bibliography section. Otherwise it returns
@@ -128,7 +132,8 @@ formatting parameters keyed to the parameter names as symbols:
     (citeproc-proc-finalize proc)
     (let* ((formatter (citeproc-formatter-for-format format))
 	   (rt-formatter (citeproc-formatter-rt formatter))
-	   (bib-formatter (citeproc-formatter-bib formatter))
+	   (bib-formatter (or bib-formatter-fun
+			      (citeproc-formatter-bib formatter)))
 	   (bibitem-formatter (citeproc-formatter-bib-item formatter))
 	   (style (citeproc-proc-style proc))
 	   (bib-opts (citeproc-style-bib-opts style))

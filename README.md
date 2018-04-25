@@ -174,13 +174,17 @@ a list of formatted citations. `format` is one of the [supported output
 formats](#supported-output-formats) as a symbol. If the optional `no-links` is
 non-nil then don’t link cites to the referred items.
 
-#### citeproc-render-bib `(proc format &optional no-link-targets)`
+#### citeproc-render-bib `(proc format &optional no-link-targets bib-formatter-fun)`
 
 Render a bibliography of the citations in citation processor `proc` in the
 given`format`. `format` is one of the [supported output
 formats](#supported-output-formats) as a symbol. If optional `no-link-targets`
-is non-nil then don’t generate targets for citation links. Return a
-`(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
+is non-nil then don’t generate targets for citation links. If the optional
+`bib-formatter-fun` is given then it will be used to join the bibliography items
+instead of the content of the chosen formatter’s `bib` slot (see the
+documentation of the `citeproc-formatter` structure type for details).
+
+Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
 `FORMATTING-PARAMETERS` is an alist containing the values of the following
 formatting parameters keyed to the parameter names as symbols:
 
