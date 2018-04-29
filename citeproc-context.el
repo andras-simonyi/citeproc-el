@@ -57,8 +57,8 @@ MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
    :render-mode render-mode
    :render-year-suffix (not (citeproc-style-uses-ys-var style))))
 
-(defconst citeproc--short-long-var-alist '((title . title-short)
-				      (container-title . container-title-short))
+(defconst citeproc--short-long-var-alist
+  '((title . title-short) (container-title . container-title-short))
   "Alist mapping the long form of variables names to their short form.")
 
 (defun citeproc-var-value (var context &optional form)
@@ -75,9 +75,9 @@ optional FORM can be nil, 'short or 'long."
 				(string= (citeproc-var-value 'label context) "page"))
 			   (eq var 'page)))
 	  (let ((prange-format (citeproc-lib-intern (alist-get 'page-range-format
-							  (citeproc-context-opts context))))
+							       (citeproc-context-opts context))))
 		(sep (or (citeproc-term-text-from-terms "page-range-delimiter"
-						   (citeproc-context-terms context))
+							(citeproc-context-terms context))
 			 "–")))
 	    (citeproc-prange-render var-val prange-format sep))
 	var-val))))
@@ -93,8 +93,8 @@ optional FORM can be nil, 'short or 'long."
 	(oiq (citeproc-term-get-text "open-inner-quote" context))
 	(ciq (citeproc-term-get-text "close-inner-quote" context)))
     `(,oq ,@(citeproc-rt-replace-all `((,oq . ,oiq) (,cq . ,ciq)
-				  (,oiq . ,oq) (,ciq . ,cq))
-				rt)
+				       (,oiq . ,oq) (,ciq . ,cq))
+				     rt)
 	  ,cq)))
 
 (defun citeproc-rt-join-formatted (attrs rts context)
@@ -126,8 +126,8 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
 		       'present-var)
 		      (t 'empty-vars))))
     (cons (citeproc-rt-join-formatted attrs
-				 (--map (car it) typed-rts)
-				 context)
+				      (--map (car it) typed-rts)
+				      context)
 	  type)))
 
 (defun citeproc-term-get-text (term context)
@@ -158,9 +158,10 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
 			matches)))
     (if match
 	(citeproc-term-text match)
-      (citeproc-term--inflected-text-1 matches
-				  (alist-get form citeproc--term-form-fallback-alist)
-				  number))))
+      (citeproc-term--inflected-text-1
+       matches
+       (alist-get form citeproc--term-form-fallback-alist)
+       number))))
 
 (defun citeproc-term-get-gender (term context)
   "Return the gender of TERM or nil if none is given."
@@ -172,7 +173,8 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
       (citeproc-term-gender match)
     nil))
 
-(defun citeproc-render-varlist-in-rt (var-alist style mode render-mode &optional no-item-no)
+(defun citeproc-render-varlist-in-rt (var-alist style mode render-mode &optional
+						no-item-no)
   "Render an item described by VAR-ALIST with STYLE in rich-text.
 Does NOT finalize the rich-text rendering. MODE is either `bib'
 or `cite', RENDER-MODE is `display' or `sort'. If NO-ITEM-NO is
