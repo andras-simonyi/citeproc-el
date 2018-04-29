@@ -59,23 +59,37 @@
 	    (push (cons id item) result)))))))
 
 (defun citeproc-itemgetter-from-bibtex (file-or-files)
-  "Return a getter for a BibTeX bibliography FILE-OR-FILES."
-  (let ((files (if (listp file-or-files)
-		   file-or-files
-		 (list file-or-files))))
-   (lambda (itemids)
-     (let (result)
-       (dolist (file files)
+  "Return a getter for BibTeX bibliography FILE-OR-FILES."
+  (if (listp file-or-files)
+      (lambda (itemids)
+	(let (result
+	      (remaining-ids (cl-copy-list itemids))
+	      (remaining-files file-or-files))
+	  (while (and remaining-ids remaining-files)
+	    (let ((file (pop remaining-files)))
+	     (with-temp-buffer
+	       (insert-file-contents file)
+	       (goto-char (point-min))
+	       (bibtex-set-dialect 'BibTeX t)
+	       (bibtex-map-entries
+		(lambda (key _beg _end)
+		  (when (member key itemids)
+		    (push (cons key (citeproc-bt-entry-to-csl (bibtex-parse-entry)))
+			  result)
+		    (setq remaining-ids (delete key remaining-ids))))))))
+	  result))
+    (lambda (itemids)
+      (let (result)
 	(with-temp-buffer
-	  (insert-file-contents file)
+	  (insert-file-contents file-or-files)
 	  (goto-char (point-min))
 	  (bibtex-set-dialect 'BibTeX t)
 	  (bibtex-map-entries
 	   (lambda (key _beg _end)
 	     (when (member key itemids)
 	       (push (cons key (citeproc-bt-entry-to-csl (bibtex-parse-entry)))
-		     result))))))
-       result))))
+		     result)))))
+	result))))
 
 (defun citeproc-itemgetter-from-org-bibtex (file-or-files)
   "Return a getter for org-bibtex bibliography FILE-OR-FILES."
