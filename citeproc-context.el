@@ -45,16 +45,17 @@
 (defun citeproc-context-create (var-alist style mode render-mode)
   "Create a citeproc-context struct from var-values VAR-ALIST and csl style STYLE.
 MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
-  (citeproc-context--create :vars var-alist
-		       :macros (citeproc-style-macros style)
-		       :terms (citeproc-style-terms style)
-		       :date-text (citeproc-style-date-text style)
-		       :date-numeric (citeproc-style-date-numeric style)
-		       :opts (citeproc-style-global-opts style mode)
-		       :locale-opts (citeproc-style-locale-opts style)
-		       :mode mode
-		       :render-mode render-mode
-		       :render-year-suffix (not (citeproc-style-uses-ys-var style))))
+  (citeproc-context--create
+   :vars var-alist
+   :macros (citeproc-style-macros style)
+   :terms (citeproc-style-terms style)
+   :date-text (citeproc-style-date-text style)
+   :date-numeric (citeproc-style-date-numeric style)
+   :opts (citeproc-style-global-opts style mode)
+   :locale-opts (citeproc-style-locale-opts style)
+   :mode mode
+   :render-mode render-mode
+   :render-year-suffix (not (citeproc-style-uses-ys-var style))))
 
 (defconst citeproc--short-long-var-alist '((title . title-short)
 				      (container-title . container-title-short))
