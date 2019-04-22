@@ -8,12 +8,12 @@ cache:
 matrix:
   fast_finish: true
   allow_failures:
-  - env: EMACS_VERSION=emacs-snapshot
+  - env: EMACS_VERSION=26.1
 env:
   matrix:
   - EMACS_VERSION=25.1
   - EMACS_VERSION=25.2
-  - EMACS_VERSION=emacs-snapshot
+  - EMACS_VERSION=26.1
 before_install:
 - export PATH="$HOME/bin:$PATH"
 - wget 'https://raw.githubusercontent.com/flycheck/emacs-travis/master/emacs-travis.mk'
