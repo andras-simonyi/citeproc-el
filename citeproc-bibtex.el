@@ -30,7 +30,10 @@
 (require 'bibtex)
 (require 'cl-lib)
 (require 'org)
-(require 'org-bibtex)
+;; Handle the fact that org-bibtex has been renamed to ol-bibtex -- for the time
+;; being we support both feature names.
+(or (require 'ol-bibtex nil t)
+    (require 'org-bibtex))
 
 (require 'citeproc-s)
 
