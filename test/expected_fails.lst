@@ -22,12 +22,10 @@ citeproc-bugreports-year-suffix-in-harvard1
 citeproc-collapse-author-collapse-no-date-sorted
 citeproc-collapse-chicago-after-collapse
 citeproc-collapse-citation-number-ranges-insert
-citeproc-date-accessed
 citeproc-date-date-no-date-no-test
 citeproc-date-empty-strings
 citeproc-date-in-press
 citeproc-date-lone-japanese-month
-citeproc-date-lopsided-data-year-suffix-collapse
 citeproc-date-other-alone
 citeproc-date-other-with-date
 citeproc-date-raw-parse-simple-date
@@ -170,7 +168,6 @@ citeproc-punctuation-full-monty-quotes-in
 citeproc-quotes-punctuation-with-inner-quote
 citeproc-sort-bibliography-citation-number-descending-via-macro
 citeproc-sort-bibliography-nosort-option
-citeproc-sort-change-in-name-sort
 citeproc-sort-chicago-year-suffix1
 citeproc-sort-chicago-year-suffix2
 citeproc-sort-citation-unsorted
@@ -215,12 +212,10 @@ citeproc-bugreports-no-case-escape
 citeproc-bugreports-small-caps-escape
 citeproc-bugreports-two-full-stops
 citeproc-condition-is-numeric
-citeproc-date-accessed-crash
 citeproc-disambiguate-based-on-subsequent-form-with-backref2
 citeproc-flipflop-orphan-quote
 citeproc-flipflop-single-before-colon
 citeproc-label-editor-translator2
-citeproc-label-missing-returns-empty
 citeproc-number-edition-sort
 citeproc-sort-omitted-bib-ref-mixed-numeric-style
 citeproc-sort-omitted-bib-ref-non-numeric-style
