@@ -29,6 +29,10 @@
 
 (require 'dash)
 (require 'org)
+;; Handle the fact that org-bibtex has been renamed to ol-bibtex -- for the time
+;; being we support both feature names.
+(or (require 'ol-bibtex nil t)
+    (require 'org-bibtex))
 (require 'org-bibtex)
 (require 'json)
 (require 'bibtex)
