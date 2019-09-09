@@ -7,6 +7,7 @@ citeproc-bugreports-chicago-author-date-looping
 citeproc-bugreports-creeping-add-names
 citeproc-bugreports-demo-page-full-cite-cruft-on-subsequent
 citeproc-bugreports-double-encoded-angle-braces
+citeproc-bugreports-env-and-urb
 citeproc-bugreports-french-apostrophe
 citeproc-bugreports-ikey-one
 citeproc-bugreports-move-punctuation-inside-quotes-for-locator
@@ -89,6 +90,7 @@ citeproc-label-editor-translator1
 citeproc-locale-empty-plus-override-date
 citeproc-locale-non-existent-locale-def
 citeproc-locale-overload-with-empty-string
+citeproc-label-plural-with-localized-ampersand
 citeproc-locale-title-case-empty-lang-non-english-locale
 citeproc-locale-title-case-garbage-lang-empty-locale
 citeproc-locale-title-case-garbage-lang-english-locale
@@ -183,6 +185,7 @@ citeproc-sort-with-and-in-one-entry
 citeproc-substitute-suppress-ordinary-variable
 citeproc-testers-first-auto-generated-zotero-plugin-test
 citeproc-testers-second-auto-generated-zotero-plugin-test
+citeproc-textcase-no-space-before-apostrophe
 citeproc-textcase-non-english-chars
 citeproc-textcase-sentence-capitalization
 citeproc-textcase-skip-name-particles-in-title-case
