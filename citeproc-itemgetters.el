@@ -33,7 +33,6 @@
 ;; being we support both feature names.
 (or (require 'ol-bibtex nil t)
     (require 'org-bibtex))
-(require 'org-bibtex)
 (require 'json)
 (require 'bibtex)
 
