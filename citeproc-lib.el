@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 's)
 
 (defconst citeproc--number-vars
   '(chapter-number collection-number edition issue number number-of-pages

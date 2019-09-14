@@ -29,6 +29,7 @@
 
 (require 'dash)
 (require 'f)
+(require 's)
 
 (require 'citeproc-lib)
 (require 'citeproc-term)

@@ -31,6 +31,7 @@
 (require 'dash)
 (require 'cl-lib)
 (require 'queue)
+(require 's)
 
 (require 'citeproc-date)
 (require 'citeproc-itemdata)

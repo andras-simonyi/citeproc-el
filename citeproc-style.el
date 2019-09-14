@@ -30,6 +30,7 @@
 (require 'let-alist)
 (require 'dash)
 (require 'cl-lib)
+(require 's)
 
 (require 'citeproc-lib)
 (require 'citeproc-locale)

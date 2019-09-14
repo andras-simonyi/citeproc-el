@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'thingatpt)
+(require 's)
 
 (defun citeproc-s-camelcase-p (s)
   "Return whether string S is in camel case."

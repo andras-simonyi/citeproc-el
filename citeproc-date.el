@@ -29,6 +29,7 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'let-alist)
+(require 's)
 
 (require 'citeproc-lib)
 (require 'citeproc-rt)

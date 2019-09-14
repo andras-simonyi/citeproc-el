@@ -27,6 +27,7 @@
 
 (require 'subr-x)
 (require 'rst)
+(require 's)
 
 (require 'citeproc-context)
 (require 'citeproc-lib)

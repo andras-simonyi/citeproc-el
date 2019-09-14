@@ -30,6 +30,7 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'queue)
+(require 's)
 
 (require 'citeproc-rt)
 (require 'citeproc-number)

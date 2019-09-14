@@ -29,6 +29,7 @@
 (require 'subr-x)
 (require 'bibtex)
 (require 'cl-lib)
+(require 's)
 (require 'org)
 ;; Handle the fact that org-bibtex has been renamed to ol-bibtex -- for the time
 ;; being we support both feature names.

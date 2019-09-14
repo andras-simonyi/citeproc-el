@@ -34,9 +34,11 @@
 
 ;;; Code:
 
+(require 's)
+
 (require 'citeproc-lib)
 (require 'citeproc-context)
-(require 'citeproc-date)
+(require 'ciSteproc-date)
 
 (defun citeproc-choose-eval-conditions (attrs context)
   "Eval (possibly complex) boolean conditions in ATTRS."

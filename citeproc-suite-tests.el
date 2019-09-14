@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'f)
+(require 's)
 (require 'json)
 (require 'ert)
 (require 'string-inflection)

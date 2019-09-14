@@ -28,6 +28,7 @@
 (require 'subr-x)
 (require 'let-alist)
 (require 'dash)
+(require 's)
 
 (require 'citeproc-lib)
 (require 'citeproc-s)

@@ -35,6 +35,7 @@
 (require 'dash)
 (require 'cl-lib)
 (require 'let-alist)
+(require 's)
 
 (require 'citeproc-s)
 (require 'citeproc-lib)
