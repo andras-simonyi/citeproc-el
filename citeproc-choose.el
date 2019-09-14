@@ -38,7 +38,7 @@
 
 (require 'citeproc-lib)
 (require 'citeproc-context)
-(require 'ciSteproc-date)
+(require 'citeproc-date)
 
 (defun citeproc-choose-eval-conditions (attrs context)
   "Eval (possibly complex) boolean conditions in ATTRS."
