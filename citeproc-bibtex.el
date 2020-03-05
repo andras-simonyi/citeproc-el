@@ -130,7 +130,7 @@
 
 (defconst citeproc-bt--to-ucs-alist
   '(("l" . "ł") ("L" . "Ł") ("o" . "ø") ("O" . "Ø") ("AA" . "Å") ("aa" . "å")
-    ("AE" . "Æ") ("ae" ly-raw string "\"æ\""))
+    ("AE" . "Æ") ("ae" . "æ"))
   "Alist mapping LaTeX commands to characters")
 
 (defun citeproc-bt--to-ucs (ltx char)
