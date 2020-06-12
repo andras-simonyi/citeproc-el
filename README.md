@@ -45,8 +45,8 @@ formats](#supported-output-formats) for the full list).
 
 ## Requirements
 
-Emacs 25 or later (the library has been tested on Emacs 25.1, 25.3 and 26.1)
-compiled with libxml2 support.
+Emacs 25 or later (the library is regularly tested on Emacs 26.3) compiled with
+libxml2 support.
 
 ## Installation
 
