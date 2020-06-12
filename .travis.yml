@@ -1,41 +1,42 @@
-language: python
+language: emacs-lisp
+# Emacs fails to build in container-based builds on Travis
+# See https://github.com/travis-ci/travis-ci/issues/9061
+# and https://github.com/moby/moby/issues/22801
 sudo: required
 dist: trusty
-group: deprecated-2017Q4
 cache:
-- directories:
-  - "$HOME/emacs"
+  - directories:
+      # Cache stable Emacs binaries (saves 1min per job)
+      - "$HOME/emacs/"
+# Allow Emacs snapshot builds to fail and don’t wait for these as they can take
+# a looooong time
 matrix:
   fast_finish: true
   allow_failures:
-  - env: EVM_EMACS=emacs-26.1-travis
-  - env: EVM_EMACS=emacs-git-snapshot-travis
+    - env: EMACS_VERSION=snapshot
 env:
-  - EVM_EMACS=emacs-25.1-travis
-  - EVM_EMACS=emacs-25.3-travis
-  - EVM_EMACS=emacs-26.1-travis
-  - EVM_EMACS=emacs-git-snapshot-travis
+  - EMACS_VERSION=26.1
+  - EMACS_VERSION=26.2
+  - EMACS_VERSION=26.3
+  - EMACS_VERSION=snapshot
 before_install:
+  # Configure $PATH: Executables are installed to $HOME/bin
   - export PATH="$HOME/bin:$PATH"
+  # Download the makefile to emacs-travis.mk
   - wget 'https://raw.githubusercontent.com/flycheck/emacs-travis/master/emacs-travis.mk'
-  - make -f emacs-travis.mk install_gnutls install_emacs
+  # Install Emacs (according to $EMACS_VERSION) and Cask
+  - make -f emacs-travis.mk install_emacs
   - make -f emacs-travis.mk install_cask
-  - |
-    case $EMACS_VERSION in
-    25.*) EMACS_GNUPGHOME=.cask/$EMACS_VERSION/elpa/gnupg ;;
-    *)    EMACS_GNUPGHOME=$HOME/.emacs.d/elpa/gnupg ;;
-    esac
-  - mkdir -p "$EMACS_GNUPGHOME"
-  - chmod 700 "$EMACS_GNUPGHOME"
-  - wget 'https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/package-keyring.gpg'
-  - gpg --homedir "$EMACS_GNUPGHOME" --import package-keyring.gpg
-  - emacs --version
-  - cask exec emacs --version
   - git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
   - git clone --depth 1 https://github.com/citation-style-language/locales.git test/locales
+
 install:
-- cask install
+  # Install your dependencies
+  - cask install
+
 script:
-- cask build 2>&1 | tee build.log
-# - sh -c "! grep -oe '.*:Warning:.*' build.log"
-- cask exec ert-runner test/citeproc-test.el
+  - emacs --version
+  - cask build 2>&1 | tee build.log
+  # - sh -c "! grep -oe '.*:Warning:.*' build.log"
+  - cask exec ert-runner test/citeproc-test.el
+  - echo "Done testing"
