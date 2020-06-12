@@ -37,4 +37,4 @@ script:
   - cask build 2>&1 | tee build.log
   # - sh -c "! grep -oe '.*:Warning:.*' build.log"
   - cask exec ert-runner test/citeproc-test.el
-  - echo "Done testing"
+  
