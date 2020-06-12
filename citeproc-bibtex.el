@@ -1,6 +1,6 @@
 ;;; citeproc-bibtex.el --- convert BibTeX entries to CSL -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2020 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
@@ -37,6 +37,16 @@
     (require 'org-bibtex))
 
 (require 'citeproc-s)
+
+;; Declare used ol-bibtex variables and functions to silence 'reference to free
+;; variable' and 'function is not known to be defined' warnings during
+;; compilation.
+(defvar org-bibtex-key-property)
+(defvar org-bibtex-type-property-name)
+(defvar org-bibtex-export-arbitrary-fields)
+(defvar org-bibtex-prefix)
+(defvar org-bibtex-types)
+(declare-function org-bibtex-get "ext:ol-bibtex")
 
 (defconst citeproc-bt--to-csl-types-alist
   '(("article" . "article-journal") ("book" . "book") ("proceedings" . "book")
