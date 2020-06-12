@@ -25,7 +25,7 @@ before_install:
 - git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
 - git clone --depth 1 https://github.com/citation-style-language/locales.git test/locales
 install:
-- cask install
+- cask install --verbose
 script:
 - cask build 2>&1 | tee build.log
 # - sh -c "! grep -oe '.*:Warning:.*' build.log"
