@@ -16,16 +16,25 @@ env:
   - EVM_EMACS=emacs-26.1-travis
   - EVM_EMACS=emacs-git-snapshot-travis
 before_install:
-- export PATH="$HOME/bin:$PATH"
-- wget 'https://raw.githubusercontent.com/flycheck/emacs-travis/master/emacs-travis.mk'
-- make -f emacs-travis.mk install_emacs
-- make -f emacs-travis.mk install_cask
-- emacs --version
-- cask exec emacs --version
-- git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
-- git clone --depth 1 https://github.com/citation-style-language/locales.git test/locales
+  - export PATH="$HOME/bin:$PATH"
+  - wget 'https://raw.githubusercontent.com/flycheck/emacs-travis/master/emacs-travis.mk'
+  - make -f emacs-travis.mk install_gnutls install_emacs
+  - make -f emacs-travis.mk install_cask
+  - |
+    case $EMACS_VERSION in
+    25.*) EMACS_GNUPGHOME=.cask/$EMACS_VERSION/elpa/gnupg ;;
+    *)    EMACS_GNUPGHOME=$HOME/.emacs.d/elpa/gnupg ;;
+    esac
+  - mkdir -p "$EMACS_GNUPGHOME"
+  - chmod 700 "$EMACS_GNUPGHOME"
+  - wget 'https://git.savannah.gnu.org/cgit/emacs.git/plain/etc/package-keyring.gpg'
+  - gpg --homedir "$EMACS_GNUPGHOME" --import package-keyring.gpg
+  - emacs --version
+  - cask exec emacs --version
+  - git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
+  - git clone --depth 1 https://github.com/citation-style-language/locales.git test/locales
 install:
-- cask install --verbose
+- cask install --de
 script:
 - cask build 2>&1 | tee build.log
 # - sh -c "! grep -oe '.*:Warning:.*' build.log"
