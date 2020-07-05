@@ -26,7 +26,7 @@
 ;; where ATTRS is an alist consisting of (FORMAT-ATTR . VALUE) pairs and RT_1,
 ;; RT_2... are all rich-texts. The constants `citeproc-rt-format-attrs' and
 ;; `citeproc-rt-ext-format-attrs' define the list of normal and extended format
-;; attributes, respectively. As a degenerative case, nil is also a legitimate
+;; attributes, respectively. As a degenerate case, nil is also a legitimate
 ;; rich-text.
 
 ;;; Code:
