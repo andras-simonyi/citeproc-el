@@ -174,9 +174,9 @@ D1 and D2. Return a list of rich-text contents."
 						part-attrs))
 			  "–"))
 	   (range-p-attrs
-	    (cond ((not (= (citeproc-date-year d1) (citeproc-date-year d2)))
+	    (cond ((/= (citeproc-date-year d1) (citeproc-date-year d2))
 		   (list part-attrs))
-		  ((not (= (citeproc-date-month d1) (citeproc-date-month d2)))
+		  ((/= (citeproc-date-month d1) (citeproc-date-month d2))
 		   (let ((year-part (--find (eq 'year (car it))
 					    part-attrs))
 			 (attrs-wo-year

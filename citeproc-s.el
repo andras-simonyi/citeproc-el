@@ -166,7 +166,7 @@ first word is not in lowercase then return S."
 			  ;; Don't downcase A before a period:
 			  (or (not (string= word "A"))
 			      (= (point) (point-max))
-			      (not (= (char-after) ?.))))
+			      (/= (char-after) ?.)))
 		     (downcase-word -1))
 		    ((s-lowercase-p word)
 		     (capitalize-word -1))))

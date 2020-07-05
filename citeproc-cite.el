@@ -207,7 +207,7 @@ if no cites were collapsed."
       (setq result (nconc (citeproc-cite-range--collapse
 			   start-cite end-cite group-len)
 			  result)))
-    (if (not (= (length cites) (length result)))
+    (if (/= (length cites) (length result))
 	(nreverse result)
       nil)))
 
