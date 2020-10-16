@@ -118,6 +118,7 @@ citeproc-name-celts-and-toffs-spaced-initials
 citeproc-name-cite-group-delimiter-with-year-suffix-collapse
 citeproc-name-cite-group-delimiter-with-year-suffix-collapse2
 citeproc-name-cite-group-delimiter-with-year-suffix-collapse3
+citeproc-name-delimiter-after-inverted
 citeproc-name-editor-translator-same-empty-term
 citeproc-name-et-al-with-combined
 citeproc-name-hebrew-and
@@ -140,6 +141,7 @@ citeproc-name-particles-demote-non-dropping-never
 citeproc-name-split-initials
 citeproc-name-substitute-on-names-span-group-span-fail
 citeproc-name-substitute-on-names-span-names-span-fail
+citeproc-name-substitute-partial-each
 citeproc-name-with-non-breaking-space
 citeproc-nameattr-et-al-subsequent-min-on-citation-in-citation
 citeproc-nameattr-et-al-subsequent-min-on-style-in-citation
@@ -147,6 +149,7 @@ citeproc-nameattr-et-al-subsequent-use-first-on-citation-in-citation
 citeproc-nameattr-et-al-subsequent-use-first-on-style-in-citation
 citeproc-nameorder-long-name-as-sort-demote-display-and-sort
 citeproc-nameorder-long-name-as-sort-demote-never
+citeproc-number-limit-ordinals-to-day-one
 citeproc-number-new-ordinals-edition
 citeproc-number-new-ordinals-with-gender-change
 citeproc-number-ordinal-spacing
@@ -173,7 +176,6 @@ citeproc-sort-bibliography-nosort-option
 citeproc-sort-chicago-year-suffix1
 citeproc-sort-chicago-year-suffix2
 citeproc-sort-citation-unsorted
-citeproc-sort-conditional-macro-dates
 citeproc-sort-dale-dalebout
 citeproc-sort-drop-name-label-in-sort
 citeproc-sort-leading-a
@@ -185,6 +187,7 @@ citeproc-sort-with-and-in-one-entry
 citeproc-substitute-suppress-ordinary-variable
 citeproc-testers-first-auto-generated-zotero-plugin-test
 citeproc-testers-second-auto-generated-zotero-plugin-test
+citeproc-textcase-locale-unicode
 citeproc-textcase-no-space-before-apostrophe
 citeproc-textcase-non-english-chars
 citeproc-textcase-sentence-capitalization
