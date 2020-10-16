@@ -31,6 +31,7 @@
 (require 'cl-lib)
 (require 's)
 (require 'org)
+(require 'map)
 ;; Handle the fact that org-bibtex has been renamed to ol-bibtex -- for the time
 ;; being we support both feature names.
 (or (require 'ol-bibtex nil t)
@@ -86,6 +87,7 @@
     (("\"" . "A") . "Ä")
     (("r" . "A") . "Å")
     (("c" . "C") . "Ç")
+    (("c" . "S") . "Ş")
     (("`" . "E") . "È")
     (("'" . "E") . "É")
     (("^" . "E") . "Ê")
@@ -112,6 +114,7 @@
     (("\"" . "a") . "ä")
     (("r" . "a") . "å")
     (("c" . "c") . "ç")
+    (("c" . "s") . "ş")
     (("`" . "e") . "è")
     (("'" . "e") . "é")
     (("^" . "e") . "ê")
@@ -149,15 +152,16 @@ LTX is a one-char LaTeX accenting command (e.g. \"'\"), CHAR is
 an ascii character. Return nil if no corresponding unicode
 character was found."
   (or (assoc-default (cons ltx char) citeproc-bt--comm-letter-to-ucs-alist)
-      ;; If the combination is not in citeproc-bt--comm-letter-to-ucs-alist then, as
-      ;; a last resort, we try to assemble the canonical unicode name of the
-      ;; requested character and look it up in (usc-names). This process is *very
-      ;; slow*!
+      ;; If the combination is not in citeproc-bt--comm-letter-to-ucs-alist
+      ;; then, as a last resort, we try to assemble the canonical unicode name
+      ;; of the requested character and look it up in (usc-names). This process
+      ;; can be *very slow* on older Emacs versions in which (usc-names) returns
+      ;; an alist!
       (-if-let* ((case-name (if (s-lowercase-p char) "SMALL" "CAPITAL"))
 		 (combining-name (assoc-default ltx citeproc-bt--pref-to-ucs-alist))
 		 (name (concat "LATIN " case-name " LETTER "
 			       (upcase char) " " combining-name))
-		 (char-name (assoc-default name (ucs-names))))
+		 (char-name (map-elt (ucs-names) name)))
 	  (char-to-string char-name)
 	nil)))
 
