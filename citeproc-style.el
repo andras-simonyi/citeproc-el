@@ -75,7 +75,7 @@ is the parsed form of the xml STYLE-FILE."
 	(goto-char 1)
 	(cons (re-search-forward "variable=\"year-suffix\"" nil t)
 	      (citeproc-lib-remove-xml-comments
-	       (libxml-parse-xml-region (point-min) (point-max) nil t)))))))
+	       (libxml-parse-xml-region (point-min) (point-max))))))))
 
 ;; TODO: Parse and store info in a more structured and sensible form. Also,
 ;; currently the first in-style locale is loaded that is compatible with the

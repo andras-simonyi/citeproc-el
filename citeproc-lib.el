@@ -46,10 +46,8 @@
   "Return the parsed xml representation of FILE."
   (with-temp-buffer
     (insert-file-contents file)
-    (libxml-parse-xml-region (point-min) (point-max) nil t)))
+    (libxml-parse-xml-region (point-min) (point-max))))
 
-;; TODO: Remove uses of this when the libxml discard comments option will be
-;; operational
 (defun citeproc-lib-remove-xml-comments (tree)
   "Remove comments from xml TREE."
   (let ((head (car tree))
@@ -67,7 +65,7 @@
   "Return the parsed representation of html in string S."
   (with-temp-buffer
     (insert s)
-    (libxml-parse-html-region (point-min) (point-max) nil t)))
+    (libxml-parse-html-region (point-min) (point-max))))
 
 (defun citeproc-lib-intern (s)
   "Intern S if it is a string, return nil if it is nil."
