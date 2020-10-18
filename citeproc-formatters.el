@@ -83,31 +83,31 @@ item as a string."
 	     (dolist (attr attrs)
 	       (let ((key (car attr)))
 		 (if (or (eq key 'cited-item-no) (eq key 'bib-item-no))
-		     (-when-let (fmt-fun (alist-get key fmt-alist))
+		     (when-let ((fmt-fun (alist-get key fmt-alist)))
 		       (setq result (funcall fmt-fun result (cdr attr))))
-		   (-when-let
-		       (fmt-fun
-			(alist-get
-			 (pcase attr
-			   ('(font-style . "italic") 'font-style-italic)
-			   ('(font-weight . "bold") 'font-weight-bold)
-			   ('(rendered-var . URL) 'rendered-var-url)
-			   ('(display . "indent") 'display-indent)
-			   ('(display . "left-margin") 'display-left-margin)
-			   ('(display . "right-inline") 'display-right-inline)
-			   ('(display . "block") 'display-block)
-			   ('(vertical-align . "sup") 'vertical-align-sup)
-			   ('(vertical-align . "baseline") 'vertical-align-baseline)
-			   ('(font-variant . "small-caps") 'font-variant-small-caps)
-			   ('(text-decoration . "underline") 'text-decoration-underline)
-			   ('(font-style . "oblique") 'font-style-oblique)
-			   ('(font-style . "normal") 'font-style-normal)
-			   ('(font-variant . "normal") 'font-variant-normal)
-			   ('(font-weight . "light") 'font-weight-light)
-			   ('(font-weight . "normal") 'font-weight-normal)
-			   ('(text-decoration . "normal") 'text-decoration-normal)
-			   ('(vertical-align . "sub") 'vertical-align-sub))
-			 fmt-alist))
+		   (when-let
+		       ((fmt-fun
+			 (alist-get
+			  (pcase attr
+			    ('(font-style . "italic") 'font-style-italic)
+			    ('(font-weight . "bold") 'font-weight-bold)
+			    ('(rendered-var . URL) 'rendered-var-url)
+			    ('(display . "indent") 'display-indent)
+			    ('(display . "left-margin") 'display-left-margin)
+			    ('(display . "right-inline") 'display-right-inline)
+			    ('(display . "block") 'display-block)
+			    ('(vertical-align . "sup") 'vertical-align-sup)
+			    ('(vertical-align . "baseline") 'vertical-align-baseline)
+			    ('(font-variant . "small-caps") 'font-variant-small-caps)
+			    ('(text-decoration . "underline") 'text-decoration-underline)
+			    ('(font-style . "oblique") 'font-style-oblique)
+			    ('(font-style . "normal") 'font-style-normal)
+			    ('(font-variant . "normal") 'font-variant-normal)
+			    ('(font-weight . "light") 'font-weight-light)
+			    ('(font-weight . "normal") 'font-weight-normal)
+			    ('(text-decoration . "normal") 'text-decoration-normal)
+			    ('(vertical-align . "sub") 'vertical-align-sub))
+			  fmt-alist)))
 		     (setq result (funcall fmt-fun result))))))
 	     result))
 	  (_ rt))))
@@ -247,7 +247,7 @@ CSL tests."
 (defun citeproc-formatter-for-format (format)
   "Return the formatter struct belonging to FORMAT.
 FORMAT is a symbol"
-  (-if-let (formatter (alist-get format citeproc-fmt--formatters-alist))
+  (if-let ((formatter (alist-get format citeproc-fmt--formatters-alist)))
       formatter
     (error "No formatter for citeproc format `%s'" format)))
 
