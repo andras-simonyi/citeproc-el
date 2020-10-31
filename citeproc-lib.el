@@ -59,7 +59,12 @@
 	((pred atom) (push (pop body) result))
 	(`(comment . ,_) (pop body))
 	(_ (push (citeproc-lib-remove-xml-comments (pop body)) result))))
-    (cons head (cons attrs (nreverse result)))))
+    (let ((full-result (cons head (cons attrs (nreverse result)))))
+      ;; Handle the problem of the top element added by the libxml parser when
+      ;; there is a comment after the xml declaration.
+      (if (eq (car full-result) 'top)
+	  (caddr full-result)
+	full-result))))
 
 (defun citeproc-lib-parse-html-frag (s)
   "Return the parsed representation of html in string S."
