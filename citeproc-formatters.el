@@ -32,8 +32,20 @@
 (require 's)
 (require 'cl-lib)
 
-(cl-defstruct (citeproc-formatter (:constructor citeproc-formatter-create))
-  "Output formatter struct with slots RT, CITE, BIB-ITEM and BIB.
+(defconst citeproc-fmt--doi-link-prefix
+  "https://doi.org/"
+  "Prefix for linking DOIs.")
+
+(defconst citeproc-fmt--pmid-link-prefix
+  "https://www.ncbi.nlm.nih.gov/pubmed/"
+  "Prefix for linking PMIDs.")
+
+(defconst citeproc-fmt--pmcid-link-prefix
+  "https://www.ncbi.nlm.nih.gov/pmc/articles/"
+  "Prefix for linking PMCIDs")
+
+  (cl-defstruct (citeproc-formatter (:constructor citeproc-formatter-create))
+    "Output formatter struct with slots RT, CITE, BIB-ITEM and BIB.
 RT is a one-argument function mapping a rich-text to its
   formatted version,
 CITE is a one-argument function mapping the output of RT for a
@@ -45,8 +57,8 @@ BIB is a two-argument function mapping a list of formatted
   bibliography items and a FORMATTING-PARAMETERS alist (see
   `citeproc-render-bib' for details) to a fully formatted
   bibliography."
-  rt (cite #'identity) (bib-item (lambda (x _) x))
-  (bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
+    rt (cite #'identity) (bib-item (lambda (x _) x))
+    (bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
 
 (defun citeproc-formatter-fun-create (fmt-alist)
   "Return a rich-text formatter function based on FMT-ALIST.
@@ -60,7 +72,8 @@ as keys:
 - vertical-align-sub, vertical-align-sup, vertical-align-baseline
 - display-block, display-left-margin, display-right-inline,
   display-indent
-- rendered-var-url
+- rendered-var-url, rendered-var-doi, rendered-var-pmid,
+  rendered-var-pmcid
 - cited-item-no, bib-item-no
 with the exceptions listed below the values should be
 one-argument formatting functions that format the input string
@@ -92,6 +105,9 @@ item as a string."
 			    ('(font-style . "italic") 'font-style-italic)
 			    ('(font-weight . "bold") 'font-weight-bold)
 			    ('(rendered-var . URL) 'rendered-var-url)
+			    ('(rendered-var . DOI) 'rendered-var-doi)
+			    ('(rendered-var . PMID) 'rendered-var-pmid)
+			    ('(rendered-var . PMCID) 'rendered-var-pmcid)
 			    ('(display . "indent") 'display-indent)
 			    ('(display . "left-margin") 'display-left-margin)
 			    ('(display . "right-inline") 'display-right-inline)
@@ -128,7 +144,14 @@ item as a string."
     (text-decoration-underline . ,(lambda (x) (concat "_" x "_")))
     (vertical-align-sub . ,(lambda (x) (concat "_{" x "}")))
     (vertical-align-sup . ,(lambda (x) (concat "^{" x "}")))
-    (display-left-margin . ,(lambda (x) (concat x " ")))))
+    (display-left-margin . ,(lambda (x) (concat x " ")))
+    (rendered-var-doi . ,(lambda (x) (concat "[[" citeproc-fmt--doi-link-prefix x
+					     "][" x "]]")))
+    (rendered-var-pmid . ,(lambda (x) (concat "[[" citeproc-fmt--pmid-link-prefix x
+					      "][" x "]]")))
+    (rendered-var-pmcid . ,(lambda (x) (concat
+					"[[" citeproc-fmt--pmcid-link-prefix
+					x "][" x "]]")))))
 
 ;; HTML
 
@@ -153,10 +176,16 @@ CSL tests."
 				   "<span style=\"font-variant:small-caps;\">" x "</span>")))
     (font-weight-bold . ,(lambda (x) (concat "<b>" x "</b>")))
     (text-decoration-underline .
-     ,(lambda (x)
-	(concat
-	 "<span style=\"text-decoration:underline;\">" x "</span>")))
+			       ,(lambda (x)
+				  (concat
+				   "<span style=\"text-decoration:underline;\">" x "</span>")))
     (rendered-var-url . ,(lambda (x) (concat "<a href=\"" x "\">" x "</a>")))
+    (rendered-var-doi . ,(lambda (x) (concat "<a href=\"" citeproc-fmt--doi-link-prefix
+					     x "\">" x "</a>")))
+    (rendered-var-pmid . ,(lambda (x) (concat "<a href=\"" citeproc-fmt--pmid-link-prefix
+					      x "\">" x "</a>")))
+    (rendered-var-pmcid . ,(lambda (x) (concat "<a href=\"" citeproc-fmt--pmcid-link-prefix
+					       x "\">" x "</a>")))
     (vertical-align-sub . ,(lambda (x) (concat "<sub>" x "</sub>")))
     (vertical-align-sup . ,(lambda (x) (concat "<sup>" x "</sup>")))
     (vertical-align-baseline . ,(lambda (x) (concat "<span style=\"baseline\">" x "</span>")))
@@ -223,6 +252,12 @@ CSL tests."
     (text-decoration-underline . ,(lambda (x) (concat "\\underline{" x "}")))
     (vertical-align-sup . ,(lambda (x) (concat "^{" x "}")))
     (rendered-var-url . ,(lambda (x) (concat "\\url{" x "}")))
+    (rendered-var-doi . ,(lambda (x) (concat "\\href{" citeproc-fmt--doi-link-prefix
+					     x "}{" x "}")))
+    (rendered-var-pmid . ,(lambda (x) (concat "\\href{" citeproc-fmt--pmid-link-prefix
+					      x "}{" x "}")))
+    (rendered-var-pmcid . ,(lambda (x) (concat "\\href{" citeproc-fmt--pmcid-link-prefix
+					       x "}{" x "}")))
     (display-left-margin . ,(lambda (x) (concat x " ")))
     (vertical-align-sub . ,(lambda (x) (concat "_{" x "}")))
     (font-style-oblique . ,(lambda (x) (concat "\\textsl{" x "}")))))
