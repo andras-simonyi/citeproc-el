@@ -64,7 +64,8 @@
     ("booktitle" . container-title) ("journal" . container-title)
     ("chapter" . title) ("location" . event-place) ("series" . collection-title)
     ("keywords" . keyword) ("institution" . publisher) ("school" . publisher)
-    ("pages" . page) ("organization" . publisher) ("url" . URL))
+    ("pages" . page) ("organization" . publisher) ("url" . URL)
+    ("doi" . DOI) ("pmid" . PMID) ("pmcid" . PMCID))
   "Alist mapping BibTeX keys to CSL keys with different names.")
 
 (defconst citeproc-bt--mon-to-num-alist
