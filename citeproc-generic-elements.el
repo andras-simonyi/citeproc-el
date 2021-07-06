@@ -96,8 +96,7 @@
 (defun citeproc--text (attrs context &rest _body)
   "Render the content of a text element with ATTRS and BODY."
   (let-alist attrs
-    (let ((result-attrs (copy-alist attrs))
-	  (content nil)
+    (let ((content nil)
 	  (type 'text-only))
       (cond (.value (setq content .value))
 	    (.variable
@@ -107,7 +106,7 @@
 	       (if val
 		   (let ((var (intern .variable)))
 		     (setq type 'present-var)
-		     (push `(rendered-var . ,var) result-attrs)
+		     (push `(rendered-var . ,var) attrs)
 		     (when (memq var citeproc-generic-elements--linked-vars)
 		       (let ((target
 			      (concat
@@ -121,8 +120,8 @@
 			   (let ((start (caar match-pos)))
 			     (setq content (concat (substring .prefix start) content))
 			     (push (cons 'prefix (substring .prefix 0 start))
-				   result-attrs)))
-			 (push (cons 'href target) result-attrs))))
+				   attrs)))
+			 (push (cons 'href target) attrs))))
 		 (setq type 'empty-vars))))
 	    (.term (setq .form (if .form (intern .form) 'long)
 			 .plural (if (or (not .plural)
@@ -132,7 +131,7 @@
 	    (.macro (let ((macro-val (citeproc-macro-output .macro context)))
 		      (setq content (car macro-val))
 		      (setq type (cdr macro-val)))))
-      (cons (citeproc-rt-format-single result-attrs content context) type))))
+      (cons (citeproc-rt-format-single attrs content context) type))))
 
 (provide 'citeproc-generic-elements)
 
