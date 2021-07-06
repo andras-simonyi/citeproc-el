@@ -32,18 +32,6 @@
 (require 's)
 (require 'cl-lib)
 
-(defconst citeproc-fmt--doi-link-prefix
-  "https://doi.org/"
-  "Prefix for linking DOIs.")
-
-(defconst citeproc-fmt--pmid-link-prefix
-  "https://www.ncbi.nlm.nih.gov/pubmed/"
-  "Prefix for linking PMIDs.")
-
-(defconst citeproc-fmt--pmcid-link-prefix
-  "https://www.ncbi.nlm.nih.gov/pmc/articles/"
-  "Prefix for linking PMCIDs")
-
   (cl-defstruct (citeproc-formatter (:constructor citeproc-formatter-create))
     "Output formatter struct with slots RT, CITE, BIB-ITEM and BIB.
 RT is a one-argument function mapping a rich-text to its
@@ -64,27 +52,32 @@ BIB is a two-argument function mapping a list of formatted
   "Return a rich-text formatter function based on FMT-ALIST.
 FMT-ALIST is an alist with some or all of the following symbols
 as keys:
-- unformatted
-- font-style-italic, font-style-oblique, font-style-normal
-- font-variant-small-caps, font-variant-normal
-- font-weight-bold, font-weight-light, font-weight-normal
-- text-decoration-underline, text-decoration-normal
-- vertical-align-sub, vertical-align-sup, vertical-align-baseline
-- display-block, display-left-margin, display-right-inline,
-  display-indent
-- rendered-var-url, rendered-var-doi, rendered-var-pmid,
-  rendered-var-pmcid
-- cited-item-no, bib-item-no
-with the exceptions listed below the values should be
+- `unformatted',
+- `font-style-italic', `font-style-oblique', `font-style-normal',
+- `font-variant-small-caps', `font-variant-normal',
+- `font-weight-bold', `font-weight-light', `font-weight-normal',
+- `text-decoration-underline', `text-decoration-normal',
+- `vertical-align-sub', `vertical-align-sup', `vertical-align-baseline',
+- `display-block', `display-left-margin', `display-right-inline',
+  `display-indent',
+- `href',
+- `cited-item-no', `bib-item-no'.
+
+With the exceptions listed below the values should be
 one-argument formatting functions that format the input string
 according to the attribute-value pair specified by the key.
-  The exceptions are the keys `unformatted', for which the value
-should be a one-argument function converting unformatted text
-into the required format (e.g., by escaping), and `cited-item-no'
-and `bib-item-no' whose associated values should be two-argument
-functions, which are called with the already formatted
-cites/bibliography item text and the number of the bibliography
-item as a string."
+
+The exceptions are the keys
+- `unformatted', for which the value should be a one-argument
+  function converting unformatted text into the required
+  format (e.g., by escaping);
+- `href', here the value should be a two-argument function
+  mapping the first argument as anchor text and the second as
+  target URI to a hyperlink representation; and
+- `cited-item-no' and `bib-item-no' whose associated values
+  should be two-argument functions, which are called with the
+  already formatted cites/bibliography item text and the number of
+  the bibliography item as a string."
   (cl-labels
       ((rt-fmt
 	(rt)
@@ -95,7 +88,7 @@ item as a string."
 		 (result (mapconcat #'rt-fmt (cdr rt) "")))
 	     (dolist (attr attrs)
 	       (let ((key (car attr)))
-		 (if (or (eq key 'cited-item-no) (eq key 'bib-item-no))
+		 (if (memq key '(href cited-item-no bib-item-no))
 		     (when-let ((fmt-fun (alist-get key fmt-alist)))
 		       (setq result (funcall fmt-fun result (cdr attr))))
 		   (when-let
@@ -104,10 +97,6 @@ item as a string."
 			  (pcase attr
 			    ('(font-style . "italic") 'font-style-italic)
 			    ('(font-weight . "bold") 'font-weight-bold)
-			    ('(rendered-var . URL) 'rendered-var-url)
-			    ('(rendered-var . DOI) 'rendered-var-doi)
-			    ('(rendered-var . PMID) 'rendered-var-pmid)
-			    ('(rendered-var . PMCID) 'rendered-var-pmcid)
 			    ('(display . "indent") 'display-indent)
 			    ('(display . "left-margin") 'display-left-margin)
 			    ('(display . "right-inline") 'display-right-inline)
@@ -135,6 +124,7 @@ item as a string."
 
 (defconst citeproc-fmt--org-alist
   `((unformatted . identity)
+    (href . ,(lambda (x y) (concat "[[" y "][" x "]]")))
     (cited-item-no . ,(lambda (x y) (concat "[[citeproc_bib_item_" y "][" x "]]")))
     (bib-item-no . ,(lambda (x y) (concat "<<citeproc_bib_item_" y ">>" x)))
     (font-style-italic . ,(lambda (x) (concat "/" x "/")))
@@ -144,14 +134,7 @@ item as a string."
     (text-decoration-underline . ,(lambda (x) (concat "_" x "_")))
     (vertical-align-sub . ,(lambda (x) (concat "_{" x "}")))
     (vertical-align-sup . ,(lambda (x) (concat "^{" x "}")))
-    (display-left-margin . ,(lambda (x) (concat x " ")))
-    (rendered-var-doi . ,(lambda (x) (concat "[[" citeproc-fmt--doi-link-prefix x
-					     "][" x "]]")))
-    (rendered-var-pmid . ,(lambda (x) (concat "[[" citeproc-fmt--pmid-link-prefix x
-					      "][" x "]]")))
-    (rendered-var-pmcid . ,(lambda (x) (concat
-					"[[" citeproc-fmt--pmcid-link-prefix
-					x "][" x "]]")))))
+    (display-left-margin . ,(lambda (x) (concat x " ")))))
 
 ;; HTML
 
@@ -164,6 +147,7 @@ CSL tests."
 
 (defconst citeproc-fmt--html-alist
   `((unformatted . citeproc-fmt--xml-escape)
+    (href . ,(lambda (x y) (concat "<a href=\"" y "\">" x "</a>")))
     (cited-item-no . ,(lambda (x y) (concat "<a href=\"#citeproc_bib_item_" y "\">"
 					    x "</a>")))
     (bib-item-no . ,(lambda (x y) (concat "<a name=\"citeproc_bib_item_" y "\"></a>"
@@ -179,13 +163,6 @@ CSL tests."
 			       ,(lambda (x)
 				  (concat
 				   "<span style=\"text-decoration:underline;\">" x "</span>")))
-    (rendered-var-url . ,(lambda (x) (concat "<a href=\"" x "\">" x "</a>")))
-    (rendered-var-doi . ,(lambda (x) (concat "<a href=\"" citeproc-fmt--doi-link-prefix
-					     x "\">" x "</a>")))
-    (rendered-var-pmid . ,(lambda (x) (concat "<a href=\"" citeproc-fmt--pmid-link-prefix
-					      x "\">" x "</a>")))
-    (rendered-var-pmcid . ,(lambda (x) (concat "<a href=\"" citeproc-fmt--pmcid-link-prefix
-					       x "\">" x "</a>")))
     (vertical-align-sub . ,(lambda (x) (concat "<sub>" x "</sub>")))
     (vertical-align-sup . ,(lambda (x) (concat "<sup>" x "</sup>")))
     (vertical-align-baseline . ,(lambda (x) (concat "<span style=\"baseline\">" x "</span>")))
@@ -242,6 +219,7 @@ CSL tests."
 
 (defconst citeproc-fmt--latex-alist
   `((unformatted . citeproc-fmt--latex-escape)
+    (href . ,(lambda (x y) (concat "\\href{" y "}{" x "}")))
     (font-style-italic . ,(lambda (x) (concat "\\textit{" x "}")))
     (font-weight-bold . ,(lambda (x) (concat "\\textbf{" x "}")))
     (cited-item-no . ,(lambda (x y) (concat "\\hyperlink{citeproc_bib_item_" y "}{"
@@ -251,13 +229,6 @@ CSL tests."
     (font-variant-small-caps . ,(lambda (x) (concat "\\textsc{" x "}")))
     (text-decoration-underline . ,(lambda (x) (concat "\\underline{" x "}")))
     (vertical-align-sup . ,(lambda (x) (concat "^{" x "}")))
-    (rendered-var-url . ,(lambda (x) (concat "\\url{" x "}")))
-    (rendered-var-doi . ,(lambda (x) (concat "\\href{" citeproc-fmt--doi-link-prefix
-					     x "}{" x "}")))
-    (rendered-var-pmid . ,(lambda (x) (concat "\\href{" citeproc-fmt--pmid-link-prefix
-					      x "}{" x "}")))
-    (rendered-var-pmcid . ,(lambda (x) (concat "\\href{" citeproc-fmt--pmcid-link-prefix
-					       x "}{" x "}")))
     (display-left-margin . ,(lambda (x) (concat x " ")))
     (vertical-align-sub . ,(lambda (x) (concat "_{" x "}")))
     (font-style-oblique . ,(lambda (x) (concat "\\textsl{" x "}")))))
