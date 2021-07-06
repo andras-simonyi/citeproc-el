@@ -37,6 +37,16 @@
 (require 'citeproc-context)
 (require 'citeproc-macro)
 
+(defconst citeproc-generic-elements--linked-vars
+  '(URL DOI PMID PMCID)
+  "Variables whose rendered content should be linked.")
+
+(defconst citeproc-generic-elements--link-prefix-alist
+  '((DOI .  "https://doi.org/")
+    (PMID . "https://www.ncbi.nlm.nih.gov/pubmed/")
+    (PMCID . "https://www.ncbi.nlm.nih.gov/pmc/articles/"))
+  "Alist mapping variable names to uri prefixes.")
+
 (defun citeproc--layout (attrs context &rest body)
   "Render the content of a layout element with ATTRS and BODY."
   (let* ((attrs (if (eq (citeproc-context-mode context) 'bib) attrs
@@ -86,7 +96,8 @@
 (defun citeproc--text (attrs context &rest _body)
   "Render the content of a text element with ATTRS and BODY."
   (let-alist attrs
-    (let ((content nil)
+    (let ((result-attrs (copy-alist attrs))
+	  (content nil)
 	  (type 'text-only))
       (cond (.value (setq content .value))
 	    (.variable
@@ -94,9 +105,24 @@
 									.form))))
 	       (setq content val)
 	       (if val
-		   (progn
+		   (let ((var (intern .variable)))
 		     (setq type 'present-var)
-		     (push `(rendered-var . ,(intern .variable)) attrs))
+		     (push `(rendered-var . ,var) result-attrs)
+		     (when (memq var citeproc-generic-elements--linked-vars)
+		       (let ((target
+			      (concat
+				  (alist-get var citeproc-generic-elements--link-prefix-alist
+					     "")
+				  content)))
+			 (-when-let (match-pos (and .prefix (s-matched-positions-all
+							     "https?://\\S *\\'" \.prefix)))
+			   ;; If the prefix ends with an URL then it is moved
+			   ;; from the prefix to the rendered variable content.
+			   (let ((start (caar match-pos)))
+			     (setq content (concat (substring .prefix start) content))
+			     (push (cons 'prefix (substring .prefix 0 start))
+				   result-attrs)))
+			 (push (cons 'href target) result-attrs))))
 		 (setq type 'empty-vars))))
 	    (.term (setq .form (if .form (intern .form) 'long)
 			 .plural (if (or (not .plural)
@@ -106,7 +132,7 @@
 	    (.macro (let ((macro-val (citeproc-macro-output .macro context)))
 		      (setq content (car macro-val))
 		      (setq type (cdr macro-val)))))
-      (cons (citeproc-rt-format-single attrs content context) type))))
+      (cons (citeproc-rt-format-single result-attrs content context) type))))
 
 (provide 'citeproc-generic-elements)
 
