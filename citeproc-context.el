@@ -198,14 +198,15 @@ information and external links, respecively."
 				      (alist-get 'citation-number var-alist))))
 	  ;; Finalize external linking by linking the title if needed
 	  (when (and (eq mode 'bib) (not no-external-links))
-	    (-when-let ((var . val) (--any (rassq it var-alist)
+	    (-when-let ((var . val) (--any (assoc it var-alist)
 					   citeproc--linked-vars))
+	      (message "HERE")
 	      (unless (cl-intersection (citeproc-rt-rendered-vars rendered)
 				       citeproc--linked-vars)
 		(citeproc-rt-link-title rendered
-		 (concat (alist-get var citeproc--link-prefix-alist
-				    "")
-			 (alist-get var var-alist))))))
+					(concat (alist-get var citeproc--link-prefix-alist
+							   "")
+						(alist-get var var-alist))))))
 	  ;; Add item-no information as the last attribute
 	  (unless no-item-no
 	    (cond ((consp rendered) (setf (car rendered)
