@@ -44,9 +44,12 @@ BIB-ITEM is a two-argument function mapping the output of RT for
 BIB is a two-argument function mapping a list of formatted
   bibliography items and a FORMATTING-PARAMETERS alist (see
   `citeproc-render-bib' for details) to a fully formatted
-  bibliography."
+  bibliography,
+NO-EXTERNAL-LINKS is non-nil if the formatter doesn't support
+  external linking."
     rt (cite #'identity) (bib-item (lambda (x _) x))
-    (bib (lambda (x _) (mapconcat #'identity x "\n\n"))))
+    (bib (lambda (x _) (mapconcat #'identity x "\n\n")))
+    (no-external-links nil))
 
 (defun citeproc-formatter-fun-create (fmt-alist)
   "Return a rich-text formatter function based on FMT-ALIST.
@@ -241,13 +244,15 @@ CSL tests."
 	       :bib #'citeproc-fmt--html-bib-formatter))
      (csl-test . ,(citeproc-formatter-create
 		   :rt (citeproc-formatter-fun-create citeproc-fmt--csl-test-alist)
-		   :bib #'citeproc-fmt--html-bib-formatter))
+		   :bib #'citeproc-fmt--html-bib-formatter
+		   :no-external-links t))
      (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
      (org . ,(citeproc-formatter-create
 	      :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)))
      (latex . ,(citeproc-formatter-create
 		:rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
-     (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain)))
+     (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain
+					  :no-external-links t)))
    "Alist mapping supported output formats to formatter structs.")
 
 (defun citeproc-formatter-for-format (format)

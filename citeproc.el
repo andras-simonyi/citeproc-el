@@ -136,6 +136,8 @@ formatting parameters keyed to the parameter names as symbols:
 	   (bib-formatter (or bib-formatter-fun
 			      (citeproc-formatter-bib formatter)))
 	   (bibitem-formatter (citeproc-formatter-bib-item formatter))
+	   (formatter-no-external-links (citeproc-formatter-no-external-links
+					 formatter))
 	   (style (citeproc-proc-style proc))
 	   (bib-opts (citeproc-style-bib-opts style))
 	   (punct-in-quote (string= (alist-get 'punctuation-in-quote
@@ -145,7 +147,8 @@ formatting parameters keyed to the parameter names as symbols:
 	   (raw-bib (--map (citeproc-rt-finalize
 			    (citeproc-render-varlist-in-rt
 			     (citeproc-itemdata-varvals it)
-			     style 'bib 'display no-link-targets no-external-links)
+			     style 'bib 'display no-link-targets
+			     (or formatter-no-external-links no-external-links))
 			    punct-in-quote)
 			   sorted))
 	   (substituted
