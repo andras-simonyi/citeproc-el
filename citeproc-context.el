@@ -40,9 +40,10 @@
 (cl-defstruct (citeproc-context (:constructor citeproc-context--create))
   "A struct representing the context for rendering CSL elements."
   vars macros terms date-text date-numeric opts locale-opts
-  mode render-mode render-year-suffix)
+  mode render-mode render-year-suffix no-external-links)
 
-(defun citeproc-context-create (var-alist style mode render-mode)
+(defun citeproc-context-create (var-alist style mode render-mode
+					  &optional no-external-links)
   "Create a citeproc-context struct from var-values VAR-ALIST and csl style STYLE.
 MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
   (citeproc-context--create
@@ -55,7 +56,8 @@ MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
    :locale-opts (citeproc-style-locale-opts style)
    :mode mode
    :render-mode render-mode
-   :render-year-suffix (not (citeproc-style-uses-ys-var style))))
+   :render-year-suffix (not (citeproc-style-uses-ys-var style))
+   :no-external-links no-external-links))
 
 (defconst citeproc--short-long-var-alist
   '((title . title-short) (container-title . container-title-short))
@@ -174,15 +176,17 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
     nil))
 
 (defun citeproc-render-varlist-in-rt (var-alist style mode render-mode &optional
-						no-item-no)
+						no-item-no no-external-links)
   "Render an item described by VAR-ALIST with STYLE in rich-text.
 Does NOT finalize the rich-text rendering. MODE is either `bib'
-or `cite', RENDER-MODE is `display' or `sort'. If NO-ITEM-NO is
-non-nil then don't add item-no information."
+or `cite', RENDER-MODE is `display' or `sort'. If the optional
+NO-ITEM-NO, NO-EXTERNAL-LINKS are non-nil then don't add item-no
+information and external links, respecively."
   (-if-let (unprocessed-id (alist-get 'unprocessed-with-id var-alist))
       ;; Itemid received no associated csl fields from the getter!
       (list nil (concat "NO_ITEM_DATA:" unprocessed-id))
-    (let* ((context (citeproc-context-create var-alist style mode render-mode))
+    (let* ((context (citeproc-context-create var-alist style mode render-mode
+					     no-external-links))
 	   (layout-fun-accessor (if (eq mode 'cite) 'citeproc-style-cite-layout
 				  'citeproc-style-bib-layout))
 	   (layout-fun (funcall layout-fun-accessor style)))
@@ -192,6 +196,16 @@ non-nil then don't add item-no information."
 	       (itemid-attr (if (eq mode 'cite) 'cited-item-no 'bib-item-no))
 	       (itemid-attr-val (cons itemid-attr
 				      (alist-get 'citation-number var-alist))))
+	  ;; Finalize external linking by linking the title if needed
+	  (when (and (eq mode 'bib) (not no-external-links))
+	    (-when-let ((var . val) (--any (rassq it var-alist)
+					   citeproc--linked-vars))
+	      (unless (cl-intersection (citeproc-rt-rendered-vars rendered)
+				       citeproc--linked-vars)
+		(citeproc-rt-link-title rendered
+		 (concat (alist-get var citeproc--link-prefix-alist
+				    "")
+			 (alist-get var var-alist))))))
 	  ;; Add item-no information as the last attribute
 	  (unless no-item-no
 	    (cond ((consp rendered) (setf (car rendered)

@@ -1,6 +1,6 @@
 ;; citeproc-rt.el --- citeproc-el rich-text functions -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
@@ -403,7 +403,7 @@ successful."
     0))
 
 (defun citeproc-rt-cull-spaces-puncts (rt)
-  "Remove unnecessary characters from rich text RT."
+  "Remove unnecessary characters from rich-text RT."
   (let* ((plain (citeproc-rt-to-plain rt))
 	 (updated (citeproc-rt-update-from-plain
 		   rt (citeproc-s-cull-spaces-puncts plain))))
@@ -508,17 +508,17 @@ The values are ordered depth-first."
   "Return the list of name ids in raw content R."
   (citeproc-rt--attr-values r 'name-id))
 
-(defun citeproc-rt-endered-vars (r)
+(defun citeproc-rt-rendered-vars (r)
   "Return the list of rendered vars in raw content R."
   (citeproc-rt--attr-values r 'rendered-var))
 
 (defun citeproc-rt-rendered-date-vars (r)
   "Return the list of date vars in raw content R."
-  (--select (memq it citeproc--date-vars) (citeproc-rt-endered-vars r)))
+  (--select (memq it citeproc--date-vars) (citeproc-rt-rendered-vars r)))
 
 (defun citeproc-rt-rendered-name-vars (r)
   "Return the list of name vars in raw content R."
-  (--select (memq it citeproc--name-vars) (citeproc-rt-endered-vars r)))
+  (--select (memq it citeproc--name-vars) (citeproc-rt-rendered-vars r)))
 
 ;;; Helpers for bibliography rendering
 
@@ -542,6 +542,17 @@ modified bibliography."
 	   (car (citeproc-rt-replace-first-names it s))
 	 (prog1 it (setq prev-author author))))
      bib)))
+
+(defun citeproc-rt-link-title (r target)
+  "Link the rendered title var in rich-text R to TARGET."
+  (cl-flet ((rendered-var-title-p
+	     (node)
+	     (and (consp node)
+		  (eq (alist-get 'rendered-var (car node)) 'title)))
+	    (add-link
+	     (node)
+	     (push (cons 'href target) (car node))))
+    (citeproc-rt-transform-first r #'rendered-var-title-p #'add-link)))
 
 (provide 'citeproc-rt)
 

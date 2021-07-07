@@ -127,7 +127,7 @@ Return the resulting output."
 				     proc))))
     (let ((output (if (string= mode "citation")
 		      (citeproc-render-citations proc 'csl-test t)
-		    (car (citeproc-render-bib proc 'csl-test t)))))
+		    (car (citeproc-render-bib proc 'csl-test t t)))))
       (if (string= mode "citation") (s-join "\n" output) output))))
 
 (defun citeproc-suite-tests-expected-from-parsed (parsed)

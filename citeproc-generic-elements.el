@@ -1,6 +1,6 @@
 ;;; citeproc-generic-elements.el --- render generic CSL elements -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
@@ -32,20 +32,11 @@
 
 (require 'dash)
 (require 'let-alist)
+(require 's)
 
 (require 'citeproc-rt)
 (require 'citeproc-context)
 (require 'citeproc-macro)
-
-(defconst citeproc-generic-elements--linked-vars
-  '(URL DOI PMID PMCID)
-  "Variables whose rendered content should be linked.")
-
-(defconst citeproc-generic-elements--link-prefix-alist
-  '((DOI .  "https://doi.org/")
-    (PMID . "https://www.ncbi.nlm.nih.gov/pubmed/")
-    (PMCID . "https://www.ncbi.nlm.nih.gov/pmc/articles/"))
-  "Alist mapping variable names to uri prefixes.")
 
 (defun citeproc--layout (attrs context &rest body)
   "Render the content of a layout element with ATTRS and BODY."
@@ -93,11 +84,15 @@
 	    nil)
 	  type)))
 
+(defconst citeproc-generic-elements--url-prefix-re "https?://\\S *\\'"
+  "Regex matching an URL prefix at the end of a string.")
+
 (defun citeproc--text (attrs context &rest _body)
   "Render the content of a text element with ATTRS and BODY."
   (let-alist attrs
     (let ((content nil)
-	  (type 'text-only))
+	  (type 'text-only)
+	  (no-external-links (citeproc-context-no-external-links context)))
       (cond (.value (setq content .value))
 	    (.variable
 	     (let ((val (citeproc-var-value (intern .variable) context (citeproc-lib-intern
@@ -107,14 +102,17 @@
 		   (let ((var (intern .variable)))
 		     (setq type 'present-var)
 		     (push `(rendered-var . ,var) attrs)
-		     (when (memq var citeproc-generic-elements--linked-vars)
+		     (when (and (not no-external-links)
+				(memq var citeproc--linked-vars))
 		       (let ((target
 			      (concat
-				  (alist-get var citeproc-generic-elements--link-prefix-alist
-					     "")
-				  content)))
-			 (-when-let (match-pos (and .prefix (s-matched-positions-all
-							     "https?://\\S *\\'" \.prefix)))
+			       (alist-get var citeproc--link-prefix-alist
+					  "")
+			       content)))
+			 (-when-let (match-pos
+				     (and .prefix (s-matched-positions-all
+						   citeproc-generic-elements--url-prefix-re
+						   .prefix)))
 			   ;; If the prefix ends with an URL then it is moved
 			   ;; from the prefix to the rendered variable content.
 			   (let ((start (caar match-pos)))

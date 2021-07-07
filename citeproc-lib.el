@@ -42,6 +42,17 @@
 	   illustrator interviewer original-author recipient reviewed-author translator)
   "CSL name variables.")
 
+(defconst citeproc--linked-vars
+  '(DOI PMCID PMCID URL)
+  "Variables whose rendered content should be linked.
+The ordering is according to priority ")
+
+(defconst citeproc--link-prefix-alist
+  '((DOI .  "https://doi.org/")
+    (PMID . "https://www.ncbi.nlm.nih.gov/pubmed/")
+    (PMCID . "https://www.ncbi.nlm.nih.gov/pmc/articles/"))
+  "Alist mapping variable names to uri prefixes.")
+
 (defun citeproc-lib-parse-xml-file (file)
   "Return the parsed xml representation of FILE."
   (with-temp-buffer

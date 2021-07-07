@@ -103,12 +103,13 @@ non-nil then don't link cites to the referred items."
 	 (queue-head (citeproc-proc-citations proc))))
 
 (defun citeproc-render-bib (proc format &optional no-link-targets
-				 bib-formatter-fun)
+				 no-external-links bib-formatter-fun)
   "Render a bibliography of items in PROC in FORMAT.
-If optional NO-LINK-TARGETS is non-nil then don't generate
-targets for citation links. If the optional BIB-FORMATTER-FUN is
-given then it will be used to join the bibliography items instead
-of the content of the chosen formatter's `bib' slot (see
+If optional NO-LINK-TARGETS, NO-EXTERNAL-LINKS are non-nil then
+don't generate targets for citation links and external links,
+respecively. If the optional BIB-FORMATTER-FUN is given then it
+will be used to join the bibliography items instead of the
+content of the chosen formatter's `bib' slot (see
 `citeproc-formatter' for details).
 
 Returns an error message string if the style of PROC doesn't
@@ -144,7 +145,7 @@ formatting parameters keyed to the parameter names as symbols:
 	   (raw-bib (--map (citeproc-rt-finalize
 			    (citeproc-render-varlist-in-rt
 			     (citeproc-itemdata-varvals it)
-			     style 'bib 'display no-link-targets)
+			     style 'bib 'display no-link-targets no-external-links)
 			    punct-in-quote)
 			   sorted))
 	   (substituted
@@ -197,7 +198,8 @@ then use LOCALE even if the style's default locale is different."
 
 ;; REVIEW: this should be rethought -- should we apply the specific wrappers as
 ;; well?
-(defun citeproc-render-item (item-data style mode format)
+(defun citeproc-render-item (item-data style mode format
+				       &optional no-external-links)
   "Render a bibliography item described by ITEM-DATA with STYLE.
 ITEM-DATA is the parsed form of a bibliography item description
   in CSL-JSON format,
@@ -211,7 +213,8 @@ FORMAT is a symbol representing a supported output format."
     (funcall (citeproc-formatter-rt (citeproc-formatter-for-format format))
 	     (citeproc-rt-cull-spaces-puncts
 	      (citeproc-rt-finalize
-	       (citeproc-render-varlist-in-rt internal-varlist style mode 'display t))))))
+	       (citeproc-render-varlist-in-rt
+		internal-varlist style mode 'display t no-external-links))))))
 
 (provide 'citeproc)
 
