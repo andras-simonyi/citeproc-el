@@ -43,7 +43,7 @@
   "CSL name variables.")
 
 (defconst citeproc--linked-vars
-  '(DOI PMCID PMCID URL)
+  '(DOI PMCID PMID URL)
   "Variables whose rendered content should be linked.
 The ordering is according to priority ")
 

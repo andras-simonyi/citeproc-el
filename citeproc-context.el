@@ -200,7 +200,6 @@ information and external links, respecively."
 	  (when (and (eq mode 'bib) (not no-external-links))
 	    (-when-let ((var . val) (--any (assoc it var-alist)
 					   citeproc--linked-vars))
-	      (message "HERE")
 	      (unless (cl-intersection (citeproc-rt-rendered-vars rendered)
 				       citeproc--linked-vars)
 		(citeproc-rt-link-title rendered
