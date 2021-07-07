@@ -208,7 +208,9 @@ ITEM-DATA is the parsed form of a bibliography item description
   in CSL-JSON format,
 STYLE is a `citeproc-style' structure,
 MODE is one of the symbols `bib' or `cite',
-FORMAT is a symbol representing a supported output format."
+FORMAT is a symbol representing a supported output format.
+If the optional NO-EXTERNAL-LINKS is non-nil then don't generate
+external links in the item."
   (let ((internal-varlist (--map-when (memq (car it) citeproc--date-vars)
 				      (cons (car it)
 					    (citeproc-date-parse (cdr it)))
