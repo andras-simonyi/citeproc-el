@@ -68,13 +68,13 @@ one-argument formatting functions that format the input string
 according to the attribute-value pair specified by the key.
 
 The exceptions are the keys
-- `unformatted', for which the value should be a one-argument
+`unformatted', for which the value should be a one-argument
   function converting unformatted text into the required
   format (e.g., by escaping);
-- `href', here the value should be a two-argument function
+`href', here the value should be a two-argument function
   mapping the first argument as anchor text and the second as
   target URI to a hyperlink representation; and
-- `cited-item-no' and `bib-item-no' whose associated values
+`cited-item-no' and `bib-item-no' whose associated values
   should be two-argument functions, which are called with the
   already formatted cites/bibliography item text and the number of
   the bibliography item as a string."
