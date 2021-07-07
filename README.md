@@ -174,15 +174,16 @@ a list of formatted citations. `format` is one of the [supported output
 formats](#supported-output-formats) as a symbol. If the optional `no-links` is
 non-nil then don’t link cites to the referred items.
 
-#### citeproc-render-bib `(proc format &optional no-link-targets bib-formatter-fun)`
+#### citeproc-render-bib `(proc format &optional no-link-targets no-external-links bib-formatter-fun)`
 
 Render a bibliography of the citations in citation processor `proc` in the
 given`format`. `format` is one of the [supported output
-formats](#supported-output-formats) as a symbol. If optional `no-link-targets`
-is non-nil then don’t generate targets for citation links. If the optional
-`bib-formatter-fun` is given then it will be used to join the bibliography items
-instead of the content of the chosen formatter’s `bib` slot (see the
-documentation of the `citeproc-formatter` structure type for details).
+formats](#supported-output-formats) as a symbol. If optional `no-link-targets`,
+`no-external-links` are non-nil then don't generate targets for citation links and
+external links, respecively. If the optional `bib-formatter-fun` is given then
+it will be used to join the bibliography items instead of the content of the
+chosen formatter’s `bib` slot (see the documentation of the `citeproc-formatter`
+structure type for details).
 
 Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
 `FORMATTING-PARAMETERS` is an alist containing the values of the following
@@ -219,13 +220,14 @@ for the description of the arguments.
 
 After the creation of a style object references can be rendered by
 
-#### citeproc-render-item `(item-data style mode format)`
+#### citeproc-render-item `(item-data style mode format &optional no-external-links)`
 Render an item described by `item-data` with `style`. `item-data` is the parsed
 form of a bibliographic item description in
 [CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
 format, `style` is a `citeproc-style` style object, `mode` is one of the symbols
 `bib` or `cite`, `format` is a supported output format (see next section) as a
-symbol.
+symbol. If the optional `no-external-links` is non-nil then don't generate
+external links in the item.
 
 ### Supported output formats
 
@@ -238,7 +240,7 @@ for examples.
 
 ## License
 
-Copyright (C) 2018 András Simonyi
+Copyright (C) 2018-2021 András Simonyi
 
 Authors: András Simonyi
 
