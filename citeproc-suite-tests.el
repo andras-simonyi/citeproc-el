@@ -1,6 +1,6 @@
 ;; citeproc-suite-tests.el --- CSL test suite tests -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
