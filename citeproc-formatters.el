@@ -125,9 +125,16 @@ The exceptions are the keys
 
 ;; Org
 
+(defun citeproc-fmt--org-link (anchor target)
+  "Return an Org link with ANCHOR and TARGET.
+If ANCHOR is string= to TARGET then return ANCHOR."
+  (if (string= anchor target)
+      anchor
+    (concat "[[" target "][" anchor "]]")))
+
 (defconst citeproc-fmt--org-alist
   `((unformatted . identity)
-    (href . ,(lambda (x y) (concat "[[" y "][" x "]]")))
+    (href . ,#'citeproc-fmt--org-link)
     (cited-item-no . ,(lambda (x y) (concat "[[citeproc_bib_item_" y "][" x "]]")))
     (bib-item-no . ,(lambda (x y) (concat "<<citeproc_bib_item_" y ">>" x)))
     (font-style-italic . ,(lambda (x) (concat "/" x "/")))
