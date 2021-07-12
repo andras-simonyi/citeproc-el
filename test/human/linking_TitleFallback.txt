@@ -1,0 +1,35 @@
+>>===== OUTPUT-FORMAT =====>>
+org
+<<===== OUTPUT-FORMAT =====<<
+
+
+>>===== MODE =====>>
+bibliography
+<<===== MODE =====<<
+
+
+>>===== RESULT =====>>
+[[http://orgmode.org][Org mode is great]]
+<<===== RESULT =====<<
+
+
+>>===== CSL =====>>
+<style>
+  <bibliography>
+    <layout>
+      <text variable="title"/>
+    </layout>
+  </bibliography>
+</style>
+<<===== CSL =====<<
+
+
+>>===== INPUT =====>>
+[
+    {
+        "id": "ITEM-1",
+        "title": "Org mode is great",
+	"URL": "http://orgmode.org"
+    }
+]
+<<===== INPUT =====<<
