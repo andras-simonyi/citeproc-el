@@ -1,0 +1,36 @@
+>>===== OUTPUT-FORMAT =====>>
+org
+<<===== OUTPUT-FORMAT =====<<
+
+
+>>===== MODE =====>>
+bibliography
+<<===== MODE =====<<
+
+
+>>===== RESULT =====>>
+[[https://doi.org/10.1000/xyz123][Org mode is great]]
+<<===== RESULT =====<<
+
+
+>>===== CSL =====>>
+<style>
+  <bibliography>
+    <layout>
+      <text variable="title"/>
+    </layout>
+  </bibliography>
+</style>
+<<===== CSL =====<<
+
+
+>>===== INPUT =====>>
+[
+    {
+        "id": "ITEM-1",
+	"title": "Org mode is great",	
+	"URL": "http://orgmode.org",
+	"DOI": "10.1000/xyz123"
+    }
+]
+<<===== INPUT =====<<

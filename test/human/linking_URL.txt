@@ -1,0 +1,36 @@
+>>===== OUTPUT-FORMAT =====>>
+html
+<<===== OUTPUT-FORMAT =====<<
+
+
+>>===== MODE =====>>
+bibliography
+<<===== MODE =====<<
+
+
+>>===== RESULT =====>>
+<div class="csl-bib-body">
+  <div class="csl-entry"><a href="http://orgmode.org">http://orgmode.org</a></div>
+</div>
+<<===== RESULT =====<<
+
+
+>>===== CSL =====>>
+<style>
+  <bibliography>
+    <layout>
+      <text variable="URL"/>
+    </layout>
+  </bibliography>
+</style>
+<<===== CSL =====<<
+
+
+>>===== INPUT =====>>
+[
+    {
+        "id": "ITEM-1",
+	"URL": "http://orgmode.org"
+    }
+]
+<<===== INPUT =====<<

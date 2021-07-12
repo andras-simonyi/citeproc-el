@@ -1,0 +1,36 @@
+>>===== OUTPUT-FORMAT =====>>
+latex
+<<===== OUTPUT-FORMAT =====<<
+
+
+>>===== MODE =====>>
+bibliography
+<<===== MODE =====<<
+
+
+>>===== RESULT =====>>
+A title. https://doi.org/ \href{https://doi.org/10.1000/xyz123}{10.1000/xyz123}
+<<===== RESULT =====<<
+
+
+>>===== CSL =====>>
+<style>
+  <bibliography>
+    <layout>
+      <text variable="title" suffix=". "/>
+      <text variable="DOI" prefix="https://doi.org/ "/>
+    </layout>
+  </bibliography>
+</style>
+<<===== CSL =====<<
+
+
+>>===== INPUT =====>>
+[
+    {
+        "id": "ITEM-1",
+	"DOI": "10.1000/xyz123",
+	"title": "A title"
+    }
+]
+<<===== INPUT =====<<

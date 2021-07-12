@@ -1,0 +1,35 @@
+>>===== OUTPUT-FORMAT =====>>
+org
+<<===== OUTPUT-FORMAT =====<<
+
+
+>>===== MODE =====>>
+bibliography
+<<===== MODE =====<<
+
+
+>>===== RESULT =====>>
+[[https://www.ncbi.nlm.nih.gov/pubmed/25166873][25166873]]
+<<===== RESULT =====<<
+
+
+>>===== CSL =====>>
+<style>
+  <bibliography>
+    <layout>
+      <text variable="PMID"/>
+    </layout>
+  </bibliography>
+</style>
+<<===== CSL =====<<
+
+
+>>===== INPUT =====>>
+[
+    {
+        "id": "ITEM-1",
+	"PMID": "25166873",
+	"PMCID": "PMC3531190"
+    }
+]
+<<===== INPUT =====<<
