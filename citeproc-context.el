@@ -65,7 +65,7 @@ MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
 
 (defun citeproc-var-value (var context &optional form)
   "Return the value of csl variable VAR in CONTEXT.
-VAR is a symbol, GLOBALS is a `citeproc-context' struct, and the
+VAR is a symbol, CONTEXT is a `citeproc-context' struct, and the
 optional FORM can be nil, 'short or 'long."
   (if (eq form 'short)
       (-if-let* ((short-var (alist-get var citeproc--short-long-var-alist))
