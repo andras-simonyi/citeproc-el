@@ -284,12 +284,12 @@ position and before the (possibly empty) body."
 		    (citeproc-style--transform-xmltree-1 x)))
 		(cddr it))))))
     `(if (citeproc-var-value 'suppress-author context) (cons nil 'empty-vars)
-       (let* ((names-attrs (quote ,names-attrs))
-	      (name-attrs (quote ,name-attrs))
+       (let* ((names-attrs ',names-attrs)
+	      (name-attrs ',name-attrs)
 	      (count (string= (alist-get 'form name-attrs) "count"))
-	      (et-al-attrs (quote ,et-al-attrs))
-	      (name-parts (quote ,name-parts))
-	      (label-attrs (quote ,label-attrs))
+	      (et-al-attrs ',et-al-attrs)
+	      (name-parts ',name-parts)
+	      (label-attrs ',label-attrs)
 	      (is-label ,is-label)
 	      (label-before-names ,label-before-names)
 	      (val (citeproc-name-render-vars
@@ -299,13 +299,15 @@ position and before the (possibly empty) body."
 			  val
 			(-if-let ((cont . type) (--first (car it)
 							 (list ,@substs)))
-			    (cons (cons (list (quote (subst . t))) (list cont)) type)
-			  (cons nil 'empty-vars)))))
-	 (if count
-	     (let* ((number (citeproc-rt-count-names (car result)))
-		    (str (if (= 0 number) "" (number-to-string number))))
-	       (cons str (cdr result)))
-	   result)))))
+			    (cons (cons (list '(subst . t)) (list cont)) type)
+			  (cons nil 'empty-vars))))
+	      (final (if count
+			 (let* ((number (citeproc-rt-count-names (car result)))
+				(str (if (= 0 number) "" (number-to-string number))))
+			   (cons str (cdr result)))
+		       result)))
+	 ;; Handle `author' citation substyle by stopping if needed
+	 (citeproc-lib-maybe-stop-rendering 'names context final)))))
 
 (defun citeproc-style-global-opts (style layout)
   "Return the global opts in STYLE for LAYOUT.
