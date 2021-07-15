@@ -43,7 +43,7 @@
 (defconst citeproc-rt-format-attrs
   '(font-variant font-style font-weight text-decoration vertical-align font-variant
 		 display rendered-var name-id quotes cited-item-no bib-item-no
-		 rendered-names href)
+		 rendered-names href stopped-rendering)
   "The rich-text content format attributes (used in raw output).")
 
 (defconst citeproc-rt-ext-format-attrs
