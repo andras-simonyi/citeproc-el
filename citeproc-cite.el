@@ -1,6 +1,6 @@
 ;;; citeproc-cite.el --- cite and citation rendering -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
@@ -40,19 +40,49 @@
 (require 'citeproc-formatters)
 (require 'citeproc-sort)
 
-(cl-defstruct (citeproc-citation (:constructor citeproc-citation-create))
+(cl-defstruct (citeproc-citation (:constructor citeproc-citation--create))
   "A struct representing a citation.
-CITES is a list of cites,
+The public constructor is `citeproc-citation-create', see its
+documentation for a description of the fields."
+  cites note-index capitalize-first suppress-affixes variant
+  grouped)
+
+(defconst citeproc-cite--from-variant-alist
+  '((textual . (suppress-author . t))
+    (suppress-author . (suppress-author . t))
+    (author-only . (stop-rendering-at . names))
+    (year-only . (stop-rendering-at . issued)))
+  "Alist mapping citation variants to corresponding cite-level
+key-value pair representations.")
+
+(cl-defun citeproc-citation-create
+    (&key cites note-index capitalize-first suppress-affixes 
+	  variant grouped)
+  "Create a `citeproc-citation' structure.
+CITES is a list of alists describing individual cites,
 NOTE-INDEX is the note index of the citation if it occurs in a
   note,
 CAPITALIZE-FIRST is non-nil if the first word of the rendered
   citation should be capitalized,
 SUPPRESS-AFFIXES is non-nil if the citation affixes should be
-  suppressed.
+  suppressed,
+VARIANT is either nil (for the default citation variant) or one
+  of the symbols `suppress-author', `textual', `author-only',
+  `year-only'.
 GROUPED is used internally to indicate whether the cites were
   grouped by the csl processor."
-  cites (note-index nil) (capitalize-first nil)
-  (suppress-affixes nil) (grouped nil))
+  (citeproc-citation--create
+   ;; Add variant-based cite-level information to the first cite alist.
+   :cites (progn
+	    (-when-let (variant-rep
+			(alist-get variant citeproc-cite--from-variant-alist))
+	      (push variant-rep (car cites)))
+	    cites)
+   :note-index note-index
+   :capitalize-first capitalize-first
+   :suppress-affixes suppress-affixes
+   :variant variant
+   :grouped grouped))
 
 (defun citeproc-cite--varlist (cite)
   "Return the varlist belonging to CITE."
@@ -62,7 +92,8 @@ GROUPED is used internally to indicate whether the cites were
 	 (cite-vv
 	  (--filter (memq (car it)
 			  '(label locator suppress-author suppress-date
-				  position near-note first-reference-note-number))
+				  stop-rendering-at position near-note
+				  first-reference-note-number))
 		    cite)))
     (nconc cite-vv item-vv)))
 

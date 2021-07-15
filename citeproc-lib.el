@@ -138,6 +138,20 @@ numeric content."
 	   (s-matches-p "\\`[[:alpha:]]?[[:digit:]]+[[:alpha:]]*\\(\\( *\\([,&-]\\|--\\) *\\)?[[:alpha:]]?[[:digit:]]+[[:alpha:]]*\\)?\\'"
 			val))))
 
+(defun citeproc-lib-maybe-stop-rendering
+    (trigger context result &optional var)
+  "Stop rendering if a (`stop-rendering-at'. TRIGGER) pair is present in CONTEXT.
+In case of stopping return with RESULT. If the optional VAR
+symbol is non-nil then rendering is stopped only if VAR is eq to
+TRIGGER."
+  (if (and (eq trigger (alist-get 'stop-rendering-at (citeproc-context-vars context)))
+	   (or (not var) (eq var trigger))
+	   (eq (cdr result) 'present-var))
+      (let ((rt-result (car result)))
+	(push '(stopped-rendering . t) (car rt-result))
+	(throw 'stop-rendering (citeproc-rt-render-affixes rt-result)))
+    result))
+
 (provide 'citeproc-lib)
 
 ;;; citeproc-lib.el ends here

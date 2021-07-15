@@ -192,7 +192,8 @@ information and external links, respecively."
 	   (layout-fun (funcall layout-fun-accessor style)))
       (if (null layout-fun) "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
 	(let* ((year-suffix (alist-get 'year-suffix var-alist))
-	       (rendered (funcall layout-fun context))
+	       (rendered (catch 'stop-rendering
+			  (funcall layout-fun context)))
 	       (itemid-attr (if (eq mode 'cite) 'cited-item-no 'bib-item-no))
 	       (itemid-attr-val (cons itemid-attr
 				      (alist-get 'citation-number var-alist))))
