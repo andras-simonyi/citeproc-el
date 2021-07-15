@@ -201,9 +201,15 @@ bibliograpgy items they refer to."
 	(when outer-attrs
 	  (setq result (list outer-attrs result)))
 	;; Capitalize first
-	(if (citeproc-citation-capitalize-first c)
-	    (citeproc-rt-change-case result #'citeproc-s-capitalize-first)
-	  result)))))
+	(when (citeproc-citation-capitalize-first c)
+	  (setq result (citeproc-rt-change-case result #'citeproc-s-capitalize-first)))
+	;; Prepend author to textual citations
+	(when (eq (citeproc-citation-variant c) 'textual)
+	  (let ((first-cite
+		 (append '((suppress-author . nil) (stop-rendering-at . names)) (car cites))))
+	    (setq result `(nil ,(citeproc-cite--render first-cite style t)
+			       " " ,result))))
+	result))))
 
 (defun citeproc-cites--collapse-indexed (cites index-getter no-span-pred)
   "Collapse continuously indexed cites in CITES.
