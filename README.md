@@ -137,17 +137,22 @@ contain at least the default `en-US` locale file.
 
 Citation structures are created with
 
-#### citeproc-citation-create `(&key cites note-index capitalize-first suppress-affixes)`
+#### citeproc-citation-create `(&key cites note-index capitalize-first suppress-affixes ignore-et-al variant) `
+
 
   * `cites` is a list of alists describing cites. Each alist must contain the
      `id` symbol as key coupled with an item id string as value, and can
-     optionally contain additional information with the symbol keys
-     `suppress-author` (with a boolean value), `prefix`, `suffix`, `locator`,
-     `label` (all with string values);
+     optionally contain additional information with the symbol keys `prefix`,
+     `suffix`, `locator`, `label` (all with string values);
   * `note-index` is the note index of the citation if it occurs in a note and
      `nil` otherwise;
   * `capitalize-first` is non-nil if the first word of the citation has to be
     capitalized;
+  * `ignore-et-al` is non-nil if et-al settings should be ignored for the first
+    cite,
+  * `variant` is either nil (for the default citation variant) or one
+    of the symbols `suppress-author`, `textual`, `author-only`,
+    `year-only`.
   * `suppress-affixes` is non-nil if the prefix and the suffix of the citation
     (e.g., opening and closing brackets) have to be suppressed.
   
