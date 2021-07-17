@@ -306,7 +306,7 @@ position and before the (possibly empty) body."
 				(str (if (= 0 number) "" (number-to-string number))))
 			   (cons str (cdr result)))
 		       result)))
-	 ;; Handle `author' citation substyle by stopping if needed
+	 ;; Handle `author' citation mode by stopping if needed
 	 (citeproc-lib-maybe-stop-rendering 'names context final)))))
 
 (defun citeproc-style-global-opts (style layout)

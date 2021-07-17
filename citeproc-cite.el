@@ -44,41 +44,41 @@
   "A struct representing a citation.
 The public constructor is `citeproc-citation-create', see its
 documentation for a description of the fields."
-  cites note-index capitalize-first suppress-affixes ignore-et-al
-  variant grouped)
+  cites note-index mode suppress-affixes capitalize-first
+  ignore-et-al grouped)
 
-(defconst citeproc-cite--from-variant-alist
+(defconst citeproc-cite--from-mode-alist
   '((textual . (suppress-author . t))
     (suppress-author . (suppress-author . t))
     (author-only . (stop-rendering-at . names))
     (year-only . (stop-rendering-at . issued)))
-  "Alist mapping citation variants to corresponding cite-level
+  "Alist mapping citation modes to corresponding cite-level
 key-value pair representations.")
 
 (cl-defun citeproc-citation-create
-    (&key cites note-index capitalize-first suppress-affixes 
-	  ignore-et-al variant grouped)
+    (&key cites note-index mode suppress-affixes capitalize-first
+	  ignore-et-al grouped)
   "Create a `citeproc-citation' structure.
 CITES is a list of alists describing individual cites,
 NOTE-INDEX is the note index of the citation if it occurs in a
   note,
-CAPITALIZE-FIRST is non-nil if the first word of the rendered
-  citation should be capitalized,
+MODE is either nil (for the default citation mode) or one
+  of the symbols `suppress-author', `textual', `author-only',
+  `year-only',
 SUPPRESS-AFFIXES is non-nil if the citation affixes should be
   suppressed,
+CAPITALIZE-FIRST is non-nil if the first word of the rendered
+  citation should be capitalized,
 IGNORE-ET-AL is non-nil if et-al settings should be ignored for
-  the first cite,
-VARIANT is either nil (for the default citation variant) or one
-  of the symbols `suppress-author', `textual', `author-only',
-  `year-only'.
+  the first cite.
 GROUPED is used internally to indicate whether the cites were
   grouped by the csl processor."
   (citeproc-citation--create
    ;; Add suitable cite-level information to the first cite alist.
    :cites (progn
-	    (-when-let (variant-rep
-			(alist-get variant citeproc-cite--from-variant-alist))
-	      (push variant-rep (car cites)))
+	    (-when-let (mode-rep
+			(alist-get mode citeproc-cite--from-mode-alist))
+	      (push mode-rep (car cites)))
 	    (when ignore-et-al
 	      (push '(ignore-et-al . t) (car cites)))
 	    cites)
@@ -86,7 +86,7 @@ GROUPED is used internally to indicate whether the cites were
    :capitalize-first capitalize-first
    :suppress-affixes suppress-affixes
    :ignore-et-al ignore-et-al
-   :variant variant
+   :mode mode
    :grouped grouped))
 
 (defun citeproc-cite--varlist (cite)
@@ -209,7 +209,7 @@ bibliograpgy items they refer to."
 	(when (citeproc-citation-capitalize-first c)
 	  (setq result (citeproc-rt-change-case result #'citeproc-s-capitalize-first)))
 	;; Prepend author to textual citations
-	(if (eq (citeproc-citation-variant c) 'textual)
+	(if (eq (citeproc-citation-mode c) 'textual)
 	    (let* ((first-cite
 		    (append '((suppress-author . nil) (stop-rendering-at . names))
 			    (car cites)))

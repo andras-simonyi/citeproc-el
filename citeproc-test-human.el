@@ -101,7 +101,7 @@ then the input is list of cites."
 	 :cites (-map #'citeproc-test-human--normalize-cite
 		      (alist-get 'citationItems citation-info))
 	 :note-index .noteIndex
-	 :variant (citeproc-lib-intern .variant)
+	 :mode (citeproc-lib-intern .mode)
 	 :capitalize-first .capitalize-first
 	 :suppress-affixes .suppress-affixes
 	 :ignore-et-al .ignore-et-al)))))

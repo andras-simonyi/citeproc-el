@@ -21,7 +21,7 @@ Smith (1986)
             ],
             "properties": {
                 "noteIndex": 0,
-		"variant": "textual"
+		"mode": "textual"
             }
         },
         [],

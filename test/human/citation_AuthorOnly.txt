@@ -20,7 +20,7 @@ citation
             ],
             "properties": {
                 "noteIndex": 0,
-		"variant": "author-only"
+		"mode": "author-only"
             }
         },
         [],

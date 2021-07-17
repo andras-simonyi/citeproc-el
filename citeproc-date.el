@@ -93,7 +93,7 @@ Set the remaining slots to the values SEASON and CIRCA."
 			     'present-var))
 		   (cons nil 'empty-vars)))
 	     (cons nil 'empty-vars))))
-    ;; Handle `year' citation substyle by stopping if needed
+    ;; Handle `year' citation mode by stopping if needed
     (citeproc-lib-maybe-stop-rendering 'issued context result var-sym)))
 
 (defun citeproc--date-part (attrs _context &rest _body)

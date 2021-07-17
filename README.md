@@ -137,7 +137,7 @@ contain at least the default `en-US` locale file.
 
 Citation structures are created with
 
-#### citeproc-citation-create `(&key cites note-index capitalize-first suppress-affixes ignore-et-al variant) `
+#### citeproc-citation-create `(&key cites note-index mode suppress-affixes capitalize-first ignore-et-al) `
 
 
   * `cites` is a list of alists describing cites. Each alist must contain the
@@ -146,15 +146,15 @@ Citation structures are created with
      `suffix`, `locator`, `label` (all with string values);
   * `note-index` is the note index of the citation if it occurs in a note and
      `nil` otherwise;
-  * `capitalize-first` is non-nil if the first word of the citation has to be
-    capitalized;
-  * `ignore-et-al` is non-nil if et-al settings should be ignored for the first
-    cite,
-  * `variant` is either nil (for the default citation variant) or one
+  * `mode` is either nil (for the default citation mode) or one
     of the symbols `suppress-author`, `textual`, `author-only`,
-    `year-only`.
+    `year-only`,
   * `suppress-affixes` is non-nil if the prefix and the suffix of the citation
-    (e.g., opening and closing brackets) have to be suppressed.
+    (e.g., opening and closing brackets) have to be suppressed,
+  * `capitalize-first` is non-nil if the first word of the citation has to be
+    capitalized,
+  * `ignore-et-al` is non-nil if et-al settings should be ignored for the first
+    cite.
   
 ### Managing a processor’s citation list
 

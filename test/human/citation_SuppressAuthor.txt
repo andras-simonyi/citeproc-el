@@ -21,7 +21,7 @@ citation
             ],
             "properties": {
                 "noteIndex": 0,
-		"variant": "suppress-author"
+		"mode": "suppress-author"
             }
         },
         [],
