@@ -136,7 +136,11 @@ Nature."
 		.et-al-use-first (or .names-use-first .et-al-use-first)
 		.et-al-use-last (or (string= .names-use-last "true")
 				    (string= .et-al-use-last "true")))
-	  (let* ((et-al-min-val (citeproc-s-nil-or-s-to-num .et-al-min))
+	  (let* ((et-al-min-val
+		  ;; If et-al should be ignored then we set this to an unreachable number.
+		  (if (alist-get 'ignore-et-al (citeproc-context-vars context))
+		      100
+		    (citeproc-s-nil-or-s-to-num .et-al-min)))
 		 (et-al-use-first-val (+ add-names
 					 (citeproc-s-nil-or-s-to-num .et-al-use-first)))
 		 (et-al (and .et-al-min .et-al-use-first

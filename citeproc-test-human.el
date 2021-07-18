@@ -92,11 +92,19 @@ CSL test."
   "Parse test citations description CT-DESC.
 Return a list of citation structures. If CITES-ONLY is non-nil
 then the input is list of cites."
-  (citeproc-citation-create
-   :cites (-map #'citeproc-test-human--normalize-cite
-		(if cites-only ct-desc (alist-get 'citationItems (car ct-desc))))
-   :note-index (and (not cites-only)
-		    (alist-get 'noteIndex (alist-get 'properties (car ct-desc))))))
+  (if cites-only
+      (citeproc-citation-create
+       :cites (-map #'citeproc-test-human--normalize-cite ct-desc))
+    (let ((citation-info (car ct-desc)))
+      (let-alist (alist-get 'properties citation-info)
+	(citeproc-citation-create
+	 :cites (-map #'citeproc-test-human--normalize-cite
+		      (alist-get 'citationItems citation-info))
+	 :note-index .noteIndex
+	 :mode (citeproc-lib-intern .mode)
+	 :capitalize-first .capitalize-first
+	 :suppress-affixes .suppress-affixes
+	 :ignore-et-al .ignore-et-al)))))
 
 (defun citeproc-test-human--normalize-cite (cite)
   "Normalize a test CITE."
@@ -131,7 +139,8 @@ Return the resulting output."
        (t (citeproc-append-citations (list (citeproc-test-human--parse-citation input t))
 				     proc))))
     (let ((output (if (string= mode "citation")
-		      (citeproc-render-citations proc output-format t)
+		      (citeproc-render-citations proc output-format
+						 (eq 'csl-test output-format))
 		    (car (citeproc-render-bib proc output-format t)))))
       (if (string= mode "citation") (s-join "\n" output) output))))
 

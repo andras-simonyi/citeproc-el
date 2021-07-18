@@ -65,7 +65,7 @@ MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
 
 (defun citeproc-var-value (var context &optional form)
   "Return the value of csl variable VAR in CONTEXT.
-VAR is a symbol, GLOBALS is a `citeproc-context' struct, and the
+VAR is a symbol, CONTEXT is a `citeproc-context' struct, and the
 optional FORM can be nil, 'short or 'long."
   (if (eq form 'short)
       (-if-let* ((short-var (alist-get var citeproc--short-long-var-alist))
@@ -192,7 +192,8 @@ information and external links, respecively."
 	   (layout-fun (funcall layout-fun-accessor style)))
       (if (null layout-fun) "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
 	(let* ((year-suffix (alist-get 'year-suffix var-alist))
-	       (rendered (funcall layout-fun context))
+	       (rendered (catch 'stop-rendering
+			  (funcall layout-fun context)))
 	       (itemid-attr (if (eq mode 'cite) 'cited-item-no 'bib-item-no))
 	       (itemid-attr-val (cons itemid-attr
 				      (alist-get 'citation-number var-alist))))

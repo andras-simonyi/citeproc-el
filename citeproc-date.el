@@ -72,24 +72,29 @@ Set the remaining slots to the values SEASON and CIRCA."
   (-let* (((&alist 'variable var
 		   'form form)
 	   attrs)
-	  (parsed-dates (citeproc-var-value (intern var) context))
-	  ((d1 d2) parsed-dates))
-    (if d1 (progn
-	     (when form
-	       (let ((localized (citeproc-date--localized-attrs attrs body context)))
-		 (setq attrs (car localized)
-		       body (cdr localized))))
-	     (when (eq (citeproc-context-render-mode context) 'sort)
-	       (setq body (citeproc-date--partattrs-for-sort body)))
-	     (if (citeproc-date--renders-with-attrs-p d1 body)
-		 (progn
-		   (push `(rendered-var . ,(intern var)) attrs)
-		   (cons (if d2
-			     (citeproc-date--render-range d1 d2 attrs body context)
-			   (citeproc-date--render d1 attrs body context))
-			 'present-var))
-	       (cons nil 'empty-vars)))
-      (cons nil 'empty-vars))))
+	  (var-sym (intern var))
+	  (parsed-dates (citeproc-var-value var-sym context))
+	  ((d1 d2) parsed-dates)
+	  (result
+	   (if d1
+	       (progn
+		 (when form
+		   (let ((localized (citeproc-date--localized-attrs attrs body context)))
+		     (setq attrs (car localized)
+			   body (cdr localized))))
+		 (when (eq (citeproc-context-render-mode context) 'sort)
+		   (setq body (citeproc-date--partattrs-for-sort body)))
+		 (if (citeproc-date--renders-with-attrs-p d1 body)
+		     (progn
+		       (push `(rendered-var . ,(intern var)) attrs)
+		       (cons (if d2
+				 (citeproc-date--render-range d1 d2 attrs body context)
+			       (citeproc-date--render d1 attrs body context))
+			     'present-var))
+		   (cons nil 'empty-vars)))
+	     (cons nil 'empty-vars))))
+    ;; Handle `year' citation mode by stopping if needed
+    (citeproc-lib-maybe-stop-rendering 'issued context result var-sym)))
 
 (defun citeproc--date-part (attrs _context &rest _body)
   "Function corresponding to the date-part CSL element."

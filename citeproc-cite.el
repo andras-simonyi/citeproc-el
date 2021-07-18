@@ -1,6 +1,6 @@
 ;;; citeproc-cite.el --- cite and citation rendering -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
@@ -40,19 +40,54 @@
 (require 'citeproc-formatters)
 (require 'citeproc-sort)
 
-(cl-defstruct (citeproc-citation (:constructor citeproc-citation-create))
+(cl-defstruct (citeproc-citation (:constructor citeproc-citation--create))
   "A struct representing a citation.
-CITES is a list of cites,
+The public constructor is `citeproc-citation-create', see its
+documentation for a description of the fields."
+  cites note-index mode suppress-affixes capitalize-first
+  ignore-et-al grouped)
+
+(defconst citeproc-cite--from-mode-alist
+  '((textual . (suppress-author . t))
+    (suppress-author . (suppress-author . t))
+    (author-only . (stop-rendering-at . names))
+    (year-only . (stop-rendering-at . issued)))
+  "Alist mapping citation modes to corresponding cite-level
+key-value pair representations.")
+
+(cl-defun citeproc-citation-create
+    (&key cites note-index mode suppress-affixes capitalize-first
+	  ignore-et-al grouped)
+  "Create a `citeproc-citation' structure.
+CITES is a list of alists describing individual cites,
 NOTE-INDEX is the note index of the citation if it occurs in a
   note,
+MODE is either nil (for the default citation mode) or one
+  of the symbols `suppress-author', `textual', `author-only',
+  `year-only',
+SUPPRESS-AFFIXES is non-nil if the citation affixes should be
+  suppressed,
 CAPITALIZE-FIRST is non-nil if the first word of the rendered
   citation should be capitalized,
-SUPPRESS-AFFIXES is non-nil if the citation affixes should be
-  suppressed.
+IGNORE-ET-AL is non-nil if et-al settings should be ignored for
+  the first cite.
 GROUPED is used internally to indicate whether the cites were
   grouped by the csl processor."
-  cites (note-index nil) (capitalize-first nil)
-  (suppress-affixes nil) (grouped nil))
+  (citeproc-citation--create
+   ;; Add suitable cite-level information to the first cite alist.
+   :cites (progn
+	    (-when-let (mode-rep
+			(alist-get mode citeproc-cite--from-mode-alist))
+	      (push mode-rep (car cites)))
+	    (when ignore-et-al
+	      (push '(ignore-et-al . t) (car cites)))
+	    cites)
+   :note-index note-index
+   :capitalize-first capitalize-first
+   :suppress-affixes suppress-affixes
+   :ignore-et-al ignore-et-al
+   :mode mode
+   :grouped grouped))
 
 (defun citeproc-cite--varlist (cite)
   "Return the varlist belonging to CITE."
@@ -62,7 +97,8 @@ GROUPED is used internally to indicate whether the cites were
 	 (cite-vv
 	  (--filter (memq (car it)
 			  '(label locator suppress-author suppress-date
-				  position near-note first-reference-note-number))
+				  stop-rendering-at position near-note
+				  first-reference-note-number ignore-et-al))
 		    cite)))
     (nconc cite-vv item-vv)))
 
@@ -169,6 +205,14 @@ bibliograpgy items they refer to."
 	;; Add outer (non-affix attrs) if needed
 	(when outer-attrs
 	  (setq result (list outer-attrs result)))
+	;; Prepend author to textual citations
+	(when (eq (citeproc-citation-mode c) 'textual)
+	  (let* ((first-cite
+		  (append '((suppress-author . nil) (stop-rendering-at . names))
+			  (car cites)))
+		 (rendered-author (citeproc-cite--render first-cite style t)))
+	    (when (alist-get 'stopped-rendering (car rendered-author))
+	      (setq result `(nil ,rendered-author " " ,result)))))
 	;; Capitalize first
 	(if (citeproc-citation-capitalize-first c)
 	    (citeproc-rt-change-case result #'citeproc-s-capitalize-first)
