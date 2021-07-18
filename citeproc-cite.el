@@ -207,10 +207,16 @@ bibliograpgy items they refer to."
 	  (setq result (list outer-attrs result)))
 	;; Prepend author to textual citations
 	(when (eq (citeproc-citation-mode c) 'textual)
-	  (let* ((first-cite
+	  (let* ((first-elt (car cites)) ;; First elt is either a cite or a cite group.
+		 ;; If the latter then we need to locate the first cite as the
+		 ;; 2nd element of the first cite group.
+		 (first-cite (if (eq 'group (car first-elt))
+				 (cadr first-elt)
+			       first-elt))
+		 (author-cite
 		  (append '((suppress-author . nil) (stop-rendering-at . names))
-			  (car cites)))
-		 (rendered-author (citeproc-cite--render first-cite style t)))
+			  first-cite))
+		 (rendered-author (citeproc-cite--render author-cite style t)))
 	    (when (alist-get 'stopped-rendering (car rendered-author))
 	      (setq result `(nil ,rendered-author " " ,result)))))
 	;; Capitalize first
