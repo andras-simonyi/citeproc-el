@@ -205,18 +205,17 @@ bibliograpgy items they refer to."
 	;; Add outer (non-affix attrs) if needed
 	(when outer-attrs
 	  (setq result (list outer-attrs result)))
-	;; Capitalize first
-	(when (citeproc-citation-capitalize-first c)
-	  (setq result (citeproc-rt-change-case result #'citeproc-s-capitalize-first)))
 	;; Prepend author to textual citations
-	(if (eq (citeproc-citation-mode c) 'textual)
-	    (let* ((first-cite
-		    (append '((suppress-author . nil) (stop-rendering-at . names))
-			    (car cites)))
-		   (rendered-author (citeproc-cite--render first-cite style t)))
-	      (if (alist-get 'stopped-rendering (car rendered-author))
-		  `(nil ,rendered-author " " ,result)
-		result)) 
+	(when (eq (citeproc-citation-mode c) 'textual)
+	  (let* ((first-cite
+		  (append '((suppress-author . nil) (stop-rendering-at . names))
+			  (car cites)))
+		 (rendered-author (citeproc-cite--render first-cite style t)))
+	    (when (alist-get 'stopped-rendering (car rendered-author))
+	      (setq result `(nil ,rendered-author " " ,result)))))
+	;; Capitalize first
+	(if (citeproc-citation-capitalize-first c)
+	    (citeproc-rt-change-case result #'citeproc-s-capitalize-first)
 	  result)))))
 
 (defun citeproc-cites--collapse-indexed (cites index-getter no-span-pred)
