@@ -225,7 +225,9 @@ CSL tests."
 
 (defun citeproc-fmt--latex-escape (s)
   "Return the LaTeX-escaped version of string S."
-  (s-replace-all '(("_" . "\\_") ("{" . "\\{") ("}" . "\\}") ("&" . "\\&")) s))
+  (s-replace-all
+   '(("_" . "\\_") ("{" . "\\{") ("}" . "\\}") ("&" . "\\&") ("#" . "\\#"))
+   s))
 
 (defconst citeproc-fmt--latex-alist
   `((unformatted . citeproc-fmt--latex-escape)
