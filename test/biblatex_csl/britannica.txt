@@ -1,0 +1,28 @@
+---
+@Collection{britannica,
+  editor       = {Preece, Warren E.},
+  title        = {The New Encyclop{\ae}dia {Britannica}},
+  date         = 2003,
+  edition      = 15,
+  volumes      = 32,
+  publisher    = {Encyclop{\ae}dia Britannica},
+  location     = {Chicago, Ill.},
+  label        = {EB},
+  sorttitle    = {Encyclop{\ae}dia Britannica},
+  indextitle   = {Encyclop{\ae}dia Britannica, The New},
+  shorttitle   = {Encyclop{\ae}dia {Britannica}}
+}
+---
+- citation-label: EB
+  edition: 15
+  editor:
+  - family: Preece
+    given: Warren E.
+  id: britannica
+  issued: 2003
+  number-of-volumes: 32
+  publisher: Encyclopædia Britannica
+  publisher-place: Chicago, Ill.
+  title: The New Encyclopædia Britannica
+  title-short: Encyclopædia Britannica
+  type: book

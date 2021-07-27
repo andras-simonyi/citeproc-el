@@ -199,7 +199,7 @@ per line (together with the `citeproc-' prefix)."
 	   nil)))
     (dolist (test-file (f-glob (concat dir "/*.txt")))
       (citeproc-test-human-create-from-file test-file expected-fails
-      name-prefix))))
+					    name-prefix))))
 
 (provide 'citeproc-test-human)
 
