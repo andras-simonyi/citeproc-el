@@ -170,6 +170,7 @@
     ;; places
     (venue . event-place)
     (origlocation . original-publisher-place)
+    (address . publisher-place)
     ;; doi etcetera
     (doi . DOI)
     (isbn . ISBN)

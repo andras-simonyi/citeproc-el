@@ -1,0 +1,86 @@
+---
+@article{article-req,
+    Author = {Author, Ann},
+    Date = {2013-01-01},
+    Journaltitle = {The Journaltitle},
+    Title = {An article entry with just the required fields}}
+
+@article{article-opt,
+    Addendum = {The Addendum},
+    Annotator = {Annotator, A.},
+    Author = {Author, Jr., Ann A.},
+    Commentator = {Commentator, C.},
+    Date = {2013-01-01},
+    Doi = {10.1086/520976},
+    Editor = {Editor, Edward},
+    Editora = {Editor, A.},
+    Editorb = {Editor, B.},
+    Editorc = {Editor, C.},
+    Eid = {eid},
+    Eprint = {eprint},
+    Eprintclass = {eprintclass},
+    Eprinttype = {eprinttype},
+    Issn = {issn},
+    Issue = {issue},
+    Issuesubtitle = {The Issuesubtitle},
+    Issuetitle = {The Issuetitle},
+    Journalsubtitle = {The Journalsubtitle},
+    Journaltitle = {The Journaltitle},
+    Journal = {The Journal},
+    Language = {language},
+    Month = {01},
+    Year = {2013},
+    Note = {The Note},
+    Number = {number},
+    Origlanguage = {origlanguage},
+    Pages = {pages},
+    Pubstate = {in press},
+    Series = {new series},
+    Subtitle = {The subtitle},
+    Title = {An article entry with the required and all optional fields},
+    Titleaddon = {The titleaddon},
+    Translator = {Translator, Ted},
+    Url = {http://foo.bar.baz/},
+    Urldate = {2013-01-01},
+    Version = {version},
+    Volume = {volume},
+}
+---
+- author:
+  - family: Author
+    given: Ann
+  container-title: The Journaltitle
+  id: article-req
+  issued: 2013-01-01
+  title: An article entry with just the required fields
+  type: article-journal
+- accessed: 2013-01-01
+  author:
+  - family: Author
+    given: Ann A.
+    suffix: Jr.
+  collection-title: new series
+  container-title: "The Journaltitle: The Journalsubtitle"
+  DOI: 10.1086/520976
+  editor:
+  - family: Editor
+    given: Edward
+  id: article-opt
+  ISSN: issn
+  issue: number, issue
+  issued: 2013-01-01
+  language: language
+  note: The Note. The Addendum
+  page: pages
+  status: in press
+  title: "An article entry with the required and all optional fields:
+    The subtitle. The titleaddon"
+  title-short: An article entry with the required and all optional
+    fields
+  translator:
+  - family: Translator
+    given: Ted
+  type: article-journal
+  URL: "http://foo.bar.baz/"
+  version: version
+  volume: volume

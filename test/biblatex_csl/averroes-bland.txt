@@ -1,0 +1,44 @@
+---
+@Book{averroes-bland,
+  author       = {Averroes},
+  title        = {The Epistle on the Possibility of Conjunction with the Active
+                  Intellect by {Ibn Rushd} with the Commentary of {Moses Narboni}},
+  date         = 1982,
+  editor       = {Bland, Kalman P.},
+  translator   = {Bland, Kalman P.},
+  series       = {Moreshet: {Studies} in {Jewish} History, Literature and Thought},
+  number       = 7,
+  publisher    = {Jewish Theological Seminary of America},
+  location     = {New York},
+  keywords     = {primary},
+  indextitle   = {Epistle on the Possibility of Conjunction, The},
+  shorttitle   = {Possibility of Conjunction},
+  annotation   = {A book entry with a series and a
+                  number. Note the concatenation of the editor
+                  and translator fields as well as the
+                  indextitle field},
+}
+---
+- annote: A book entry with a series and a number. Note the
+    concatenation of the editor and translator fields as well as the
+    indextitle field
+  author:
+  - family: Averroes
+  collection-number: 7
+  collection-title: "Moreshet: Studies in Jewish History, Literature and
+    Thought"
+  editor:
+  - family: Bland
+    given: Kalman P.
+  id: averroes-bland
+  issued: 1982
+  keyword: primary
+  publisher: Jewish Theological Seminary of America
+  publisher-place: New York
+  title: The Epistle on the Possibility of Conjunction with the Active
+    Intellect by Ibn Rushd with the Commentary of Moses Narboni
+  title-short: Possibility of Conjunction
+  translator:
+  - family: Bland
+    given: Kalman P.
+  type: book
