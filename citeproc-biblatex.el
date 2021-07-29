@@ -181,6 +181,7 @@
     ;; notes
     (abstract . abstract)
     (annotation . annote)
+    (annote . annote) 			; alias for jurabib compatibility
     ;; else
     (pubstate . status)
     (language . language)
@@ -298,7 +299,9 @@ variables in B."
 				(and is-chapter-like \.maintitle)
 				(and is-chapter-like (citeproc-blt--get-standard
 						      'booktitle b))
-				(citeproc-blt--get-standard 'journaltitle b)))
+				(or (citeproc-blt--get-standard 'journaltitle b)
+				    ;; also accept `journal' for BibTeX compatibility
+				    (citeproc-blt--get-standard 'journal b))))
 	   (container-subtitle (or (and is-periodical (citeproc-blt--get-standard
 						       'subtitle b))
 				   (and is-chapter-like (citeproc-blt--get-standard
@@ -348,12 +351,14 @@ variables in B."
       (push `(publisher . ,(mapconcat #'identity values "; ")) result))
     ;; places
     (let ((csl-place-var
-	   (if (string= .type "patent") 'jurisdiction 'publisher-place)))
-      (-when-let (.location (citeproc-blt--get-standard 'location b))
+	   (if (eq .type 'patent) 'jurisdiction 'publisher-place)))
+      (-when-let (.location (or (citeproc-blt--get-standard 'location b)
+				(citeproc-blt--get-standard 'address b)))
 	(push (cons csl-place-var .location) result)))
     ;; url
     (-when-let (url (or (alist-get 'url b)
-			(when-let ((.eprinttype (alist-get 'eprinttype b))
+			(when-let ((.eprinttype (or (alist-get 'eprinttype b)
+						    (alist-get 'archiveprefix b)))
 				   (.eprint (alist-get 'eprint b))
 				   (base-url
 				    (assoc-default .eprinttype
