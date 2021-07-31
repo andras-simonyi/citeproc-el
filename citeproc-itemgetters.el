@@ -35,8 +35,10 @@
     (require 'org-bibtex))
 (require 'json)
 (require 'bibtex)
+(require 'parsebib)
 
 (require 'citeproc-bibtex)
+(require 'citeproc-biblatex)
 
 (defun citeproc-hash-itemgetter-from-csl-json (file)
   "Return a hash-based getter for csl json bibliography FILE."
