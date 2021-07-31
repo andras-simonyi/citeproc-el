@@ -160,7 +160,7 @@ CSL tests."
     (href . ,(lambda (x y) (concat "<a href=\"" y "\">" x "</a>")))
     (cited-item-no . ,(lambda (x y) (concat "<a href=\"#citeproc_bib_item_" y "\">"
 					    x "</a>")))
-    (bib-item-no . ,(lambda (x y) (concat "<a name=\"citeproc_bib_item_" y "\"></a>"
+    (bib-item-no . ,(lambda (x y) (concat "<a id=\"citeproc_bib_item_" y "\"></a>"
 					  x)))
     (font-style-italic . ,(lambda (x) (concat "<i>" x "</i>")))
     (font-style-oblique . ,(lambda (x)
@@ -188,7 +188,7 @@ CSL tests."
   `((unformatted . citeproc-fmt--xml-escape)
     (cited-item-no . ,(lambda (x y) (concat "<a href=\"#citeproc_bib_item_" y "\">"
 					    x "</a>")))
-    (bib-item-no . ,(lambda (x y) (concat "<a name=\"citeproc_bib_item_" y "\"></a>"
+    (bib-item-no . ,(lambda (x y) (concat "<a id=\"citeproc_bib_item_" y "\"></a>"
 					  x)))
     (font-style-italic . ,(lambda (x) (concat "<i>" x "</i>")))
     (font-style-oblique . ,(lambda (x)
