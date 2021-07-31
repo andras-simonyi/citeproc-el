@@ -1,6 +1,6 @@
 ;; citeproc-itemgetters.el --- functions for constructing itemgetters -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
@@ -109,6 +109,55 @@
 		  result)))
 	t files)
        result))))
+
+(defun citeproc-hash-itemgetter-from-any (file-or-files)
+  "Return a getter for FILE-OR-FILES in any supported format.
+The format is determined on the basis of file extensions.
+Supported formats:
+- CSL-JSON (.json extension) the recommended native format;
+- biblatex (.bib extension), broadly compatible with BibTeX, the
+  use of the dedicated BibTeX reader can be enforced by using the
+  .bibtex extension in the filename;
+- BibTeX (.bibtex extension);
+- org-bibtex (.org extension)."
+  (let ((files (if (listp file-or-files)
+		   file-or-files
+		 (list file-or-files)))
+	(cache (make-hash-table :test #'equal)))
+    (dolist (file files)
+      (pcase (file-name-extension file)
+        ("json"
+         (let ((json-array-type 'list)
+               (json-key-type 'symbol))
+           (dolist (item (json-read-file file))
+             (puthash (cdr (assq 'id item)) item cache))))
+        ((and (or "bib" "bibtex") ext)
+         (with-temp-buffer
+	   (insert-file-contents file)
+	   (bibtex-set-dialect (if (string= ext "bib") 'biblatex 'BibTeX) t)
+	   (let ((to-csl-fun (if (eq bibtex-dialect 'biblatex)
+				 #'citeproc-blt-entry-to-csl
+			       #'citeproc-bt-entry-to-csl))
+                 (entries (car (parsebib-parse-buffer nil nil t t))))
+             (maphash 
+	      (lambda (key entry)
+                (puthash key (funcall to-csl-fun entry)
+                         cache))
+              entries))))
+	("org"
+	 (org-map-entries
+	  (lambda ()
+	    (-when-let (key-w-entry (citeproc-bt-from-org-headline))
+	      (puthash (car key-w-entry) (citeproc-bt-entry-to-csl
+					  (cdr key-w-entry))
+		       cache)))
+	  t (list file)))
+        (ext
+         (user-error "Unknown bibliography extension: %S" ext))))
+    (lambda (itemids)
+      (mapcar (lambda (id)
+                (cons id (gethash id cache)))
+              itemids))))
 
 (provide 'citeproc-itemgetters)
 
