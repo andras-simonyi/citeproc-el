@@ -39,7 +39,7 @@ subsequent author substitution, and passes more than 70% of the tests in the
 addition to the standard
 [CSL-JSON](https://github.com/citation-style-language/schema/blob/master/csl-data.json)
 data format, citeproc-el has rudimentary support for reading bibliographic data
-from BibTeX and org-bibtex bibliographies and can produce output in several
+from BibTeX, biblatex and org-bibtex bibliographies and can produce output in several
 formats including HTML and org-mode markup (see [Supported output
 formats](#supported-output-formats) for the full list).
 
