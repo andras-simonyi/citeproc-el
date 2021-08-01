@@ -524,7 +524,8 @@ The values are ordered depth-first."
 
 (defun citeproc-rt-max-offset (rts)
   "Return the maximal first field width in rich-texts RTS."
-  (cl-loop for raw-item in rts maximize
+  (cl-loop for raw-item in rts 
+	   when (listp raw-item) maximize
 	   (length (citeproc-rt-to-plain (cadr raw-item)))))
 
 (defun citeproc-rt-subsequent-author-substitute (bib s)
