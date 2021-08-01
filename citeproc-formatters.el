@@ -240,9 +240,9 @@ CSL tests."
 					  x "}")))
     (font-variant-small-caps . ,(lambda (x) (concat "\\textsc{" x "}")))
     (text-decoration-underline . ,(lambda (x) (concat "\\underline{" x "}")))
-    (vertical-align-sup . ,(lambda (x) (concat "^{" x "}")))
+    (vertical-align-sup . ,(lambda (x) (concat "\\textsuperscript{" x "}")))
     (display-left-margin . ,(lambda (x) (concat x " ")))
-    (vertical-align-sub . ,(lambda (x) (concat "_{" x "}")))
+    (vertical-align-sub . ,(lambda (x) (concat "\\textsubscript{" x "}")))
     (font-style-oblique . ,(lambda (x) (concat "\\textsl{" x "}")))))
 
 ;; Define the formatters alist
