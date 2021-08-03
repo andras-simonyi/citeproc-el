@@ -29,17 +29,23 @@
 (require 's)
 
 (defconst citeproc--number-vars
-  '(chapter-number collection-number edition issue number number-of-pages
-		   number-of-volumes volume citation-number first-reference-note-number)
-  "CSL number variables.")
+  '(chapter-number citation-number collection-number edition first-reference-note-number
+		   issue number number-of-pages number-of-volumes page page-first
+		   part-number printing-number section supplement-number version volume)
+  "CSL number variables."
+  ;; Note: `locator', which is also on the official list, is omitted because
+  ;; it's treated specially in the code.
+  )
 
 (defconst citeproc--date-vars
-  '(accessed container event-date issued original-date submitted)
+  '(accessed available-date event-date issued original-date submitted)
   "CSL date variables.")
 
 (defconst citeproc--name-vars
-  '(author collection-editor composer container-author director editor editorial-director
-	   illustrator interviewer original-author recipient reviewed-author translator)
+  '(author chair collection-editor compiler composer container-author contributor curator
+	   director editor editorial-director executive-producer guest host illustrator
+	   interviewer narrator organizer original-author performer producer recipient
+	   reviewed-author script-writer series-creator translator)
   "CSL name variables.")
 
 (defconst citeproc--linked-vars
