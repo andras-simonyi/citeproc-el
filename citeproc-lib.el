@@ -1,6 +1,6 @@
 ;;; citeproc-lib.el --- misc functions and variables for citeproc-el -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
