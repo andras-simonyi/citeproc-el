@@ -146,10 +146,19 @@ first word is not in lowercase then return S."
 	(buffer-string))
     s))
 
-(defconst citeproc-s-english-stopwords '("a" "an" "and" "as" "at" "but" "by" "down"
-					 "for" "from" "in" "into" "nor" "of" "on"
-					 "onto" "or" "over" "so" "the" "till" "to" "up"
-					 "via" "with" "yet"))
+(defconst citeproc-s-english-stopwords
+  '("a" "according to" "across" "afore" "after" "against" "ahead of" "along" "alongside"
+    "amid" "amidst" "among" "amongst" "an" "and" "anenst" "apart from" "apropos"
+    "around" "as" "as regards" "aside" "astride" "at" "athwart" "atop" "back to"
+    "barring" "because of" "before" "behind" "below" "beneath" "beside" "besides"
+    "between" "beyond" "but" "by" "c" "ca" "circa" "close to" "d'" "de" "despite" "down"
+    "due to" "during" "et" "except" "far from" "for" "forenenst" "from" "given" "in"
+    "inside" "instead of" "into" "lest" "like" "modulo" "near" "next" "nor" "of" "off"
+    "on" "onto" "or" "out" "outside of" "over" "per" "plus" "prior to" "pro" "pursuant
+    to" "qua" "rather than" "regardless of" "sans" "since" "so" "such as" "than"
+    "that of" "the" "through" "throughout" "thru" "thruout" "till" "to" "toward" "towards"
+    "under" "underneath" "until" "unto" "up" "upon" "v." "van" "versus" "via" "vis-à-vis"
+    "von" "vs." "where as" "with" "within" "without" "yet"))
 
 (defun citeproc-s-title-case (s)
   "Return a title-cased version of string S."
