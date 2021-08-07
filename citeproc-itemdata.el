@@ -63,7 +63,7 @@ DISAMB-POS contains the position on which cite disambiguation is
 	       (cons (cons 'position (citeproc-itemdata-disamb-pos itd))
 		     (citeproc-itemdata-varvals itd))
 	       style
-	       'cite 'display)))
+	       'cite 'display 'no-links t)))
       (setf (citeproc-itemdata-rawcite itd) rc
 	    (citeproc-itemdata-rc-uptodate itd) t)
       rc)))
