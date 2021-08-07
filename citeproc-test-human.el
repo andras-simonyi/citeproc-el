@@ -140,8 +140,9 @@ Return the resulting output."
 				     proc))))
     (let ((output (if (string= mode "citation")
 		      (citeproc-render-citations proc output-format
-						 (eq 'csl-test output-format))
-		    (car (citeproc-render-bib proc output-format t)))))
+						 (when (eq 'csl-test output-format)
+						   'no-links))
+		    (car (citeproc-render-bib proc output-format 'no-links)))))
       (if (string= mode "citation") (s-join "\n" output) output))))
 
 (defun citeproc-test-human--expected-from-parsed (parsed)

@@ -94,23 +94,31 @@ CITATIONS is a list of `citeproc-citation' structures."
 	(queue-append (citeproc-proc-citations proc) citation))
       (setf (citeproc-proc-finalized proc) nil))))
 
-(defun citeproc-render-citations (proc format &optional no-links)
+(defun citeproc-render-citations (proc format &optional internal-links)
   "Render all citations in PROC in the given FORMAT.
-Return a list of formatted citations. If optional NO-LINKS is
-non-nil then don't link cites to the referred items."
+Return a list of formatted citations.
+  If the optional INTERNAL-LINKS is `no-links' then don't add
+internal links, if `bib-links' then link cites to the
+bibliography regardless of the style type, else add internal
+links based on the style type (cite-cite links for note styles
+and cite-bib links else)."
   (citeproc-proc-finalize proc)
-  (--map (citeproc-citation--render-formatted-citation it proc format no-links)
+  (--map (citeproc-citation--render-formatted-citation it proc format internal-links)
 	 (queue-head (citeproc-proc-citations proc))))
 
-(defun citeproc-render-bib (proc format &optional no-link-targets
+(defun citeproc-render-bib (proc format &optional internal-links
 				 no-external-links bib-formatter-fun)
   "Render a bibliography of items in PROC in FORMAT.
-If optional NO-LINK-TARGETS, NO-EXTERNAL-LINKS are non-nil then
-don't generate targets for citation links and external links,
-respecively. If the optional BIB-FORMATTER-FUN is given then it
-will be used to join the bibliography items instead of the
-content of the chosen formatter's `bib' slot (see
-`citeproc-formatter' for details).
+  If the optional INTERNAL-LINKS is `no-links' then don't add
+internal links, if `bib-links' then link cites to the
+bibliography regardless of the style type, else add internal
+links based on the style type (cite-cite links for note styles
+and cite-bib links else). If the optional NO-EXTERNAL-LINKS is
+non-nil then don't add external links.
+  If the optional BIB-FORMATTER-FUN is given then it will be used
+to join the bibliography items instead of the content of the
+chosen formatter's `bib' slot (see `citeproc-formatter' for
+details).
 
 Returns an error message string if the style of PROC doesn't
 contain a bibliography section. Otherwise it returns
@@ -147,7 +155,7 @@ formatting parameters keyed to the parameter names as symbols:
 	   (raw-bib (--map (citeproc-rt-finalize
 			    (citeproc-render-varlist-in-rt
 			     (citeproc-itemdata-varvals it)
-			     style 'bib 'display no-link-targets
+			     style 'bib 'display internal-links
 			     (or formatter-no-external-links no-external-links))
 			    punct-in-quote)
 			   sorted))
@@ -219,7 +227,7 @@ external links in the item."
 	     (citeproc-rt-cull-spaces-puncts
 	      (citeproc-rt-finalize
 	       (citeproc-render-varlist-in-rt
-		internal-varlist style mode 'display t no-external-links))))))
+		internal-varlist style mode 'display 'no-links no-external-links))))))
 
 (provide 'citeproc)
 

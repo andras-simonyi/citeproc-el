@@ -176,12 +176,16 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
     nil))
 
 (defun citeproc-render-varlist-in-rt (var-alist style mode render-mode &optional
-						no-item-no no-external-links)
+						internal-links no-external-links)
   "Render an item described by VAR-ALIST with STYLE in rich-text.
 Does NOT finalize the rich-text rendering. MODE is either `bib'
-or `cite', RENDER-MODE is `display' or `sort'. If the optional
-NO-ITEM-NO, NO-EXTERNAL-LINKS are non-nil then don't add item-no
-information and external links, respecively."
+or `cite', RENDER-MODE is `display' or `sort'.
+  If the optional INTERNAL-LINKS is `no-links' then don't add
+internal links, if `bib-links' then link cites to the
+bibliography regardless of the style type, else add internal
+links based on the style type (cite-cite links for note styles
+and cite-bib links else). If the optional NO-EXTERNAL-LINKS is
+non-nil then don't add external links."
   (-if-let (unprocessed-id (alist-get 'unprocessed-with-id var-alist))
       ;; Itemid received no associated csl fields from the getter!
       (list nil (concat "NO_ITEM_DATA:" unprocessed-id))
@@ -191,12 +195,8 @@ information and external links, respecively."
 				  'citeproc-style-bib-layout))
 	   (layout-fun (funcall layout-fun-accessor style)))
       (if (null layout-fun) "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
-	(let* ((year-suffix (alist-get 'year-suffix var-alist))
-	       (rendered (catch 'stop-rendering
-			  (funcall layout-fun context)))
-	       (itemid-attr (if (eq mode 'cite) 'cited-item-no 'bib-item-no))
-	       (itemid-attr-val (cons itemid-attr
-				      (alist-get 'citation-number var-alist))))
+	(let ((rendered (catch 'stop-rendering
+			  (funcall layout-fun context))))
 	  ;; Finalize external linking by linking the title if needed
 	  (when (and (eq mode 'bib) (not no-external-links))
 	    (-when-let ((var . val) (--any (assoc it var-alist)
@@ -207,14 +207,26 @@ information and external links, respecively."
 					(concat (alist-get var citeproc--link-prefix-alist
 							   "")
 						(alist-get var var-alist))))))
-	  ;; Add item-no information as the last attribute
-	  (unless no-item-no
-	    (cond ((consp rendered) (setf (car rendered)
-					  (-snoc (car rendered) itemid-attr-val)))
-		  ((stringp rendered) (setq rendered
-					    (list (list itemid-attr-val) rendered)))))
+	  ;; Add appropriate item-no information   
+	  (let ((note-style (citeproc-style-cite-note style)))
+	    (unless (or (eq internal-links 'no-links)
+			(and note-style (eq mode 'bib)))
+	      (let* ((itemid-attr
+		      (if (and note-style (not (eq internal-links 'bib-links)))
+			  ;; For note styles link subsequent cites to the first ones
+			  (if (eq (alist-get 'position var-alist) 'first)
+			      'bib-item-no
+			    'cited-item-no)
+			;; Else link each cite to the corresponding bib item
+			(if (eq mode 'cite) 'cited-item-no 'bib-item-no)))
+		     (itemid-attr-val (cons itemid-attr
+					    (alist-get 'citation-number var-alist))))
+		(cond ((consp rendered) (setf (car rendered)
+					      (-snoc (car rendered) itemid-attr-val)))
+		      ((stringp rendered) (setq rendered
+						(list (list itemid-attr-val) rendered)))))))
 	  ;; Add year-suffix if needed
-	  (if year-suffix
+	  (-if-let (year-suffix (alist-get 'year-suffix var-alist))
 	      (car (citeproc-rt-add-year-suffix
 		    rendered
 		    ;; year suffix is empty if already rendered by var just to delete the
