@@ -97,11 +97,12 @@ CITATIONS is a list of `citeproc-citation' structures."
 (defun citeproc-render-citations (proc format &optional internal-links)
   "Render all citations in PROC in the given FORMAT.
 Return a list of formatted citations.
-  If the optional INTERNAL-LINKS is `no-links' then don't add
-internal links, if `bib-links' then link cites to the
-bibliography regardless of the style type, else add internal
+  If the optional INTERNAL-LINKS is `bib-links' then link cites
+to the bibliography regardless of the style type, if `no-links'
+then don't add internal links, if nil or `auto' then add internal
 links based on the style type (cite-cite links for note styles
-and cite-bib links else)."
+and cite-bib links else). For legacy reasons, any other value is
+treated as `no-links'."
   (citeproc-proc-finalize proc)
   (--map (citeproc-citation--render-formatted-citation it proc format internal-links)
 	 (queue-head (citeproc-proc-citations proc))))
@@ -109,16 +110,11 @@ and cite-bib links else)."
 (defun citeproc-render-bib (proc format &optional internal-links
 				 no-external-links bib-formatter-fun)
   "Render a bibliography of items in PROC in FORMAT.
-  If the optional INTERNAL-LINKS is `no-links' then don't add
-internal links, if `bib-links' then link cites to the
-bibliography regardless of the style type, else add internal
-links based on the style type (cite-cite links for note styles
-and cite-bib links else). If the optional NO-EXTERNAL-LINKS is
-non-nil then don't add external links.
-  If the optional BIB-FORMATTER-FUN is given then it will be used
-to join the bibliography items instead of the content of the
-chosen formatter's `bib' slot (see `citeproc-formatter' for
-details).
+For the optional INTERNAL-LINKS argument see
+`citeproc-render-citations'. If the optional BIB-FORMATTER-FUN is
+given then it will be used to join the bibliography items instead
+of the content of the chosen formatter's `bib' slot (see
+`citeproc-formatter' for details).
 
 Returns an error message string if the style of PROC doesn't
 contain a bibliography section. Otherwise it returns

@@ -180,12 +180,14 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
   "Render an item described by VAR-ALIST with STYLE in rich-text.
 Does NOT finalize the rich-text rendering. MODE is either `bib'
 or `cite', RENDER-MODE is `display' or `sort'.
-  If the optional INTERNAL-LINKS is `no-links' then don't add
-internal links, if `bib-links' then link cites to the
-bibliography regardless of the style type, else add internal
+  If the optional INTERNAL-LINKS is `bib-links' then link cites
+to the bibliography regardless of the style type, if `no-links'
+then don't add internal links, if nil or `auto' then add internal
 links based on the style type (cite-cite links for note styles
-and cite-bib links else). If the optional NO-EXTERNAL-LINKS is
-non-nil then don't add external links."
+and cite-bib links else). For legacy reasons, any other value is
+treated as `no-links'.
+  If the optional NO-EXTERNAL-LINKS is non-nil then don't add
+external links."
   (-if-let (unprocessed-id (alist-get 'unprocessed-with-id var-alist))
       ;; Itemid received no associated csl fields from the getter!
       (list nil (concat "NO_ITEM_DATA:" unprocessed-id))
@@ -209,8 +211,9 @@ non-nil then don't add external links."
 						(alist-get var var-alist))))))
 	  ;; Add appropriate item-no information   
 	  (let ((note-style (citeproc-style-cite-note style)))
-	    (unless (or (eq internal-links 'no-links)
-			(and note-style (eq mode 'bib)))
+	    (unless (or (and internal-links (not (memq internal-links '(auto bib-links))))
+			(and note-style (eq mode 'bib) (or (null internal-links)
+							   (eq internal-links 'auto))))
 	      (let* ((itemid-attr
 		      (if (and note-style (not (eq internal-links 'bib-links)))
 			  ;; For note styles link subsequent cites to the first ones

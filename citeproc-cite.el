@@ -106,10 +106,12 @@ GROUPED is used internally to indicate whether the cites were
   "Render CITE in STYLE, together with its affixes.
 If the prefix or suffix in CITE don't contain trailing and
 leading spaces then they are added. If the optional
-INTERNAL-LINKS is `no-links' then don't add internal links, if
-`bib-links' then link cites to the bibliography regardless of the
-style type, else add internal links based on the style
-type (cite-cite links for note styles and cite-bib links else)."
+INTERNAL-LINKS is `bib-links' then link cites to the bibliography
+regardless of the style type, if `no-links' then don't add
+internal links, if nil or `auto' then add internal links based on
+the style type (cite-cite links for note styles and cite-bib
+links else). For legacy reasons, any other value is treated as
+`no-links'."
   (-let* ((result nil)
 	  ((&alist 'suffix suff
 		   'prefix pref)
@@ -134,12 +136,8 @@ type (cite-cite links for note styles and cite-bib links else)."
 
 (defun citeproc-cite-or-citegroup--render (c style internal-links top-dl gr-dl ys-dl ac-dl)
   "Render cite or cite-group C with STYLE.
-  If INTERNAL-LINKS is `no-links' then don't add
-internal links, if `bib-links' then link cites to the
-bibliography regardless of the style type, else add internal
-links based on the style type (cite-cite links for note styles
-and cite-bib links else).
-  TOP-DL is the top-, GR-DL the group-, YS-DL the year-suffix- and
+For the INTERNAL-LINKS argument see `citeproc-cite--render'.
+TOP-DL is the top-, GR-DL the group-, YS-DL the year-suffix- and
 AC-DL the after-collapse-delimiter to use."
   (cond ((and (car c) (memq (car c) '(top group year-suffix-collapsed)))
 	 (let ((delimiter (pcase (car c)
@@ -162,11 +160,8 @@ AC-DL the after-collapse-delimiter to use."
 
 (defun citeproc-citation--render (c proc &optional internal-links)
   "Render citation C with CSL processor PROC.
-If the optional INTERNAL-LINKS is `no-links' then don't add
-internal links, if `bib-links' then link cites to the
-bibliography regardless of the style type, else add internal
-links based on the style type (cite-cite links for note styles
-and cite-bib links else)."
+For the optional INTERNAL-LINKS argument see
+`citeproc-cite--render'."
   (let* ((style (citeproc-proc-style proc))
 	 (punct-in-quote
 	  (string= (alist-get 'punctuation-in-quote (citeproc-style-locale-opts style))
@@ -308,11 +303,8 @@ the span."
 
 (defun citeproc-citation--render-formatted-citation (c proc format &optional internal-links)
   "Render citation C with csl processor PROC in FORMAT.
-If the optional INTERNAL-LINKS is `no-links' then don't add
-internal links, if `bib-links' then link cites to the
-bibliography regardless of the style type, else add internal
-links based on the style type (cite-cite links for note styles
-and cite-bib links else)."
+For the optional INTERNAL-LINKS argument see
+`citeproc-cite--render'."
   (let ((fmt (citeproc-formatter-for-format format)))
     (funcall (citeproc-formatter-cite fmt)
 	     (funcall (citeproc-formatter-rt fmt)
