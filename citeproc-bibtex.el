@@ -168,12 +168,14 @@ character was found."
 
 (defun citeproc-bt--to-csl (s)
   "Convert a BibTeX field S to a CSL one."
-  (--> s
-       (citeproc-bt--preprocess-for-decode it)
-       (citeproc-bt--decode it)
-       (s-replace-all '(("{" . "") ("}" . "") ("\n" . " ") ("\\" . "")) it)
-       (replace-regexp-in-string "[[:space:]]\\{2,\\}" " " it)
-       (s-chomp it)))
+  (if (> (length s) 0)
+      (--> s
+	   (citeproc-bt--preprocess-for-decode it)
+	   (citeproc-bt--decode it)
+	   (s-replace-all '(("{" . "") ("}" . "") ("\n" . " ") ("\\" . "")) it)
+	   (replace-regexp-in-string "[[:space:]]\\{2,\\}" " " it)
+	   (s-chomp it))
+    s))
 
 (defun citeproc-bt--preprocess-for-decode (s)
   "Preprocess field S before decoding.
