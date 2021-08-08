@@ -125,6 +125,6 @@ All sorts are alphanumerically increasing."
 
 (citeproc-test-blt-create-from-dir "./test/biblatex_csl")
 
-(provide 'citeproc-test-int-biblatex.el)
+(provide 'citeproc-test-int-biblatex)
 
 ;;; citeproc-test-int-biblatex.el ends here
