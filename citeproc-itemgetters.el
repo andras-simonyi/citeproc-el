@@ -40,6 +40,15 @@
 (require 'citeproc-bibtex)
 (require 'citeproc-biblatex)
 
+(defun citeproc-itemgetter--parsebib-buffer ()
+  "Parse a BibTeX/biblatex buffer with Parsebib."
+  ;; Note: this is needed to support different Parsebib versions in use.
+  (cond ((fboundp 'parsebib-parse-buffer)
+	 (parsebib-parse-buffer nil nil t t))
+	((fboundp 'parsebib-parse-bib-buffer)
+	 (parsebib-parse-bib-buffer :expand-strings t :inheritance t))
+	(t (error "No Parsebib buffer parsing function is available"))))
+
 (defun citeproc-hash-itemgetter-from-csl-json (file)
   "Return a hash-based getter for csl json bibliography FILE."
   (let* ((json-array-type 'list)
@@ -140,7 +149,7 @@ Supported formats:
 	   (let ((to-csl-fun (if (eq bibtex-dialect 'biblatex)
 				 #'citeproc-blt-entry-to-csl
 			       #'citeproc-bt-entry-to-csl))
-                 (entries (car (parsebib-parse-buffer nil nil t t))))
+                 (entries (car (citeproc-itemgetter--parsebib-buffer))))
              (maphash 
 	      (lambda (key entry)
                 (puthash key (funcall to-csl-fun entry)
