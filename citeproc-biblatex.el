@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'iso8601)
+(require 'parse-time)
 (require 'citeproc-bibtex)
 
 (defconst citeproc-blt--to-csl-types-alist
@@ -196,7 +196,7 @@ Only those fields are mapped that do not require further processing.")
   (let* ((interval-strings (split-string d "/"))
 	 (interval-date-parts
 	  (mapcar (lambda (x)
-		    (let* ((parsed (iso8601-parse-date x))
+		    (let* ((parsed (parse-time-string x))
 			   (year (decoded-time-year parsed))
 			   (month (decoded-time-month parsed))
 			   (day (decoded-time-day parsed))
