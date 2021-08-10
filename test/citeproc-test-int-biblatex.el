@@ -1,12 +1,13 @@
 ;;; citeproc-test-int-biblatex.el --- biblatex tests -*- lexical-binding: t; -*-
 
 (require 'ert)
-(require 'parsebib)
 (require 'yaml)
-(require 'citeproc-biblatex)
-(require 'citeproc-lib)
 (require 'string-inflection)
 (require 'ht)
+(require 'parsebib)
+
+(require 'citeproc-biblatex)
+(require 'citeproc-lib)
 
 (defun citeproc-test-blt--parse (file)
   "Parse a biblatex->CSL test file.
@@ -29,7 +30,8 @@ the CSL part."
       (with-temp-buffer
 	(insert blt-string)
 	(goto-char 1)
-	(setq blt (ht->alist (car (parsebib-parse-buffer nil nil t t)))))
+	(setq blt (ht->alist
+		   (car (parsebib-parse-bib-buffer :expand-strings t :inheritance t)))))
       (forward-line 2)
       (move-beginning-of-line nil)
       (setq csl (yaml-parse-string
