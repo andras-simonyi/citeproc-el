@@ -245,24 +245,63 @@ CSL tests."
     (vertical-align-sub . ,(lambda (x) (concat "\\textsubscript{" x "}")))
     (font-style-oblique . ,(lambda (x) (concat "\\textsl{" x "}")))))
 
+;; Org-ODT
+
+(defconst citeproc-fmt--org-odt-alist
+  `((unformatted . citeproc-fmt--xml-escape)
+    (href . ,(lambda (x y) (concat "<text:a xlink:type=\"simple\" xlink:href=\""
+				   y "\">" x "</text:a>")))
+    ;; (cited-item-no . ,(lambda (x y) (concat "<a href=\"#citeproc_bib_item_" y "\">" 
+    ;; 					    x "</a>")))
+    ;; (bib-item-no . ,(lambda (x y) (concat "<a id=\"citeproc_bib_item_" y "\"></a>"
+    ;; 					  x)))
+    (font-style-italic
+     . ,(lambda (x) (concat "<text:span text:style-name=\"Emphasis\">" x "</text:span>")))
+    (font-style-oblique
+     . ,(lambda (x) (concat "<text:span text:style-name=\"Emphasis\">" x "</text:span>")))
+    (font-variant-small-caps
+     . ,(lambda (x) (concat "<text:span text:style-name=\"OrgSmallCaps\">" x "</text:span>")))
+    (font-weight-bold
+     . ,(lambda (x) (concat "<text:span text:style-name=\"Bold\">" x "</text:span>")))
+    (text-decoration-underline
+     . ,(lambda (x) (concat "<text:span text:style-name=\"Underline\">" x "</text:span>")))
+    (vertical-align-sub
+     . ,(lambda (x) (concat "<text:span text:style-name=\"OrgSubscript\">" x "</text:span>")))
+    (vertical-align-sup
+     . ,(lambda (x)
+	  (concat "<text:span text:style-name=\"OrgSuperscript\">" x "</text:span>")))
+    ;; (vertical-align-baseline . ,(lambda (x) (concat "<span style=\"baseline\">" x "</span>")))
+    ;; (display-left-margin . ,(lambda (x) (concat "\n    <div class=\"csl-left-margin\">"
+    ;; 						x "</div>")))
+    ;; (display-right-inline . ,(lambda (x) (concat "<div class=\"csl-right-inline\">"
+    ;; 						 x "</div>\n  ")))
+    ;; (display-block . ,(lambda (x) (concat "\n\n    <div class=\"csl-block\">"
+    ;; 					  x "</div>\n")))
+    ;; (display-indent . ,(lambda (x) (concat "<div class=\"csl-indent\">" x "</div>\n  ")))
+    ))
+
 ;; Define the formatters alist
 
- (defvar citeproc-fmt--formatters-alist
-   `((html . ,(citeproc-formatter-create
-	       :rt (citeproc-formatter-fun-create citeproc-fmt--html-alist)
-	       :bib #'citeproc-fmt--html-bib-formatter))
-     (csl-test . ,(citeproc-formatter-create
-		   :rt (citeproc-formatter-fun-create citeproc-fmt--csl-test-alist)
-		   :bib #'citeproc-fmt--html-bib-formatter
-		   :no-external-links t))
-     (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
-     (org . ,(citeproc-formatter-create
-	      :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)))
-     (latex . ,(citeproc-formatter-create
-		:rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
-     (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain
-					  :no-external-links t)))
-   "Alist mapping supported output formats to formatter structs.")
+(defvar citeproc-fmt--formatters-alist
+  `((org-odt . ,(citeproc-formatter-create
+		 :rt (citeproc-formatter-fun-create citeproc-fmt--org-odt-alist)
+		 ;; :bib #'citeproc-fmt--org-odt-bib-formatter
+		 ))
+    (html . ,(citeproc-formatter-create
+	      :rt (citeproc-formatter-fun-create citeproc-fmt--html-alist)
+	      :bib #'citeproc-fmt--html-bib-formatter))
+    (csl-test . ,(citeproc-formatter-create
+		  :rt (citeproc-formatter-fun-create citeproc-fmt--csl-test-alist)
+		  :bib #'citeproc-fmt--html-bib-formatter
+		  :no-external-links t))
+    (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
+    (org . ,(citeproc-formatter-create
+	     :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)))
+    (latex . ,(citeproc-formatter-create
+	       :rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
+    (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain
+					 :no-external-links t)))
+  "Alist mapping supported output formats to formatter structs.")
 
 (defun citeproc-formatter-for-format (format)
   "Return the formatter struct belonging to FORMAT.
