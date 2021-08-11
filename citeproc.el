@@ -111,10 +111,11 @@ treated as `no-links'."
 				 no-external-links bib-formatter-fun)
   "Render a bibliography of items in PROC in FORMAT.
 For the optional INTERNAL-LINKS argument see
-`citeproc-render-citations'. If the optional BIB-FORMATTER-FUN is
-given then it will be used to join the bibliography items instead
-of the content of the chosen formatter's `bib' slot (see
-`citeproc-formatter' for details).
+`citeproc-render-citations'. If the optional NO-EXTERNAL-LINKS is
+non-nil then don't generate external links. If the optional
+BIB-FORMATTER-FUN is given then it will be used to join the
+bibliography items instead of the content of the chosen
+formatter's `bib' slot (see `citeproc-formatter' for details).
 
 Returns an error message string if the style of PROC doesn't
 contain a bibliography section. Otherwise it returns

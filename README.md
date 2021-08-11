@@ -125,6 +125,18 @@ BibTeX/org-bibtex files. Similarly to `citeproc-itemgetter-from-csl-json`, these
 functions open and read directly from the specified files each time they are
 called.
 
+#### citeproc-hash-itemgetter-from-any `(file-or-files)`
+Return a getter for `file-or-files` in any supported format.
+The format is determined on the basis of file extensions.
+Supported formats:
+
+- CSL-JSON (.json extension) the recommended native format;
+- biblatex (.bib extension), broadly compatible with BibTeX, the
+  use of the dedicated BibTeX reader can be enforced by using the
+  .bibtex extension in the filename;
+- BibTeX (.bibtex extension);
+- org-bibtex (.org extension).
+
 #### citeproc-locale-getter-from-dir `(directory)`
 
 Return a locale-getter function getting CSL locales from `directory`. The
@@ -172,23 +184,30 @@ Clear the citation list of citation processor `proc`.
 
 ### Rendering citations and bibliographies
 
-#### citeproc-render-citations `(proc format &optional no-links)`
+#### citeproc-render-citations `(proc format &optional internal-links)`
 
 Render all citations in citation processor `proc` in the given `format`. Return
 a list of formatted citations. `format` is one of the [supported output
-formats](#supported-output-formats) as a symbol. If the optional `no-links` is
-non-nil then don’t link cites to the referred items.
+formats](#supported-output-formats) as a symbol. 
 
-#### citeproc-render-bib `(proc format &optional no-link-targets no-external-links bib-formatter-fun)`
+If the optional `internal-links` is `bib-links` then link cites
+to the bibliography regardless of the style type, if `no-links`
+then don't add internal links, if nil or `auto` then add internal
+links based on the style type (cite-cite links for note styles
+and cite-bib links else). For legacy reasons, any other value is
+treated as `no-links`.
+
+#### citeproc-render-bib `(proc format &optional internal-links no-external-links bib-formatter-fun)`
 
 Render a bibliography of the citations in citation processor `proc` in the
 given`format`. `format` is one of the [supported output
-formats](#supported-output-formats) as a symbol. If optional `no-link-targets`,
-`no-external-links` are non-nil then don't generate targets for citation links and
-external links, respecively. If the optional `bib-formatter-fun` is given then
-it will be used to join the bibliography items instead of the content of the
-chosen formatter’s `bib` slot (see the documentation of the `citeproc-formatter`
-structure type for details).
+formats](#supported-output-formats) as a symbol. 
+
+For the optional `internal-links` argument see `citeproc-render-citations`. If
+the optional `no-external-links` is non-nil then don't generate external links.
+If the optional `bib-formatter-fun` is given then it will be used to join the
+bibliography items instead of the content of the chosen formatter’s `bib` slot
+(see the documentation of the `citeproc-formatter` structure type for details).
 
 Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
 `FORMATTING-PARAMETERS` is an alist containing the values of the following
