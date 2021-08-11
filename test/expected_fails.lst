@@ -256,8 +256,6 @@ citeproc-suite-textcase-repeated-title-bug
 citeproc-suite-textcase-sentence-capitalization
 citeproc-suite-textcase-skip-name-particles-in-title-case
 citeproc-suite-textcase-stop-word-before-hyphen
-citeproc-suite-textcase-title-capitalization
-citeproc-suite-textcase-title-capitalization2
 citeproc-suite-textcase-title-case-non-english
 citeproc-suite-textcase-uppercase
 citeproc-suite-variables-container-title-short
