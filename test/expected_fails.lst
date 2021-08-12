@@ -249,7 +249,6 @@ citeproc-suite-textcase-implicit-nocase
 citeproc-suite-textcase-in-quotes
 citeproc-suite-textcase-last-char
 citeproc-suite-textcase-locale-unicode
-citeproc-suite-textcase-lowercase
 citeproc-suite-textcase-no-space-before-apostrophe
 citeproc-suite-textcase-non-english-chars
 citeproc-suite-textcase-repeated-title-bug
@@ -257,7 +256,6 @@ citeproc-suite-textcase-sentence-capitalization
 citeproc-suite-textcase-skip-name-particles-in-title-case
 citeproc-suite-textcase-stop-word-before-hyphen
 citeproc-suite-textcase-title-case-non-english
-citeproc-suite-textcase-uppercase
 citeproc-suite-variables-container-title-short
 citeproc-suite-variables-container-title-short2
 citeproc-suite-variables-short-form

@@ -122,17 +122,24 @@ Return the original RT if it has non-empty attrs and content."
        (citeproc-rt-join-strings
 	(citeproc-rt-splice-unformatted (cons attrs simplifieds)))))))
 
-(defun citeproc-rt-map-strings (fun rts)
+(defun citeproc-rt-map-strings (fun rts &optional skip-nocase)
   "Map through FUN all strings in rich-texts RTS.
 Return a new rich-text with all S content strings replaced by the
-value of FUN applied to S. No formatting is changed."
-  (--map (citeproc-rt-format it fun) rts))
+value of FUN applied to S. No formatting is changed. If optional
+SKIP-NOCASE is non-nil then skip spans with the `nocase'
+attribute set to non-nil."
+  (--map (citeproc-rt-format it fun skip-nocase) rts))
 
-(defun citeproc-rt-format (rt fun)
-  "Format all plain text in RT with FUN."
-  (if (listp rt)
-      (cons (car rt) (citeproc-rt-map-strings fun (cdr rt)))
-    (funcall fun rt)))
+(defun citeproc-rt-format (rt fun &optional skip-nocase)
+  "Format all plain text in RT with FUN.
+If optional SKIP-NOCASE is non-nil then skip spans with the
+`nocase' attribute set to non-nil."
+  (pcase rt
+    (`nil nil)
+    ((pred listp) (if (and skip-nocase (alist-get 'nocase (car rt)))
+		      rt
+		    (cons (car rt) (citeproc-rt-map-strings fun (cdr rt) skip-nocase))))
+    (_ (funcall fun rt))))
 
 (defun citeproc-rt-replace-all (replacements rts)
   "Make all REPLACEMENTS in the strings if rich-texts RTS."
@@ -195,9 +202,9 @@ CASE is one of the following: 'lowercase, 'uppercase,
 'capitalize-first, 'capitalize-all, 'sentence, 'title."
   (pcase case
     ('uppercase
-     (citeproc-rt-map-strings #'upcase rts))
+     (citeproc-rt-map-strings #'upcase rts t))
     ('lowercase
-     (citeproc-rt-map-strings #'downcase rts))
+     (citeproc-rt-map-strings #'downcase rts t))
     ('capitalize-first
      (--map (citeproc-rt-change-case it #'citeproc-s-capitalize-first) rts))
     ('capitalize-all
