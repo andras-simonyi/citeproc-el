@@ -77,7 +77,7 @@
   '(("'" . "ACUTE") ("`" . "GRAVE") ("^" . "CIRCUMFLEX") ("~" . "TILDE")
     ("=" . "MACRON") ("." . "WITH DOT ABOVE") ("\"" . "DIAERESIS")
     ("''" . "DIAERESIS") ("H" . "DOUBLE ACUTE") ("r" . "WITH RING ABOVE")
-    ("u" . "BREVE") ("c" . "CEDILLA") ("k" . "OGONEK"))
+    ("u" . "BREVE") ("c" . "CEDILLA") ("k" . "OGONEK") ("v" . "caron"))
   "Alist mapping LaTeX prefixes to unicode name endings.")
 
 (defconst citeproc-bt--comm-letter-to-ucs-alist
@@ -88,7 +88,9 @@
     (("\"" . "A") . "Ä")
     (("r" . "A") . "Å")
     (("c" . "C") . "Ç")
+    (("v" . "C") . "Č")
     (("c" . "S") . "Ş")
+    (("v" . "S") . "Š")
     (("`" . "E") . "È")
     (("'" . "E") . "É")
     (("^" . "E") . "Ê")
@@ -115,7 +117,9 @@
     (("\"" . "a") . "ä")
     (("r" . "a") . "å")
     (("c" . "c") . "ç")
+    (("v" . "c") . "č")
     (("c" . "s") . "ş")
+    (("v" . "s") . "š")
     (("`" . "e") . "è")
     (("'" . "e") . "é")
     (("^" . "e") . "ê")
@@ -139,7 +143,9 @@
     (("H" . "o") . "ő")
     (("H" . "O") . "Ő")
     (("H" . "u") . "ű")
-    (("H" . "U") . "Ű"))
+    (("H" . "U") . "Ű")
+    (("v" . "z") . "ž")
+    (("v" . "Z") . "Ž"))
   "Alist mapping LaTeX (SYMBOL-COMMAND . ASCII-CHAR) pairs to unicode characters.")
 
 (defconst citeproc-bt--to-ucs-alist
@@ -255,6 +261,17 @@ replacements."
 	   (or (citeproc-bt--to-ucs command letter) (concat "\\" x))
 	 (assoc-default command citeproc-bt--to-ucs-alist))))
    s))
+
+(defun citeproc-bt--decode-buffer ()
+  "Decode a BibTeX encoded string."
+  (goto-char (point-min))
+  (while (re-search-forward citeproc-bt--decode-rx nil t)
+    (replace-match
+     (let ((command (match-string 1))
+	   (letter (match-string 2)))
+       (if letter
+	   (or (citeproc-bt--to-ucs command letter) (concat "\\" (match-string 0)))
+	 (assoc-default command citeproc-bt--to-ucs-alist))))))
 
 (defun citeproc-bt--to-csl-date (year month)
   "Return a CSL version of the date given by YEAR and MONTH.
