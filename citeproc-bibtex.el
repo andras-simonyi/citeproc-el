@@ -77,7 +77,7 @@
   '(("'" . "ACUTE") ("`" . "GRAVE") ("^" . "CIRCUMFLEX") ("~" . "TILDE")
     ("=" . "MACRON") ("." . "WITH DOT ABOVE") ("\"" . "DIAERESIS")
     ("''" . "DIAERESIS") ("H" . "DOUBLE ACUTE") ("r" . "WITH RING ABOVE")
-    ("u" . "BREVE") ("c" . "CEDILLA") ("k" . "OGONEK") ("v" . "caron"))
+    ("u" . "BREVE") ("c" . "CEDILLA") ("k" . "OGONEK") ("v" . "CARON"))
   "Alist mapping LaTeX prefixes to unicode name endings.")
 
 (defconst citeproc-bt--comm-letter-to-ucs-alist
@@ -145,12 +145,13 @@
     (("H" . "u") . "ű")
     (("H" . "U") . "Ű")
     (("v" . "z") . "ž")
-    (("v" . "Z") . "Ž"))
+    (("v" . "Z") . "Ž")
+    (("v" . "r") . "ř"))
   "Alist mapping LaTeX (SYMBOL-COMMAND . ASCII-CHAR) pairs to unicode characters.")
 
 (defconst citeproc-bt--to-ucs-alist
   '(("l" . "ł") ("L" . "Ł") ("o" . "ø") ("O" . "Ø") ("AA" . "Å") ("aa" . "å")
-    ("AE" . "Æ") ("ae" . "æ"))
+    ("AE" . "Æ") ("ae" . "æ") ("ss" . "ß"))
   "Alist mapping LaTeX commands to characters")
 
 (defun citeproc-bt--to-ucs (ltx char)
@@ -178,7 +179,7 @@ character was found."
       (--> s
 	   (citeproc-bt--preprocess-for-decode it)
 	   (citeproc-bt--decode it)
-	   (s-replace-all '(("{" . "") ("}" . "") ("\n" . " ") ("\\" . "")) it)
+	   (s-replace-all '(("{" . "") ("}" . "") ("\n" . " ") ("\\" . "") ("~" . " ")) it)
 	   (replace-regexp-in-string "[[:space:]]\\{2,\\}" " " it)
 	   (s-chomp it))
     s))
@@ -194,7 +195,8 @@ replacements."
 
 (defun citeproc-bt--to-csl-names (n)
   "Return a CSL version of BibTeX names field N."
-  (mapcar #'citeproc-bt--to-csl-name (s-split "\\band\\b" n)))
+  (mapcar #'citeproc-bt--to-csl-name
+	  (s-split "\\band\\b" (citeproc-bt--to-csl n))))
 
 (defun citeproc-bt--parse-family (f)
   "Parse family name tokens F into a csl name-part alist."
@@ -241,12 +243,12 @@ replacements."
 (defconst citeproc-bt--decode-rx
   (rx (or (seq "\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"")) (0+ space)
 	       (group-n 2 letter))
-	  (seq "\\" (group-n 1 (in "H" "r" "u" "c" "k")) (1+ space)
+	  (seq "\\" (group-n 1 (in "H" "r" "u" "c" "k" "v")) (1+ space)
 	       (group-n 2 letter))
-	  (seq "\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"" "H" "r" "u" "c" "k"))
+	  (seq "\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"" "H" "r" "u" "c" "k" "v"))
 	       (0+ space) "{" (group-n 2 letter) "}")
-	  (seq "\\" (group-n 1 (or "l" "L" "o" "O" "AA" "aa" "ae" "AE")) word-boundary)
-	  (seq "{" "\\" (group-n 1 (or "l" "L" "o" "O" "AA" "aa" "ae" "AE"))
+	  (seq "\\" (group-n 1 (or "l" "L" "o" "O" "AA" "aa" "ae" "AE" "ss")) word-boundary)
+	  (seq "{" "\\" (group-n 1 (or "l" "L" "o" "O" "AA" "aa" "ae" "AE" "ss"))
 	       (0+ space) "}")))
   "Regular expression matching BibTeX special character commands.")
 
@@ -263,7 +265,7 @@ replacements."
    s))
 
 (defun citeproc-bt--decode-buffer ()
-  "Decode a BibTeX encoded string."
+  "Decode BibTeX encoded characters in the current buffer."
   (goto-char (point-min))
   (while (re-search-forward citeproc-bt--decode-rx nil t)
     (replace-match
