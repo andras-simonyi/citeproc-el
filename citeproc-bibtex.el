@@ -151,8 +151,8 @@
 
 (defconst citeproc-bt--to-ucs-alist
   '(("l" . "ł") ("L" . "Ł") ("o" . "ø") ("O" . "Ø") ("AA" . "Å") ("aa" . "å")
-    ("AE" . "Æ") ("ae" . "æ") ("ss" . "ß"))
-  "Alist mapping LaTeX commands to characters")
+    ("AE" . "Æ") ("ae" . "æ") ("ss" . "ß") ("i" . "ı"))
+  "Alist mapping LaTeX commands to characters.")
 
 (defun citeproc-bt--to-ucs (ltx char)
   "Return the unicode version of LaTeX command LTX applied to CHAR.
@@ -173,16 +173,75 @@ character was found."
 	  (char-to-string char-name)
 	nil)))
 
-(defun citeproc-bt--to-csl (s)
-  "Convert a BibTeX field S to a CSL one."
-  (if (> (length s) 0)
-      (--> s
-	   (citeproc-bt--preprocess-for-decode it)
-	   (citeproc-bt--decode it)
-	   (s-replace-all '(("{" . "") ("}" . "") ("\n" . " ") ("\\" . "") ("~" . " ")) it)
-	   (replace-regexp-in-string "[[:space:]]\\{2,\\}" " " it)
-	   (s-chomp it))
-    s))
+(defconst citeproc-bt--decode-rx
+  (rx (or
+       (seq "{\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"")) (0+ space)
+	    (group-n 2 letter) "}")
+       (seq "{\\" (group-n 1 (in "H" "r" "u" "c" "k" "v")) (1+ space)
+	    (group-n 2 letter) "}")
+       (seq "{\\" (group-n 1 (or "l" "L" "o" "O" "AA" "aa" "ae" "AE" "ss" "i"))
+	    (0+ space) "}")
+       (seq "\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"" "H" "r" "u" "c" "k" "v"))
+	    (0+ space) "{" (group-n 2 letter) "}")
+       (seq "\\" (group-n 1 (in "H" "r" "u" "c" "k" "v")) (1+ space)
+	    (group-n 2 letter))
+       (seq "\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"")) (0+ space)
+	    (group-n 2 letter))
+       (seq "\\" (group-n 1 (or "l" "L" "o" "O" "AA" "aa" "ae" "AE" "ss" "i"))
+	    word-boundary)))
+  "Regular expression matching BibTeX special character commands.")
+
+(defun citeproc-bt--decode (s)
+  "Decode a BibTeX encoded string."
+  (replace-regexp-in-string
+   citeproc-bt--decode-rx
+   (lambda (x)
+     (let ((command (match-string 1 x))
+	   (letter (match-string 2 x)))
+       (if letter
+	   (or (citeproc-bt--to-ucs command letter) (concat "\\" x))
+	 (assoc-default command citeproc-bt--to-ucs-alist))))
+   s))
+
+(defun citeproc-bt--decode-buffer ()
+  "Decode BibTeX encoded characters in the current buffer."
+  (goto-char (point-min))
+  (while (re-search-forward citeproc-bt--decode-rx nil t)
+    (replace-match
+     (let ((replacement (let ((command (match-string 1))
+			      (letter (match-string 2)))
+			  (if letter
+			      (or (citeproc-bt--to-ucs command letter) (concat "\\" (match-string 0)))
+			    (assoc-default command citeproc-bt--to-ucs-alist)))))
+       replacement))))
+
+(defconst citeproc-bt--command-rx
+  (rx "\\" (1+ (any "a-z" "A-Z")) "{"	; \TEX-COMMAND{
+      (group (*? anything))		; ARGUMENT
+      "}"				; }
+      ))
+
+(defconst citeproc-bt--braces-rx
+  (rx "{" (group (*? anything)) "}")) 	; {TEXT}
+
+(defun citeproc-bt--process-brackets (s &optional lhb rhb)
+  "Process LaTeX curly brackets in string S.
+Optional LHB and RHB specify what to substitute for left and
+right braces when they are not enclosing command arguments.
+The default is to remove them."
+  (let* ((result s)
+	 (match t))
+    (while match
+      (cond ((string-match citeproc-bt--command-rx result)
+	     (setq result (replace-match "\\1" t nil result)
+		   match t))
+	    ((string-match citeproc-bt--braces-rx result)
+	     (setq result (replace-match
+			   (concat lhb "\\1" rhb)
+			   t nil result)
+		   match t))
+	    (t (setq match nil))))
+    result))
 
 (defun citeproc-bt--preprocess-for-decode (s)
   "Preprocess field S before decoding.
@@ -192,6 +251,23 @@ replacements."
 			    (string= (substring s -1) "\""))
 		       (substring s 1 -1) s)))
     (s-replace "\\&" "&" wo-quotes)))
+
+(defun citeproc-bt--to-csl (s &optional with-nocase)
+  "Convert a BibTeX field S to a CSL one.
+If optional WITH-NOCASE is non-nil then convert BibTeX no-case
+brackets to the corresponding CSL XML spans."
+  (if (> (length s) 0)
+      (--> s
+	   (citeproc-bt--preprocess-for-decode it)
+	   (citeproc-bt--decode it)
+	   (citeproc-bt--process-brackets
+	    it
+	    (when with-nocase "<span class=\"nocase\">")
+	    (when with-nocase "</span>"))
+	   (s-replace-all '(("\n" . " ") ("~" . " ") ("--" . "–")) it)
+	   (replace-regexp-in-string "[[:space:]]\\{2,\\}" " " it)
+	   (s-chomp it))
+    s))
 
 (defun citeproc-bt--to-csl-names (n)
   "Return a CSL version of BibTeX names field N."
@@ -239,41 +315,6 @@ replacements."
     (setq result (nconc (citeproc-bt--parse-family family) result))
     (--map (cons (car it) (s-join " " (cdr it)))
 	   result)))
-
-(defconst citeproc-bt--decode-rx
-  (rx (or (seq "\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"")) (0+ space)
-	       (group-n 2 letter))
-	  (seq "\\" (group-n 1 (in "H" "r" "u" "c" "k" "v")) (1+ space)
-	       (group-n 2 letter))
-	  (seq "\\" (group-n 1 (in "'" "`" "^" "~" "=" "." "\"" "H" "r" "u" "c" "k" "v"))
-	       (0+ space) "{" (group-n 2 letter) "}")
-	  (seq "\\" (group-n 1 (or "l" "L" "o" "O" "AA" "aa" "ae" "AE" "ss")) word-boundary)
-	  (seq "{" "\\" (group-n 1 (or "l" "L" "o" "O" "AA" "aa" "ae" "AE" "ss"))
-	       (0+ space) "}")))
-  "Regular expression matching BibTeX special character commands.")
-
-(defun citeproc-bt--decode (s)
-  "Decode a BibTeX encoded string."
-  (replace-regexp-in-string
-   citeproc-bt--decode-rx
-   (lambda (x)
-     (let ((command (match-string 1 x))
-	   (letter (match-string 2 x)))
-       (if letter
-	   (or (citeproc-bt--to-ucs command letter) (concat "\\" x))
-	 (assoc-default command citeproc-bt--to-ucs-alist))))
-   s))
-
-(defun citeproc-bt--decode-buffer ()
-  "Decode BibTeX encoded characters in the current buffer."
-  (goto-char (point-min))
-  (while (re-search-forward citeproc-bt--decode-rx nil t)
-    (replace-match
-     (let ((command (match-string 1))
-	   (letter (match-string 2)))
-       (if letter
-	   (or (citeproc-bt--to-ucs command letter) (concat "\\" (match-string 0)))
-	 (assoc-default command citeproc-bt--to-ucs-alist))))))
 
 (defun citeproc-bt--to-csl-date (year month)
   "Return a CSL version of the date given by YEAR and MONTH.
