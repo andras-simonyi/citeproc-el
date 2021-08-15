@@ -1,9 +1,6 @@
-language: emacs-lisp
-# Emacs fails to build in container-based builds on Travis
-# See https://github.com/travis-ci/travis-ci/issues/9061
-# and https://github.com/moby/moby/issues/22801
-sudo: required
-dist: trusty
+language: nix
+os:
+  - linux
 cache:
   - directories:
       # Cache stable Emacs binaries (saves 1min per job)
@@ -12,19 +9,23 @@ cache:
 # a looooong time
 matrix:
   fast_finish: true
-  allow_failures:
-    - env: EMACS_VERSION=snapshot
+    - env: EMACS_CI=emacs-snapshot
 env:
-  - EMACS_VERSION=27.1
-  - EMACS_VERSION=snapshot
+  - EMACS_CI=emacs-26-3
+  - EMACS_CI=emacs-27-1
+  - EMACS_CI=emacs-27-2
+  - EMACS_CI=emacs-snapshot
+  
 before_install:
   # Configure $PATH: Executables are installed to $HOME/bin
   - export PATH="$HOME/bin:$PATH"
   # Download the makefile to emacs-travis.mk
-  - wget 'https://raw.githubusercontent.com/flycheck/emacs-travis/master/emacs-travis.mk'
-  # Install Emacs (according to $EMACS_VERSION) and Cask
-  - make -f emacs-travis.mk install_emacs
-  - make -f emacs-travis.mk install_cask
+  - bash <(curl https://raw.githubusercontent.com/purcell/nix-emacs-ci/master/travis-install)
+  # - wget 'https://raw.githubusercontent.com/flycheck/emacs-travis/master/emacs-travis.mk'
+  #   Install Emacs (according to $EMACS_VERSION) and Cask
+  # - make -f emacs-travis.mk install_emacs
+  # - make -f emacs-travis.mk install_cask
+  - git clone https://github.com/cask/cask.git
   - git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
   - git clone --depth 1 https://github.com/citation-style-language/locales.git test/locales
 
@@ -33,8 +34,4 @@ install:
   - cask install
 
 script:
-  - emacs --version
-  - cask build 2>&1 | tee build.log
-  # - sh -c "! grep -oe '.*:Warning:.*' build.log"
-  - cask exec ert-runner test/citeproc-test.el
-  
+  - make test
