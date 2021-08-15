@@ -2,13 +2,13 @@ name: CI
 
 on: [ push, pull_request ]
 
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         emacs_version:
-        - 26.3
         - 27.1
         - 27.2
         - snapshot
