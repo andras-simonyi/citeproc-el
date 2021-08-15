@@ -89,8 +89,7 @@
     (("r" . "A") . "Å")
     (("c" . "C") . "Ç")
     (("v" . "C") . "Č")
-    (("c" . "S") . "Ş")
-    (("v" . "S") . "Š")
+    (("'" . "C") . "Ć")
     (("`" . "E") . "È")
     (("'" . "E") . "É")
     (("^" . "E") . "Ê")
@@ -105,6 +104,8 @@
     (("^" . "O") . "Ô")
     (("~" . "O") . "Õ")
     (("\"" . "O") . "Ö")
+    (("c" . "S") . "Ş")
+    (("v" . "S") . "Š")
     (("`" . "U") . "Ù")
     (("'" . "U") . "Ú")
     (("^" . "U") . "Û")
@@ -118,8 +119,7 @@
     (("r" . "a") . "å")
     (("c" . "c") . "ç")
     (("v" . "c") . "č")
-    (("c" . "s") . "ş")
-    (("v" . "s") . "š")
+    (("'" . "c") . "ć")
     (("`" . "e") . "è")
     (("'" . "e") . "é")
     (("^" . "e") . "ê")
@@ -134,6 +134,9 @@
     (("^" . "o") . "ô")
     (("~" . "o") . "õ")
     (("\"" . "o") . "ö")
+    (("v" . "r") . "ř")
+    (("c" . "s") . "ş")
+    (("v" . "s") . "š")
     (("`" . "u") . "ù")
     (("'" . "u") . "ú")
     (("^" . "u") . "û")
@@ -145,8 +148,7 @@
     (("H" . "u") . "ű")
     (("H" . "U") . "Ű")
     (("v" . "z") . "ž")
-    (("v" . "Z") . "Ž")
-    (("v" . "r") . "ř"))
+    (("v" . "Z") . "Ž"))
   "Alist mapping LaTeX (SYMBOL-COMMAND . ASCII-CHAR) pairs to unicode characters.")
 
 (defconst citeproc-bt--to-ucs-alist
@@ -165,13 +167,17 @@ character was found."
       ;; of the requested character and look it up in (usc-names). This process
       ;; can be *very slow* on older Emacs versions in which (usc-names) returns
       ;; an alist!
-      (-if-let* ((case-name (if (s-lowercase-p char) "SMALL" "CAPITAL"))
-		 (combining-name (assoc-default ltx citeproc-bt--pref-to-ucs-alist))
-		 (name (concat "LATIN " case-name " LETTER "
-			       (upcase char) " " combining-name))
-		 (char-name (map-elt (ucs-names) name)))
-	  (char-to-string char-name)
-	nil)))
+
+      ;; NOTE: Because of a nasty interaction bug between `ucs-names' and
+      ;; `replace-regexp-in-string' we do the lookup only for Emacs versions
+      ;; earlier than 28.
+      (when-let* (((version< emacs-version "28" ))
+		  (case-name (if (s-lowercase-p char) "SMALL" "CAPITAL"))
+		  (combining-name (assoc-default ltx citeproc-bt--pref-to-ucs-alist))
+		  (name (concat "LATIN " case-name " LETTER "
+				(upcase char) " " combining-name))
+		  (char-name (map-elt (ucs-names) name)))
+	(char-to-string char-name))))
 
 (defconst citeproc-bt--decode-rx
   (rx (or
@@ -200,8 +206,8 @@ character was found."
 	   (letter (match-string 2 x)))
        (if letter
 	   (or (citeproc-bt--to-ucs command letter) (concat "\\" x))
-	 (assoc-default command citeproc-bt--to-ucs-alist))))
-   s))
+	 (or (assoc-default command citeproc-bt--to-ucs-alist) x))))
+   s t t))
 
 (defun citeproc-bt--decode-buffer ()
   "Decode BibTeX encoded characters in the current buffer."
