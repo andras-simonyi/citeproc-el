@@ -209,15 +209,20 @@ Only those fields are mapped that do not require further processing.")
 		  interval-strings)))
     (list (cons 'date-parts interval-date-parts))))
 
-(defun citeproc-blt--get-standard (v b)
+(defun citeproc-blt--get-standard (v b &optional with-nocase)
   "Return the CSL-normalized value of var V from item B.
 V is a biblatex var name as a string, B is a biblatex entry as an
-alist. Return nil if V is undefined in B."
+alist. If optional WITH-NOCASE is non-nil then convert BibTeX
+no-case brackets to the corresponding CSL XML spans. Return nil
+if V is undefined in B."
   (-when-let (blt-val (alist-get v b))
-    (citeproc-bt--to-csl blt-val)))
+    (citeproc-bt--to-csl blt-val with-nocase)))
 
-(defun citeproc-blt-entry-to-csl (b)
+(defun citeproc-blt-entry-to-csl (b &optional omit-nocase)
   "Return a CSL form of normalized parsed biblatex entry B.
+If the optional OMIT-NOCASE is non-nil then no no-case XML
+markers are generated.
+
 The processing logic follows the analogous
 function (itemToReference) in John MacFarlane's Pandoc, see
 <https://github.com/jgm/pandoc/blob/master/src/Text/Pandoc/Citeproc/BibTeX.hs>
@@ -226,13 +231,13 @@ Many thanks to him.
 Note: in the code, dotted var names refer to values of biblatex
 variables in B."
   (let* ((b (mapcar (lambda (x) (cons (intern (downcase (car x))) (cdr x))) b))
-	  (.type (intern (downcase (alist-get '=type= b))))
-	  (.entrysubtype (alist-get 'entrysubtype b))
-	  (type (citeproc-blt--to-csl-type .type .entrysubtype))
-	  (is-article (memq .type citeproc-blt--article-types))
-	  (is-periodical (eq .type 'periodical))
-	  (is-chapter-like (memq .type citeproc-blt--chapter-types))
-	  result)
+	 (.type (intern (downcase (alist-get '=type= b))))
+	 (.entrysubtype (alist-get 'entrysubtype b))
+	 (type (citeproc-blt--to-csl-type .type .entrysubtype))
+	 (is-article (memq .type citeproc-blt--article-types))
+	 (is-periodical (eq .type 'periodical))
+	 (is-chapter-like (memq .type citeproc-blt--chapter-types))
+	 result)
     ;; set type and genre
     (push (cons 'type type) result)
     (when-let ((.reftype (alist-get 'type b))
@@ -270,59 +275,68 @@ variables in B."
 		     result))
 	      (t (push `(number . ,.number) result))))
     ;; titles
-    (let* ((\.maintitle (alist-get 'maintitle b))
-	   (title (cond (is-periodical (citeproc-blt--get-standard 'issuetitle b))
-			((and \.maintitle (not is-chapter-like)) \.maintitle)
-			(t (citeproc-blt--get-standard 'title b))))
+    (let* ((nocase (not omit-nocase))
+	   (.maintitle (citeproc-blt--get-standard 'maintitle b nocase))
+	   (title
+	    (cond (is-periodical (citeproc-blt--get-standard 'issuetitle b nocase))
+		  ((and .maintitle (not is-chapter-like)) .maintitle)
+		  (t (citeproc-blt--get-standard 'title b nocase))))
 	   (subtitle (citeproc-blt--get-standard
 		      (cond (is-periodical 'issuesubtitle)
-			    ((and \.maintitle (not is-chapter-like))
+			    ((and .maintitle (not is-chapter-like))
 			     'mainsubtitle)
 			    (t 'subtitle))
-		      b))
-	   (title-addon (citeproc-blt--get-standard
-			 (if (and \.maintitle (not is-chapter-like))
-			     'maintitleaddon
-			   'titleaddon)
-			 b))
-	   (volume-title (when \.maintitle
-			   (citeproc-blt--get-standard
-			    (if is-chapter-like 'booktitle 'title) b)))
-
-	   (volume-subtitle (when \.maintitle
-			      (citeproc-blt--get-standard
-			       (if is-chapter-like 'booksubtitle 'subtitle) b)))
-	   (volume-title-addon (when \.maintitle
-				 (citeproc-blt--get-standard
-				  (if is-chapter-like 'booktitleaddon 'titleaddon) b)))
-	   (container-title (or (and is-periodical (citeproc-blt--get-standard 'title b))
-				(and is-chapter-like \.maintitle)
-				(and is-chapter-like (citeproc-blt--get-standard
-						      'booktitle b))
-				(or (citeproc-blt--get-standard 'journaltitle b)
-				    ;; also accept `journal' for BibTeX compatibility
-				    (citeproc-blt--get-standard 'journal b))))
-	   (container-subtitle (or (and is-periodical (citeproc-blt--get-standard
-						       'subtitle b))
-				   (and is-chapter-like (citeproc-blt--get-standard
-							 'mainsubtitle b))
-				   (and is-chapter-like (citeproc-blt--get-standard
-							 'booksubtitle b))
-				   (citeproc-blt--get-standard 'journalsubtitle b)))
-	   (container-title-addon (or (and is-periodical (citeproc-blt--get-standard
-							  'titleaddon b))
-				      (and is-chapter-like (citeproc-blt--get-standard
-							    'maintitleaddon b))
-				      (and is-chapter-like
-					   (citeproc-blt--get-standard 'booktitleaddon b))))
-	   (container-title-short (or (and is-periodical (not \.maintitle)
-					   (citeproc-blt--get-standard 'titleaddon b))
-				      (citeproc-blt--get-standard 'shortjournal b)))
-	   (title-short (or (and (or (not \.maintitle) is-chapter-like)
-				 (citeproc-blt--get-standard 'shorttitle b))
-			    (and (or subtitle title-addon)
-				 (not .maintitle)
-				 title))))
+		      b nocase))
+	   (title-addon
+	    (citeproc-blt--get-standard
+	     (if (and .maintitle (not is-chapter-like))
+		 'maintitleaddon 'titleaddon)
+	     b nocase))
+	   (volume-title
+	    (when .maintitle
+	      (citeproc-blt--get-standard
+	       (if is-chapter-like 'booktitle 'title) b nocase)))
+	   (volume-subtitle
+	    (when .maintitle
+	      (citeproc-blt--get-standard
+	       (if is-chapter-like 'booksubtitle 'subtitle) b nocase)))
+	   (volume-title-addon
+	    (when .maintitle
+	      (citeproc-blt--get-standard
+	       (if is-chapter-like 'booktitleaddon 'titleaddon) b nocase)))
+	   (container-title
+	    (or (and is-periodical (citeproc-blt--get-standard 'title b nocase))
+		(and is-chapter-like .maintitle)
+		(and is-chapter-like (citeproc-blt--get-standard
+				      'booktitle b nocase))
+		(or (citeproc-blt--get-standard 'journaltitle b nocase)
+		    ;; also accept `journal' for BibTeX compatibility
+		    (citeproc-blt--get-standard 'journal b nocase))))
+	   (container-subtitle
+	    (or (and is-periodical (citeproc-blt--get-standard
+				    'subtitle b nocase))
+		(and is-chapter-like (citeproc-blt--get-standard
+				      'mainsubtitle b nocase))
+		(and is-chapter-like (citeproc-blt--get-standard
+				      'booksubtitle b nocase))
+		(citeproc-blt--get-standard 'journalsubtitle b nocase)))
+	   (container-title-addon
+	    (or (and is-periodical (citeproc-blt--get-standard
+				    'titleaddon b nocase))
+		(and is-chapter-like (citeproc-blt--get-standard
+				      'maintitleaddon b nocase))
+		(and is-chapter-like
+		     (citeproc-blt--get-standard 'booktitleaddon b nocase))))
+	   (container-title-short
+	    (or (and is-periodical (not .maintitle)
+		     (citeproc-blt--get-standard 'titleaddon b nocase))
+		(citeproc-blt--get-standard 'shortjournal b nocase)))
+	   (title-short
+	    (or (and (or (not .maintitle) is-chapter-like)
+		     (citeproc-blt--get-standard 'shorttitle b nocase))
+		(and (or subtitle title-addon)
+		     (not .maintitle)
+		     title))))
       (when title
 	(push (cons 'title
 		    (concat title

@@ -98,7 +98,7 @@ All sorts are alphanumerically increasing."
 (defun citeproc-test-blt--output (blt)
   "Generate normalized output from biblatex parse BLT."
   (let* ((processed (mapcar (lambda (x)
-			      (let ((csl-entry (citeproc-blt-entry-to-csl (cdr x))))
+			      (let ((csl-entry (citeproc-blt-entry-to-csl (cdr x) t)))
 				(push (cons 'id (car x)) csl-entry)
 				(citeproc-test-blt--simplify-dates 
 				 csl-entry)))
