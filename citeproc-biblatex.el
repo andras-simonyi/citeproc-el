@@ -197,9 +197,11 @@ Only those fields are mapped that do not require further processing.")
 	 (interval-date-parts
 	  (mapcar (lambda (x)
 		    (let* ((parsed (parse-time-string x))
-			   (year (decoded-time-year parsed))
-			   (month (decoded-time-month parsed))
-			   (day (decoded-time-day parsed))
+			   ;; TODO: use more elegant accessors for the parsed
+			   ;; time while keeping Emacs 26 compatibility.
+			   (year (elt parsed 5))
+			   (month (elt parsed 4))
+			   (day (elt parsed 3))
 			   date)
 		      (when year
 			(when day (push day date))
