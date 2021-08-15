@@ -1,7 +1,6 @@
 # citeproc-el
 
-[![Build
-Status](https://travis-ci.org/andras-simonyi/citeproc-el.svg?branch=master)](https://travis-ci.org/andras-simonyi/citeproc-el)
+[![Build Status](https://github.com/andras-simonyi/citeproc-el/actions/workflows/ci.yml/badge.svg)](https://github.com/andras-simonyi/citeproc-el/actions/workflows/ci.yml)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![MELPA](http://melpa.org/packages/citeproc-badge.svg)](http://melpa.org/#/citeproc)
