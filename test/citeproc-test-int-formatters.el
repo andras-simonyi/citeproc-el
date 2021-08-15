@@ -1,6 +1,7 @@
 ;;; citeproc-test-int-formatters.el --- formatter tests -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'citeproc)
 (require 'citeproc-formatters)
 
 (ert-deftest citeproc-test-formatters-html ()

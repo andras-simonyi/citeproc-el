@@ -1,0 +1,29 @@
+name: CI
+
+on: [ push, pull_request ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        emacs_version:
+        - 26.3
+        - 27.1
+        - 27.2
+        - snapshot
+    steps:
+    - uses: purcell/setup-emacs@master
+      with:
+        version: ${{ matrix.emacs_version }}
+    - uses: conao3/setup-cask@master
+    - uses: actions/checkout@v2
+    - name: Test
+      env:
+        COVERALLS_FLAG_NAME: Emacs ${{ matrix.emacs_version }}
+      run: |
+        git clone --depth 1 https://github.com/citation-style-language/test-suite.git test/suite
+        git clone --depth 1 https://github.com/citation-style-language/locales.git test/locales
+        cask install
+        cask build
+        make test
