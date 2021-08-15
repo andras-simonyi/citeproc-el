@@ -31,6 +31,7 @@ citeproc-suite-bugreports-ikey-one
 citeproc-suite-bugreports-illustrator-in-extra
 citeproc-suite-bugreports-move-punctuation-inside-quotes-for-locator
 citeproc-suite-bugreports-no-case-escape
+citeproc-suite-bugreports-no-title
 citeproc-suite-bugreports-non-breaking-space-join-fail
 citeproc-suite-bugreports-number-affix-escape
 citeproc-suite-bugreports-number-in-macro-with-vertical-align
@@ -107,6 +108,7 @@ citeproc-suite-flipflop-single-before-colon
 citeproc-suite-flipflop-small-caps
 citeproc-suite-fullstyles-a-bd-nt
 citeproc-suite-fullstyles-abd-nt
+citeproc-suite-fullstyles-chicago-author-date-simple
 citeproc-suite-group-complex-nesting
 citeproc-suite-integration-cross-citation-ibid-on-insert
 citeproc-suite-integration-delete-name
@@ -220,6 +222,8 @@ citeproc-suite-quotes-punctuation-with-inner-quote
 citeproc-suite-sort-bibliography-citation-number-descending-via-composite-macro
 citeproc-suite-sort-bibliography-citation-number-descending-via-macro
 citeproc-suite-sort-bibliography-nosort-option
+citeproc-suite-sort-case-insensitive-bibliography
+citeproc-suite-sort-case-insensitive-citation
 citeproc-suite-sort-chicago-year-suffix1
 citeproc-suite-sort-chicago-year-suffix2
 citeproc-suite-sort-citation-number-primary-descending-via-macro-bibliography
@@ -227,10 +231,12 @@ citeproc-suite-sort-citation-number-primary-descending-via-macro-citation
 citeproc-suite-sort-citation-number-primary-descending-via-variable-bibliography
 citeproc-suite-sort-citation-number-primary-descending-via-variable-citation
 citeproc-suite-sort-citation-unsorted
-citeproc-suite-sort-dale-dalebout
+citeproc-suite-sort-conditional-macro-dates
 citeproc-suite-sort-drop-name-label-in-sort
+citeproc-suite-sort-family-only
 citeproc-suite-sort-leading-a
 citeproc-suite-sort-leading-apostrophe-on-name-particle
+citeproc-suite-sort-name-variable
 citeproc-suite-sort-omitted-bib-ref-mixed-numeric-style
 citeproc-suite-sort-omitted-bib-ref-non-numeric-style
 citeproc-suite-sort-quotes
