@@ -1,6 +1,6 @@
 ;;; citeproc-bibtex.el --- convert BibTeX entries to CSL -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017-2020 András Simonyi
+;; Copyright (C) 2017-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
