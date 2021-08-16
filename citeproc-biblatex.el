@@ -230,85 +230,84 @@ function (itemToReference) in John MacFarlane's Pandoc, see
 <https://github.com/jgm/pandoc/blob/master/src/Text/Pandoc/Citeproc/BibTeX.hs>
 Many thanks to him.
 
-Note: in the code, dotted var names refer to values of biblatex
-variables in B."
+Note: in the code, var names starting with ~ refer to values of
+biblatex variables in B."
   (let* ((b (mapcar (lambda (x) (cons (intern (downcase (car x))) (cdr x))) b))
-	 (.type (intern (downcase (alist-get '=type= b))))
-	 (.entrysubtype (alist-get 'entrysubtype b))
-	 (type (citeproc-blt--to-csl-type .type .entrysubtype))
-	 (is-article (memq .type citeproc-blt--article-types))
-	 (is-periodical (eq .type 'periodical))
-	 (is-chapter-like (memq .type citeproc-blt--chapter-types))
+	 (~type (intern (downcase (alist-get '=type= b))))
+	 (~entrysubtype (alist-get 'entrysubtype b))
+	 (type (citeproc-blt--to-csl-type ~type ~entrysubtype))
+	 (is-article (memq ~type citeproc-blt--article-types))
+	 (is-periodical (eq ~type 'periodical))
+	 (is-chapter-like (memq ~type citeproc-blt--chapter-types))
 	 result)
     ;; set type and genre
     (push (cons 'type type) result)
-    (when-let ((.reftype (alist-get 'type b))
-	       (genre (assoc-default .reftype citeproc-blt--reftype-to-genre)))
+    (when-let ((~reftype (alist-get 'type b))
+	       (genre (assoc-default ~reftype citeproc-blt--reftype-to-genre)))
       (push (cons 'genre genre) result))
     ;; names
-    (when-let ((.editortype (alist-get 'editortype b))
-	       (.editor (alist-get 'editor b))
-	       (csl-var (assoc-default .editortype
+    (when-let ((~editortype (alist-get 'editortype b))
+	       (~editor (alist-get 'editor b))
+	       (csl-var (assoc-default ~editortype
 				       citeproc-blt--editortype-to-csl-name-alist)))
-      (push (cons csl-var (citeproc-bt--to-csl-names .editor))
+      (push (cons csl-var (citeproc-bt--to-csl-names ~editor))
 	    result))
-    (when-let ((.editoratype (alist-get 'editoratype b))
-	       (.editora (alist-get 'editora b))
-	       (csl-var (assoc-default .editoratype
+    (when-let ((~editoratype (alist-get 'editoratype b))
+	       (~editora (alist-get 'editora b))
+	       (csl-var (assoc-default ~editoratype
 				       citeproc-blt--editortype-to-csl-name-alist)))
-      (push (cons csl-var (citeproc-bt--to-csl-names .editora))
+      (push (cons csl-var (citeproc-bt--to-csl-names ~editora))
 	    result))
-    ;; TODO: do this for editorb and editorc as well...
-    ;; dates
-    (-when-let (issued (-if-let (.issued (alist-get 'date b))
-			   (citeproc-blt--to-csl-date .issued)
-			 (-when-let (.year (alist-get 'year b))
-			   (citeproc-bt--to-csl-date .year
+    ;; TODO: do this for editorb and editorc as well... dates
+    (-when-let (issued (-if-let (~issued (alist-get 'date b))
+			   (citeproc-blt--to-csl-date ~issued)
+			 (-when-let (~year (alist-get 'year b))
+			   (citeproc-bt--to-csl-date ~year
 						     (alist-get 'month b)))))
       (push (cons 'issued issued) result))
     ;; locators
-    (-if-let (.number (alist-get 'number b))
-	(cond ((memq .type citeproc-blt--collection-types) ; collection
-	       (push `(collection-number . ,.number) result))
+    (-if-let (~number (alist-get 'number b))
+	(cond ((memq ~type citeproc-blt--collection-types) ; collection
+	       (push `(collection-number . ,~number) result))
 	      (is-article		; article
-	       (push `(issue . ,(-if-let (.issue (alist-get 'issue b))
-				    (concat .number ", " .issue)
-				  .number))
+	       (push `(issue . ,(-if-let (~issue (alist-get 'issue b))
+				    (concat ~number ", " ~issue)
+				  ~number))
 		     result))
-	      (t (push `(number . ,.number) result))))
+	      (t (push `(number . ,~number) result))))
     ;; titles
     (let* ((nocase (not omit-nocase))
-	   (.maintitle (citeproc-blt--get-standard 'maintitle b nocase))
+	   (~maintitle (citeproc-blt--get-standard 'maintitle b nocase))
 	   (title
 	    (cond (is-periodical (citeproc-blt--get-standard 'issuetitle b nocase))
-		  ((and .maintitle (not is-chapter-like)) .maintitle)
+		  ((and ~maintitle (not is-chapter-like)) ~maintitle)
 		  (t (citeproc-blt--get-standard 'title b nocase))))
 	   (subtitle (citeproc-blt--get-standard
 		      (cond (is-periodical 'issuesubtitle)
-			    ((and .maintitle (not is-chapter-like))
+			    ((and ~maintitle (not is-chapter-like))
 			     'mainsubtitle)
 			    (t 'subtitle))
 		      b nocase))
 	   (title-addon
 	    (citeproc-blt--get-standard
-	     (if (and .maintitle (not is-chapter-like))
+	     (if (and ~maintitle (not is-chapter-like))
 		 'maintitleaddon 'titleaddon)
 	     b nocase))
 	   (volume-title
-	    (when .maintitle
+	    (when ~maintitle
 	      (citeproc-blt--get-standard
 	       (if is-chapter-like 'booktitle 'title) b nocase)))
 	   (volume-subtitle
-	    (when .maintitle
+	    (when ~maintitle
 	      (citeproc-blt--get-standard
 	       (if is-chapter-like 'booksubtitle 'subtitle) b nocase)))
 	   (volume-title-addon
-	    (when .maintitle
+	    (when ~maintitle
 	      (citeproc-blt--get-standard
 	       (if is-chapter-like 'booktitleaddon 'titleaddon) b nocase)))
 	   (container-title
 	    (or (and is-periodical (citeproc-blt--get-standard 'title b nocase))
-		(and is-chapter-like .maintitle)
+		(and is-chapter-like ~maintitle)
 		(and is-chapter-like (citeproc-blt--get-standard
 				      'booktitle b nocase))
 		(or (citeproc-blt--get-standard 'journaltitle b nocase)
@@ -330,14 +329,14 @@ variables in B."
 		(and is-chapter-like
 		     (citeproc-blt--get-standard 'booktitleaddon b nocase))))
 	   (container-title-short
-	    (or (and is-periodical (not .maintitle)
+	    (or (and is-periodical (not ~maintitle)
 		     (citeproc-blt--get-standard 'titleaddon b nocase))
 		(citeproc-blt--get-standard 'shortjournal b nocase)))
 	   (title-short
-	    (or (and (or (not .maintitle) is-chapter-like)
+	    (or (and (or (not ~maintitle) is-chapter-like)
 		     (citeproc-blt--get-standard 'shorttitle b nocase))
 		(and (or subtitle title-addon)
-		     (not .maintitle)
+		     (not ~maintitle)
 		     title))))
       (when title
 	(push (cons 'title
@@ -367,38 +366,38 @@ variables in B."
       (push `(publisher . ,(mapconcat #'identity values "; ")) result))
     ;; places
     (let ((csl-place-var
-	   (if (eq .type 'patent) 'jurisdiction 'publisher-place)))
-      (-when-let (.location (or (citeproc-blt--get-standard 'location b)
-				(citeproc-blt--get-standard 'address b)))
-	(push (cons csl-place-var .location) result)))
+	   (if (eq ~type 'patent) 'jurisdiction 'publisher-place)))
+      (-when-let (~location (or (citeproc-blt--get-standard 'location b)
+				 (citeproc-blt--get-standard 'address b)))
+	(push (cons csl-place-var ~location) result)))
     ;; url
     (-when-let (url (or (alist-get 'url b)
-			(when-let ((.eprinttype (or (alist-get 'eprinttype b)
-						    (alist-get 'archiveprefix b)))
-				   (.eprint (alist-get 'eprint b))
+			(when-let ((~eprinttype (or (alist-get 'eprinttype b)
+						     (alist-get 'archiveprefix b)))
+				   (~eprint (alist-get 'eprint b))
 				   (base-url
-				    (assoc-default .eprinttype
+				    (assoc-default ~eprinttype
 						   citeproc-blt--etype-to-baseurl-alist)))
-			  (concat base-url .eprint))))
+			  (concat base-url ~eprint))))
       (push (cons 'URL url) result))
     ;; notes
-    (-when-let (note (let ((.note (citeproc-blt--get-standard 'note b))
-			   (.addendum (citeproc-blt--get-standard 'addendum b)))
-		       (cond ((and .note .addendum) (concat .note ". " .addendum))
-			     (.note .note)
-			     (.addendum .addendum)
+    (-when-let (note (let ((~note (citeproc-blt--get-standard 'note b))
+			   (~addendum (citeproc-blt--get-standard 'addendum b)))
+		       (cond ((and ~note ~addendum) (concat ~note ". " ~addendum))
+			     (~note ~note)
+			     (~addendum ~addendum)
 			     (t nil))))
       (push (cons 'note note) result))
     ;; rest
     (let (rest)
-      (pcase-dolist (`(,blt-key . ,blt-value)  b) 
+      (pcase-dolist (`(,blt-key . ,blt-value) b)
 	;; remaining standard vars
 	(-when-let (csl-key
 		    (alist-get blt-key citeproc-blt--to-csl-standard-alist))
 	  (unless (alist-get csl-key result)
 	    (push (cons csl-key (citeproc-bt--to-csl blt-value)) rest)))
 	;; remaining name vars
- 	(-when-let (csl-key
+	(-when-let (csl-key
 		    (alist-get blt-key citeproc-blt--to-csl-names-alist))
 	  (unless (alist-get csl-key result)
 	    (push (cons csl-key (citeproc-bt--to-csl-names blt-value)) rest)))
