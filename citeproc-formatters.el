@@ -274,7 +274,6 @@ CSL tests."
     (vertical-align-sup
      . ,(lambda (x)
 	  (concat "<text:span text:style-name=\"OrgSuperscript\">" x "</text:span>")))
-    ;; (vertical-align-baseline . ,(lambda (x) (concat "<span style=\"baseline\">" x "</span>")))
     ;; (display-left-margin . ,(lambda (x) (concat "\n    <div class=\"csl-left-margin\">"
     ;; 						x "</div>")))
     ;; (display-right-inline . ,(lambda (x) (concat "<div class=\"csl-right-inline\">"
@@ -284,12 +283,19 @@ CSL tests."
     ;; (display-indent . ,(lambda (x) (concat "<div class=\"csl-indent\">" x "</div>\n  ")))
     ))
 
+(defun citeproc-fmt--org-odt-bib-formatter (items _bib-format)
+  "Return a html bibliography from already formatted ITEMS."
+  (mapconcat (lambda (i)
+	       (concat "<text:p text:style-name=\"Text_20_body\">" i "</text:p>"))
+	     items
+	     "\n"))
+
 ;; Define the formatters alist
 
 (defvar citeproc-fmt--formatters-alist
   `((org-odt . ,(citeproc-formatter-create
 		 :rt (citeproc-formatter-fun-create citeproc-fmt--org-odt-alist)
-		 ;; :bib #'citeproc-fmt--org-odt-bib-formatter
+		 :bib #'citeproc-fmt--org-odt-bib-formatter
 		 ))
     (html . ,(citeproc-formatter-create
 	      :rt (citeproc-formatter-fun-create citeproc-fmt--html-alist)
