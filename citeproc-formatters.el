@@ -263,6 +263,8 @@ CSL tests."
      . ,(lambda (x) (concat "<text:span text:style-name=\"Emphasis\">" x "</text:span>")))
     (font-style-oblique
      . ,(lambda (x) (concat "<text:span text:style-name=\"Emphasis\">" x "</text:span>")))
+    ;; NOTE: small caps support requires the availability of the OrgSmallcaps ODT style
+    ;; this requires an addition to or replacement of the default OrgOdtStyles.xml
     (font-variant-small-caps
      . ,(lambda (x) (concat "<text:span text:style-name=\"OrgSmallCaps\">" x "</text:span>")))
     (font-weight-bold
@@ -274,13 +276,11 @@ CSL tests."
     (vertical-align-sup
      . ,(lambda (x)
 	  (concat "<text:span text:style-name=\"OrgSuperscript\">" x "</text:span>")))
-    ;; (display-left-margin . ,(lambda (x) (concat "\n    <div class=\"csl-left-margin\">"
-    ;; 						x "</div>")))
-    ;; (display-right-inline . ,(lambda (x) (concat "<div class=\"csl-right-inline\">"
-    ;; 						 x "</div>\n  ")))
-    ;; (display-block . ,(lambda (x) (concat "\n\n    <div class=\"csl-block\">"
-    ;; 					  x "</div>\n")))
-    ;; (display-indent . ,(lambda (x) (concat "<div class=\"csl-indent\">" x "</div>\n  ")))
+    ;; TODO:
+    ;; - display-left-margin 
+    ;; - display-right-inline 
+    ;; - display-block 
+    ;; - display-indent 
     ))
 
 (defun citeproc-fmt--org-odt-bib-formatter (items _bib-format)
