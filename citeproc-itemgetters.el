@@ -40,7 +40,7 @@
 (require 'citeproc-bibtex)
 (require 'citeproc-biblatex)
 
-(defun citeproc-itemgetter--parsebib-buffer ()
+(defun citeproc-itemgetters--parsebib-buffer ()
   "Parse a BibTeX/biblatex buffer with Parsebib."
   ;; Note: this is needed to support different Parsebib versions in use.
   (cond ((fboundp 'parsebib-parse-buffer)
