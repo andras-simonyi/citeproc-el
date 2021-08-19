@@ -40,7 +40,7 @@
 (require 'citeproc-bibtex)
 (require 'citeproc-biblatex)
 
-(defun citeproc-itemgetter--parsebib-buffer ()
+(defun citeproc-itemgetters--parsebib-buffer ()
   "Parse a BibTeX/biblatex buffer with Parsebib."
   ;; Note: this is needed to support different Parsebib versions in use.
   (cond ((fboundp 'parsebib-parse-buffer)
@@ -149,7 +149,7 @@ Supported formats:
 	   (let ((to-csl-fun (if (eq bibtex-dialect 'biblatex)
 				 #'citeproc-blt-entry-to-csl
 			       #'citeproc-bt-entry-to-csl))
-                 (entries (car (citeproc-itemgetter--parsebib-buffer))))
+                 (entries (car (citeproc-itemgetters--parsebib-buffer))))
              (maphash 
 	      (lambda (key entry)
                 (puthash key (funcall to-csl-fun entry)
