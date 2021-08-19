@@ -251,10 +251,14 @@ CSL tests."
   `((unformatted . citeproc-fmt--xml-escape)
     (href . ,(lambda (x y) (concat "<text:a xlink:type=\"simple\" xlink:href=\""
 				   y "\">" x "</text:a>")))
-    ;; (cited-item-no . ,(lambda (x y) (concat "<a href=\"#citeproc_bib_item_" y "\">" 
-    ;; 					    x "</a>")))
-    ;; (bib-item-no . ,(lambda (x y) (concat "<a id=\"citeproc_bib_item_" y "\"></a>"
-    ;; 					  x)))
+    (cited-item-no
+     . ,(lambda (x y) (concat "<text:a xlink:type=\"simple\" xlink:href=\"#citeproc_bib_item_"
+			      y "\">" x "</text:a>")))
+    (bib-item-no
+     . ,(lambda (x y)
+	  (concat "<text:bookmark-start text:name=\"OrgXref.citeproc_bib_item_" y "\"/>"
+		  "<text:bookmark text:name=\"citeproc_bib_item_" y "\"/>"
+		  "<text:bookmark-end text:name=\"OrgXref.citeproc_bib_item_" y "\"/>" x)))
     (font-style-italic
      . ,(lambda (x) (concat "<text:span text:style-name=\"Emphasis\">" x "</text:span>")))
     (font-style-oblique
