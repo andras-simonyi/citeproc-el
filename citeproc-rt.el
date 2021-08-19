@@ -122,17 +122,24 @@ Return the original RT if it has non-empty attrs and content."
        (citeproc-rt-join-strings
 	(citeproc-rt-splice-unformatted (cons attrs simplifieds)))))))
 
-(defun citeproc-rt-map-strings (fun rts)
+(defun citeproc-rt-map-strings (fun rts &optional skip-nocase)
   "Map through FUN all strings in rich-texts RTS.
 Return a new rich-text with all S content strings replaced by the
-value of FUN applied to S. No formatting is changed."
-  (--map (citeproc-rt-format it fun) rts))
+value of FUN applied to S. No formatting is changed. If optional
+SKIP-NOCASE is non-nil then skip spans with the `nocase'
+attribute set to non-nil."
+  (--map (citeproc-rt-format it fun skip-nocase) rts))
 
-(defun citeproc-rt-format (rt fun)
-  "Format all plain text in RT with FUN."
-  (if (listp rt)
-      (cons (car rt) (citeproc-rt-map-strings fun (cdr rt)))
-    (funcall fun rt)))
+(defun citeproc-rt-format (rt fun &optional skip-nocase)
+  "Format all plain text in RT with FUN.
+If optional SKIP-NOCASE is non-nil then skip spans with the
+`nocase' attribute set to non-nil."
+  (pcase rt
+    (`nil nil)
+    ((pred listp) (if (and skip-nocase (alist-get 'nocase (car rt)))
+		      rt
+		    (cons (car rt) (citeproc-rt-map-strings fun (cdr rt) skip-nocase))))
+    (_ (funcall fun rt))))
 
 (defun citeproc-rt-replace-all (replacements rts)
   "Make all REPLACEMENTS in the strings if rich-texts RTS."
@@ -143,37 +150,51 @@ value of FUN applied to S. No formatting is changed."
   "Remove all periods from rich-texts RTS."
   (citeproc-rt-replace-all `(("." . "")) rts))
 
-(defun citeproc-rt--update-from-plain-1 (rt p start)
+(defun citeproc-rt-length (rt)
+  "Return the length of rich-text RT as a string."
+  (if (listp rt)
+      (-sum (mapcar #'citeproc-rt-length (cdr rt)))
+    (length rt)))
+
+(defun citeproc-rt--update-from-plain-1 (rt p start &optional skip-nocase)
   "Update rich-text RT from plain text P from position START in P.
 The length of the plain text content of RT must not be less than
-the length of P. Return an (UPDATED . NEXT) pair where UPDATED is
-the updated rich-text and NEXT is the first position in P which
-was not used for the update."
-  (if (listp rt)
-      (let ((act-start start))
-	(cons (cons (car rt)
-		    (--map (-let (((updated . next)
-				   (citeproc-rt--update-from-plain-1
-				    it p act-start)))
-			     (setq act-start next)
-			     updated)
-			   (cdr rt)))
-	      act-start))
-    (let ((end (+ start (length rt))))
-      (cons (substring p start end) end))))
+the length of P. If optional SKIP-NOCASE is non-nil then skip
+spans with the `nocase' attribute set to non-nil.
+  Return an (UPDATED . NEXT) pair where UPDATED is the updated
+rich-text and NEXT is the first position in P which was not used
+for the update."
+  (pcase rt
+    (`nil nil)
+    ((pred listp)
+     (if (and skip-nocase (alist-get 'nocase (car rt)))
+	 (cons rt (+ start (citeproc-rt-length rt)))
+       (let ((act-start start))
+	 (cons (cons (car rt)
+		     (--map (-let (((updated . next)
+				    (citeproc-rt--update-from-plain-1
+				     it p act-start skip-nocase)))
+			      (setq act-start next)
+			      updated)
+			    (cdr rt)))
+	       act-start))))
+    (_ (let ((end (+ start (length rt))))
+	 (cons (substring p start end) end)))))
 
-(defun citeproc-rt-update-from-plain (rt p)
+(defun citeproc-rt-update-from-plain (rt p &optional skip-nocase)
   "Update rich-text RT from plain text P.
 The length of the plain text content of RT must not be less than
-the length of P. Return the updated rich-text."
-  (car (citeproc-rt--update-from-plain-1 rt p 0)))
+the length of P. Return the updated rich-text. If optional
+SKIP-NOCASE is non-nil then skip spans with the `nocase'
+attribute set to non-nil."
+  (car (citeproc-rt--update-from-plain-1 rt p 0 skip-nocase)))
 
 (defun citeproc-rt-change-case (rt case-fun)
   "Change the case of rich text RT with CASE-FUN.
 CASE-FUN is a function taking a string as its argument and
 returning a string of the same length."
   (let ((plain (citeproc-rt-to-plain rt)))
-    (citeproc-rt-update-from-plain rt (funcall case-fun plain))))
+    (citeproc-rt-update-from-plain rt (funcall case-fun plain) t)))
 
 (defun citeproc--textcased (rts case)
   "Return rich-text content RTS in text-case CASE.
@@ -181,9 +202,9 @@ CASE is one of the following: 'lowercase, 'uppercase,
 'capitalize-first, 'capitalize-all, 'sentence, 'title."
   (pcase case
     ('uppercase
-     (citeproc-rt-map-strings #'upcase rts))
+     (citeproc-rt-map-strings #'upcase rts t))
     ('lowercase
-     (citeproc-rt-map-strings #'downcase rts))
+     (citeproc-rt-map-strings #'downcase rts t))
     ('capitalize-first
      (--map (citeproc-rt-change-case it #'citeproc-s-capitalize-first) rts))
     ('capitalize-all
@@ -272,7 +293,8 @@ on any dominated branch for which PRED holds."
     ((span . ((style . "font-variant:small-caps;"))) . (font-variant . "small-caps"))
     ((sc . nil) . (font-variant . "small-caps"))
     ((sup . nil) . (vertical-align . "sup"))
-    ((sub . nil) . (vertical-align . "sub")))
+    ((sub . nil) . (vertical-align . "sub"))
+    ((span . ((class . "nocase"))) . (nocase . t)))
   "A mapping from html tags and attrs to rich text attrs.")
 
 (defun citeproc-rt-from-html (h)

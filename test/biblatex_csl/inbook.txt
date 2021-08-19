@@ -124,4 +124,4 @@
   type: chapter
   volume: 1
   volume-title: Die Geburt der Tragödie. Unzeitgemäße Betrachtungen
-    I--IV. Nachgelassene Schriften 1870--1973
+    I–IV. Nachgelassene Schriften 1870–1973
