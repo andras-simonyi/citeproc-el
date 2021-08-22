@@ -165,10 +165,14 @@ Supported formats:
 	  t (list file)))
         (ext
          (user-error "Unknown bibliography extension: %S" ext))))
-    (lambda (itemids)
-      (mapcar (lambda (id)
-                (cons id (gethash id cache)))
-              itemids))))
+    (lambda (x)
+      (pcase x
+	('itemids
+	 (hash-table-keys cache))
+	((pred listp) (mapcar (lambda (id)
+				  (cons id (gethash id cache)))
+				x))
+	(_ (error "Unsupported citeproc itemgetter retrieval method"))))))
 
 (provide 'citeproc-itemgetters)
 

@@ -94,6 +94,14 @@ CITATIONS is a list of `citeproc-citation' structures."
 	(queue-append (citeproc-proc-citations proc) citation))
       (setf (citeproc-proc-finalized proc) nil))))
 
+(defun citeproc-add-uncited (itemids proc)
+  "Add uncited bib items with ITEMIDS to PROC.
+As an extension, an itemid can be the string \"*\" which has the
+effect of adding all items available in the itemgetter."
+  ;; We simply store the added ids here, real processing is performed when the
+  ;; processor is finalized.
+  (push itemids (citeproc-proc-uncited proc)))
+
 (defun citeproc-render-citations (proc format &optional internal-links)
   "Render all citations in PROC in the given FORMAT.
 Return a list of formatted citations.
