@@ -170,17 +170,23 @@ Citation structures are created with
   
 ### Managing a processor’s citation list
 
-Processor objects maintain a list of citations which can be manipulated with the
-following two functions:
+Processor objects maintain a list of citations and bibliography items
+which can be manipulated with the following functions:
 
 #### citeproc-append-citations `(citations proc)`
 
 Append `citations`, a list of citation structures, to the citation list of
 citation processor `proc`.
 
+#### citeproc-add-uncited `(itemids proc)`
+
+Add uncited bib items with `itemids` to `proc`. As an extension, an itemid can
+be the string "*" which has the effect of adding all items available in the
+itemgetter.
+
 #### citeproc-clear `(proc)`
 
-Clear the citation list of citation processor `proc`.
+Clear the citation and bibliography lists of citation processor `proc`.
 
 ### Rendering citations and bibliographies
 
