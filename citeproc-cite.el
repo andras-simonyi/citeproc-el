@@ -514,6 +514,7 @@ Possible values are 'last, 'first and 'subsequent.")
 (defun citeproc-proc-finalize (proc)
   "Finalize processor PROC by sorting and disambiguating items."
   (unless (citeproc-proc-finalized proc)
+    (citeproc-proc-process-uncited proc)
     (citeproc-proc-update-sortkeys proc)
     (citeproc-proc-sort-itds proc)
     (citeproc-proc-update-positions proc)
