@@ -41,8 +41,11 @@ OCCURRED-BEFORE is used during bibliography generation to
   occurrence is in a note then the actual value is the
   note-number.
 DISAMB-POS contains the position on which cite disambiguation is
-  based. Possible values are 'first, 'ibid and 'subsequent."
-  varvals rawcite rc-uptodate sort-key occurred-before disamb-pos)
+  based. Possible values are 'first, 'ibid and 'subsequent,
+SUBBIB-NOS is a list of numeric indexes of sub-bibliographies
+  in which the item occurs."
+  varvals rawcite rc-uptodate sort-key occurred-before disamb-pos
+  subbib-nos)
 
 (defun citeproc-itd-getvar (itd var)
   "Return itemdata ITD's value for VAR ."

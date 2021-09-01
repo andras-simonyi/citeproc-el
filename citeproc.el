@@ -46,6 +46,7 @@
 (require 'citeproc-sort)
 (require 'citeproc-formatters)
 (require 'citeproc-itemgetters)
+(require 'citeproc-subbibs)
 
 ;;; Public API
 
@@ -100,7 +101,16 @@ As an extension, an itemid can be the string \"*\" which has the
 effect of adding all items available in the itemgetter."
   ;; We simply store the added ids here, real processing is performed when the
   ;; processor is finalized.
-  (push itemids (citeproc-proc-uncited proc)))
+  (push itemids (citeproc-proc-uncited proc))
+  (setf (citeproc-proc-finalized proc) nil))
+
+(defun citeproc-add-subbib-filters (filters proc)
+  "Add subbib FILTERS to PROC.
+FILTERS should be a list of alists in which the keys are one of
+the symbols `type', `nottype', `keyword', `notkeyword', and
+values are strings."
+  (setf (citeproc-proc-bib-filters proc) filters
+	(citeproc-proc-finalized proc) nil))
 
 (defun citeproc-render-citations (proc format &optional internal-links)
   "Render all citations in PROC in the given FORMAT.

@@ -1,0 +1,65 @@
+[
+    {
+
+	"id": "doe2001",
+        "type": "article-journal",
+	"container-title": "The Mind Scientific",
+        "issue": "1",
+        "page": "45-58",
+        "title": "The Title",
+        "volume": "103",
+        "author": [
+            {
+                "family": "John",
+                "given": "Doe"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "2001",
+                    3
+                ]
+            ]
+        },
+	"keyword": "primary,philosophy"
+    },
+    {
+        "id": "smith1952",
+        "type": "book",
+        "title": "The Book Title",
+        "author": [
+            {
+                "family": "Peter",
+                "given": "Smith"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "1952"
+                ]
+            ]
+        },
+	"keyword": "primary"
+    },
+    {
+        "id": "doe1972",
+        "type": "book",
+        "title": "The Second Book Title",
+        "author": [
+            {
+                "family": "Janed",
+                "given": "Doe"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "1972"
+                ]
+            ]
+        }
+    }
+
+]

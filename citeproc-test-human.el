@@ -69,12 +69,12 @@
   "Return a getter function for ITEMS.
 ITEMS is the parsed representation of the `INPUT' section of a
 CSL test."
-  (let (result)
-    (lambda (itemids)
-      (dolist (item items result)
-	(let ((id (citeproc-s-from-num-or-s (alist-get 'id item))))
-	  (when (member id itemids)
-	    (push (cons id item) result)))))))
+  (lambda (itemids)
+    (let (result)
+     (dolist (item items result)
+       (let ((id (citeproc-s-from-num-or-s (alist-get 'id item))))
+	 (when (member id itemids)
+	   (push (cons id item) result)))))))
 
 (defun citeproc-test-human--proc-from-style (style parsed-input)
   "Create a processor from STYLE and PARSED-INPUT."
