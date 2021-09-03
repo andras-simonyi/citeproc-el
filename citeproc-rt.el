@@ -544,11 +544,11 @@ The values are ordered depth-first."
 
 ;;; Helpers for bibliography rendering
 
-(defun citeproc-rt-max-offset (rts)
+(defun citeproc-rt-max-offset (itemdata)
   "Return the maximal first field width in rich-texts RTS."
-  (cl-loop for raw-item in rts 
-	   when (listp raw-item) maximize
-	   (length (citeproc-rt-to-plain (cadr raw-item)))))
+  (cl-loop for itd being the hash-values of itemdata
+	   when (listp (citeproc-itemdata-rawbibitem itd)) maximize
+	   (length (citeproc-rt-to-plain (cadr (citeproc-itemdata-rawbibitem itd))))))
 
 (defun citeproc-rt-subsequent-author-substitute (bib s)
   "Substitute S for subsequent author(s) in BIB.

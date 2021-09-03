@@ -34,18 +34,20 @@ VARVALS is an alist containg variable-name symbols as keys and
   their values for the item as values,
 RAWCITE is the cached cite of the item in internal rich-text
   format,
-RC-UPTODATE is t iff the RAWCITE field is up-to-date.
+RC-UPTODATE is t iff the RAWCITE field is up-to-date,
+RAWBIBITEM is the cached bibliograhy item in internal rich-text
+  format.
 SORT-KEY is the bibliography sort-key of the item,
 OCCURRED-BEFORE is used during bibliography generation to
   indicate whether the item was referred to earlier. If the first
   occurrence is in a note then the actual value is the
-  note-number.
+  note-number,
 DISAMB-POS contains the position on which cite disambiguation is
   based. Possible values are 'first, 'ibid and 'subsequent,
 SUBBIB-NOS is a list of numeric indexes of sub-bibliographies
   in which the item occurs."
-  varvals rawcite rc-uptodate sort-key occurred-before disamb-pos
-  subbib-nos)
+  varvals rawcite rawbibitem rc-uptodate sort-key occurred-before
+  disamb-pos subbib-nos)
 
 (defun citeproc-itd-getvar (itd var)
   "Return itemdata ITD's value for VAR ."

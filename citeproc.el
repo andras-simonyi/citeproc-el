@@ -166,31 +166,67 @@ formatting parameters keyed to the parameter names as symbols:
 	   (punct-in-quote (string= (alist-get 'punctuation-in-quote
 					       (citeproc-style-locale-opts style))
 				    "true"))
-	   (sorted (citeproc-proc-get-itd-list proc))
-	   (raw-bib (--map (citeproc-rt-finalize
-			    (citeproc-render-varlist-in-rt
-			     (citeproc-itemdata-varvals it)
-			     style 'bib 'display internal-links
-			     (or formatter-no-external-links no-external-links))
-			    punct-in-quote)
-			   sorted))
-	   (substituted
-	    (-if-let (subs-auth-subst
-		      (alist-get 'subsequent-author-substitute bib-opts))
-		(citeproc-rt-subsequent-author-substitute raw-bib subs-auth-subst)
-	      raw-bib))
-	   (max-offset (if (alist-get 'second-field-align bib-opts)
-			   (citeproc-rt-max-offset raw-bib)
-			 0)))
-      (let ((format-params (cons (cons 'max-offset max-offset)
-				 (citeproc-style-bib-opts-to-formatting-params bib-opts))))
-	(cons (funcall bib-formatter
-		       (--map (funcall bibitem-formatter
-				       (funcall
-					rt-formatter (citeproc-rt-cull-spaces-puncts it))
-				       format-params)
-			      substituted)
-		       format-params)
+	   (itemdata (citeproc-proc-itemdata proc))
+	   (filters (citeproc-proc-bib-filters proc)))
+      ;; Render raw bibitems for each itemdata struct and store them in the
+      ;; `rawbibitem' slot.
+      (maphash (lambda (_ itd)
+		 (setf (citeproc-itemdata-rawbibitem itd)
+		       (citeproc-rt-finalize
+			(citeproc-render-varlist-in-rt
+			 (citeproc-itemdata-varvals itd)
+			 style 'bib 'display internal-links
+			 (or formatter-no-external-links no-external-links))
+			punct-in-quote)))
+	       itemdata)
+      (let* ((raw-bib
+	      (if filters
+		  ;; There are filters, we need to select and sort the subbibs.
+		  (let ((result (make-list (length filters) nil)))
+		    ;; Put the itds into subbib lists.
+		    (maphash
+		     (lambda (_ itd)
+		       (dolist (subbib-no (citeproc-itemdata-subbib-nos itd))
+			 (push itd (elt result subbib-no))))
+		     itemdata)
+		    ;; Sort the itds in each list according to the sort settings
+		    (when (citeproc-style-bib-sort (citeproc-proc-style proc))
+		      (setq result
+			    (--map (citeproc-sort-itds it (citeproc-style-bib-sort-orders
+							   (citeproc-proc-style proc)))
+				   result)))
+		    ;; Generate the raw bibs.
+		    (--map (mapcar #'citeproc-itemdata-rawbibitem it) result))
+		;; No filters, so raw-bib is a list containg a single raw bibliograhy.
+		(list (mapcar #'citeproc-itemdata-rawbibitem
+			      (citeproc-proc-get-itd-list proc)))))
+	     ;; Perform author-substitution.
+	     (substituted
+	      (-if-let (subs-auth-subst
+			(alist-get 'subsequent-author-substitute bib-opts))
+		  (--map (citeproc-rt-subsequent-author-substitute it subs-auth-subst)
+			 raw-bib)
+		raw-bib))
+	     ;; Calculate formatting params.
+	     (max-offset (if (alist-get 'second-field-align bib-opts)
+			     (citeproc-rt-max-offset itemdata)
+			   0))
+	     (format-params (cons (cons 'max-offset max-offset)
+				  (citeproc-style-bib-opts-to-formatting-params bib-opts)))
+	     (formatted-bib
+	      (--map (funcall bib-formatter
+			      (mapcar
+			       (lambda (x)
+				 (funcall
+				  bibitem-formatter
+				  (funcall
+				   rt-formatter (citeproc-rt-cull-spaces-puncts x))
+				  format-params))
+			       it)
+			      format-params)
+		     substituted)))
+	;; Generate final return value.
+	(cons (if filters formatted-bib (car formatted-bib))
 	      format-params)))))
 
 (defun citeproc-clear (proc)
