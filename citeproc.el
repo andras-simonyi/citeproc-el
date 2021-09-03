@@ -137,19 +137,21 @@ formatter's `bib' slot (see `citeproc-formatter' for details).
 
 Returns an error message string if the style of PROC doesn't
 contain a bibliography section. Otherwise it returns
-a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons cell, in
-which FORMATTING-PARAMETERS is an alist containing the following
+a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons cell,
+where FORMATTED-BIBLIOGRAPHY is either a single bibliography or a
+list of sub-bibliograhies if filters were added to the processor,
+and FORMATTING-PARAMETERS is an alist containing the following
 formatting parameters keyed to the parameter names as symbols:
-`max-offset' (integer): The width of the widest first field in the
-  bibliography, measured in characters.
-`line-spacing' (integer): Vertical line distance specified as a
+- `max-offset' (integer): The width of the widest first field in
+  the bibliography, measured in characters.
+- `line-spacing' (integer): Vertical line distance specified as a
   multiple of standard line height.
-`entry-spacing' (integer): Vertical distance between
+- `entry-spacing' (integer): Vertical distance between
   bibliographic entries, specified as a multiple of standard line
   height.
-`second-field-align' (`flush' or `margin'): The position of
+- `second-field-align' (`flush'or `margin'): The position of
   second-field alignment.
-`hanging-indent' (boolean): Whether the bibliography items should
+- `hanging-indent' (boolean): Whether the bibliography items should
   be rendered with hanging-indents."
   (if (null (citeproc-style-bib-layout (citeproc-proc-style proc)))
       "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"

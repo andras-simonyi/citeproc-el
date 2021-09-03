@@ -17,7 +17,7 @@ A CSL 1.01 Citation Processor for Emacs.
 - [Usage](#usage)
     - [Creating a citation processor](#creating-a-citation-processor)
     - [Creating citation structures](#creating-citation-structures)
-    - [Managing a processor’s citation list](#managing-a-processors-citation-list)
+    - [Managing a processor’s citation list and bibliography items](#managing-a-processors-citation-list-and-bibliography-items)
     - [Rendering citations and bibliographies](#rendering-citations-and-bibliographies)
 	- [Rendering isolated references](#rendering-isolated-references)
 	- [Supported output formats](#supported-output-formats)
@@ -168,7 +168,7 @@ Citation structures are created with
   * `ignore-et-al` is non-nil if et-al settings should be ignored for the first
     cite.
   
-### Managing a processor’s citation list
+### Managing a processor’s citation list and bibliography items
 
 Processor objects maintain a list of citations and bibliography items
 which can be manipulated with the following functions:
@@ -183,6 +183,12 @@ citation processor `proc`.
 Add uncited bib items with `itemids` to `proc`. As an extension, an itemid can
 be the string "*" which has the effect of adding all items available in the
 itemgetter.
+
+#### citeproc-add-subbib-filters `(filters proc)`
+
+Add sub-bibliography `filters` to `proc`. `filters` should be a list of alists
+in which the keys are one of the symbols `type`, `nottype`, `keyword`,
+`notkeyword`, and values are strings.
 
 #### citeproc-clear `(proc)`
 
@@ -216,6 +222,8 @@ bibliography items instead of the content of the chosen formatter’s `bib` slot
 (see the documentation of the `citeproc-formatter` structure type for details).
 
 Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
+`FORMATTED-BIBLIOGRAPHY` is either a single bibliography or a list of
+sub-bibliograhies if filters were added to the processor, and
 `FORMATTING-PARAMETERS` is an alist containing the values of the following
 formatting parameters keyed to the parameter names as symbols:
 
