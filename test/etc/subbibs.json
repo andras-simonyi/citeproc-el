@@ -1,0 +1,102 @@
+[
+    {
+
+	"id": "doe2001",
+        "type": "article-journal",
+	"container-title": "The Mind Scientific",
+        "issue": "1",
+        "page": "45-58",
+        "title": "The Title",
+        "volume": "103",
+        "author": [
+            {
+                "family": "Doe",
+                "given": "John"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "2001",
+                    3
+                ]
+            ]
+        },
+	"keyword": "primary,philosophy"
+    },
+    {
+        "id": "smith1952",
+        "type": "book",
+        "title": "The Book Title",
+        "author": [
+            {
+                "family": "Smith",
+                "given": "Peter"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "1952"
+                ]
+            ]
+        },
+	"keyword": "primary"
+    },
+    {
+        "id": "doe1972",
+        "type": "book",
+        "title": "The Second Book Title",
+        "author": [
+            {
+                "family": "Doe",
+                "given": "Jane"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "1972"
+                ]
+            ]
+        }
+    },
+    {
+        "id": "doe1972b",
+        "type": "book",
+        "title": "The Second 1972 Jane Doe book",
+        "author": [
+            {
+                "family": "Doe",
+                "given": "Jane"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "1972"
+                ]
+            ]
+        },
+	"keyword": "secondary"
+    },
+    {
+        "id": "doe1972c",
+        "type": "book",
+        "title": "The Third 1972 Jane Doe book",
+        "author": [
+            {
+                "family": "Doe",
+                "given": "Jane"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "1972"
+                ]
+            ]
+        },
+	"keyword": "primary"
+    }
+]

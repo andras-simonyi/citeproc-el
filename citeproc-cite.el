@@ -39,6 +39,7 @@
 (require 'citeproc-proc)
 (require 'citeproc-formatters)
 (require 'citeproc-sort)
+(require 'citeproc-subbibs)
 
 (cl-defstruct (citeproc-citation (:constructor citeproc-citation--create))
   "A struct representing a citation.
@@ -515,6 +516,7 @@ Possible values are 'last, 'first and 'subsequent.")
   "Finalize processor PROC by sorting and disambiguating items."
   (unless (citeproc-proc-finalized proc)
     (citeproc-proc-process-uncited proc)
+    (citeproc-sb-add-subbib-info proc)
     (citeproc-proc-update-sortkeys proc)
     (citeproc-proc-sort-itds proc)
     (citeproc-proc-update-positions proc)
