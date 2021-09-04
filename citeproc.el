@@ -184,7 +184,8 @@ formatting parameters keyed to the parameter names as symbols:
       (let* ((raw-bib
 	      (if filters
 		  ;; There are filters, we need to select and sort the subbibs.
-		  (let ((result (make-list (length filters) nil)))
+		  (let ((result (make-list (length filters) nil))
+			(bib-sort (citeproc-style-bib-sort (citeproc-proc-style proc))))
 		    ;; Put the itds into subbib lists.
 		    (maphash
 		     (lambda (_ itd)
@@ -192,16 +193,17 @@ formatting parameters keyed to the parameter names as symbols:
 			 (push itd (elt result subbib-no))))
 		     itemdata)
 		    ;; Sort the itds in each list according to the sort settings
-		    (when (citeproc-style-bib-sort (citeproc-proc-style proc))
-		      (setq result
-			    (--map (citeproc-sort-itds it (citeproc-style-bib-sort-orders
-							   (citeproc-proc-style proc)))
-				   result)))
+		    (setq result
+			  (--map (if bib-sort
+				     (citeproc-sort-itds it (citeproc-style-bib-sort-orders
+							     (citeproc-proc-style proc)))
+				   (citeproc-sort-itds-on-citnum it))
+				 result))
 		    ;; Generate the raw bibs.
 		    (--map (mapcar #'citeproc-itemdata-rawbibitem it) result))
 		;; No filters, so raw-bib is a list containg a single raw bibliograhy.
 		(list (mapcar #'citeproc-itemdata-rawbibitem
-			      (citeproc-proc-get-itd-list proc)))))
+			      (citeproc-sort-itds-on-citnum (hash-table-values itemdata))))))
 	     ;; Perform author-substitution.
 	     (substituted
 	      (-if-let (subs-auth-subst
