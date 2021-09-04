@@ -170,7 +170,7 @@ Citation structures are created with
   
 ### Managing a processor’s citation list and bibliography items
 
-Processor objects maintain a list of citations and bibliography items
+Processor objects maintain lists of citations and bibliography items,
 which can be manipulated with the following functions:
 
 #### citeproc-append-citations `(citations proc)`

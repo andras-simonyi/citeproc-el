@@ -10,8 +10,8 @@
         "volume": "103",
         "author": [
             {
-                "family": "John",
-                "given": "Doe"
+                "family": "Doe",
+                "given": "John"
             }
         ],
         "issued": {
@@ -30,8 +30,8 @@
         "title": "The Book Title",
         "author": [
             {
-                "family": "Peter",
-                "given": "Smith"
+                "family": "Smith",
+                "given": "Peter"
             }
         ],
         "issued": {
@@ -49,8 +49,8 @@
         "title": "The Second Book Title",
         "author": [
             {
-                "family": "Janed",
-                "given": "Doe"
+                "family": "Doe",
+                "given": "Jane"
             }
         ],
         "issued": {
@@ -60,6 +60,43 @@
                 ]
             ]
         }
+    },
+    {
+        "id": "doe1972b",
+        "type": "book",
+        "title": "The Second 1972 Jane Doe book",
+        "author": [
+            {
+                "family": "Doe",
+                "given": "Jane"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "1972"
+                ]
+            ]
+        },
+	"keyword": "secondary"
+    },
+    {
+        "id": "doe1972c",
+        "type": "book",
+        "title": "The Third 1972 Jane Doe book",
+        "author": [
+            {
+                "family": "Doe",
+                "given": "Jane"
+            }
+        ],
+        "issued": {
+            "date-parts": [
+                [
+                    "1972"
+                ]
+            ]
+        },
+	"keyword": "primary"
     }
-
 ]
