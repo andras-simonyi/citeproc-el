@@ -234,9 +234,7 @@ CSL tests."
     (href . ,(lambda (x y) (concat "\\href{" y "}{" x "}")))
     (font-style-italic . ,(lambda (x) (concat "\\textit{" x "}")))
     (font-weight-bold . ,(lambda (x) (concat "\\textbf{" x "}")))
-    (cited-item-no . ,(lambda (x y)
-			(concat "\\makeatletter\\hyper@linkstart{cite}{citeproc_bib_item_"
-				y "}" x "\\hyper@linkend\\makeatother")))
+    (cited-item-no . ,(lambda (x y) (concat "\\citeprocitem{" y "}{" x "}")))
     (bib-item-no . ,(lambda (x y) (concat "\\hypertarget{citeproc_bib_item_" y "}{"
 					  x "}")))
     (font-variant-small-caps . ,(lambda (x) (concat "\\textsc{" x "}")))
