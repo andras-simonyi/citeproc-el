@@ -145,27 +145,46 @@ MODE is either `cite' or `bib'."
 	       (citeproc-itd-update-sortkey itd style))
 	     itds)))
 
-(defun citeproc-proc-get-itd-list (proc)
-  "Return the ordered itemdata list of PROC.
-Ordering is according to citation number."
-  (sort (hash-table-values (citeproc-proc-itemdata proc))
+(defun citeproc-sort-itds-on-citnum (itds)
+  "Sort itemdata struct list ITDS according to citation number."
+  (sort itds
 	(lambda (x y)
 	  (< (string-to-number (citeproc-itd-getvar x 'citation-number))
 	     (string-to-number (citeproc-itd-getvar y 'citation-number))))))
 
+(defun citeproc-sort-itds-on-subbib (itd1 itd2)
+  "Sort itemdata structs ITD1 ITD2 according to subbib order."
+  (let ((idx1 (car (citeproc-itemdata-subbib-nos itd1)))
+	(idx2 (car (citeproc-itemdata-subbib-nos itd2))))
+    (and idx1
+	 (or (null idx2) (< idx1 idx2)))))
+
+(defun citeproc-sort-itds (itds sort-orders)
+  "Sort the itemdata struct list ITDS according to SORT-ORDERS."
+  (sort itds
+	(lambda (x y)
+	  (citeproc-sort--compare-keylists (citeproc-itemdata-sort-key x)
+					   (citeproc-itemdata-sort-key y)
+					   sort-orders))))
+
 (defun citeproc-proc-sort-itds (proc)
   "Sort the itemdata in PROC."
-  (when (citeproc-style-bib-sort (citeproc-proc-style proc))
-    (let* ((itds (citeproc-proc-get-itd-list proc))
-	   (sort-orders (citeproc-style-bib-sort-orders (citeproc-proc-style proc)))
-	   (sorted (sort itds
-			 (lambda (x y)
-			   (citeproc-sort--compare-keylists (citeproc-itemdata-sort-key x)
-							    (citeproc-itemdata-sort-key y)
-							    sort-orders)))))
-      (--each-indexed sorted
-	(citeproc-itd-setvar it 'citation-number
-			     (number-to-string (1+ it-index)))))))
+  (let ((sorted-bib-p (citeproc-style-bib-sort (citeproc-proc-style proc)))
+	(filters (citeproc-proc-bib-filters proc)))
+    (when (or sorted-bib-p filters)
+      (let* ((itds (hash-table-values (citeproc-proc-itemdata proc)))
+	     (sorted (if sorted-bib-p
+			 (let ((sort-orders (citeproc-style-bib-sort-orders
+					     (citeproc-proc-style proc))))
+			   (citeproc-sort-itds itds sort-orders))
+		       (citeproc-sort-itds-on-citnum itds))))
+	;; Additionally sort according to subbibliographies if there are filters.
+	(when filters
+	  (setq sorted (sort sorted #'citeproc-sort-itds-on-subbib)))
+	;; Set the CSL citation-number field according to the sort order.
+	(--each-indexed sorted
+	  (citeproc-itd-setvar it 'citation-number
+			       (number-to-string (1+ it-index))))))))
 
 (provide 'citeproc-sort)
 

@@ -1,7 +1,6 @@
 # citeproc-el
 
-[![Build
-Status](https://travis-ci.org/andras-simonyi/citeproc-el.svg?branch=master)](https://travis-ci.org/andras-simonyi/citeproc-el)
+[![Build Status](https://github.com/andras-simonyi/citeproc-el/actions/workflows/ci.yml/badge.svg)](https://github.com/andras-simonyi/citeproc-el/actions/workflows/ci.yml)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![MELPA](http://melpa.org/packages/citeproc-badge.svg)](http://melpa.org/#/citeproc)
@@ -18,7 +17,7 @@ A CSL 1.01 Citation Processor for Emacs.
 - [Usage](#usage)
     - [Creating a citation processor](#creating-a-citation-processor)
     - [Creating citation structures](#creating-citation-structures)
-    - [Managing a processor’s citation list](#managing-a-processors-citation-list)
+    - [Managing a processor’s citation list and bibliography items](#managing-a-processors-citation-list-and-bibliography-items)
     - [Rendering citations and bibliographies](#rendering-citations-and-bibliographies)
 	- [Rendering isolated references](#rendering-isolated-references)
 	- [Supported output formats](#supported-output-formats)
@@ -45,8 +44,9 @@ formats](#supported-output-formats) for the full list).
 
 ## Requirements
 
-Emacs 25 or later (the library is regularly tested on Emacs 26.3) compiled with
-libxml2 support.
+Emacs 25 or later compiled with libxml2 support. (The library is regularly
+tested on Emacs 26.3, 27.1, 27.2 and recent snapshots of the development
+version.)
 
 ## Installation
 
@@ -125,6 +125,18 @@ BibTeX/org-bibtex files. Similarly to `citeproc-itemgetter-from-csl-json`, these
 functions open and read directly from the specified files each time they are
 called.
 
+#### citeproc-hash-itemgetter-from-any `(file-or-files)`
+Return a getter for `file-or-files` in any supported format.
+The format is determined on the basis of file extensions.
+Supported formats:
+
+- CSL-JSON (.json extension) the recommended native format;
+- biblatex (.bib extension), broadly compatible with BibTeX, the
+  use of the dedicated BibTeX reader can be enforced by using the
+  .bibtex extension in the filename;
+- BibTeX (.bibtex extension);
+- org-bibtex (.org extension).
+
 #### citeproc-locale-getter-from-dir `(directory)`
 
 Return a locale-getter function getting CSL locales from `directory`. The
@@ -156,41 +168,62 @@ Citation structures are created with
   * `ignore-et-al` is non-nil if et-al settings should be ignored for the first
     cite.
   
-### Managing a processor’s citation list
+### Managing a processor’s citation list and bibliography items
 
-Processor objects maintain a list of citations which can be manipulated with the
-following two functions:
+Processor objects maintain lists of citations and bibliography items,
+which can be manipulated with the following functions:
 
 #### citeproc-append-citations `(citations proc)`
 
 Append `citations`, a list of citation structures, to the citation list of
 citation processor `proc`.
 
+#### citeproc-add-uncited `(itemids proc)`
+
+Add uncited bib items with `itemids` to `proc`. As an extension, an itemid can
+be the string "*" which has the effect of adding all items available in the
+itemgetter.
+
+#### citeproc-add-subbib-filters `(filters proc)`
+
+Add sub-bibliography `filters` to `proc`. `filters` should be a list of alists
+in which the keys are one of the symbols `type`, `nottype`, `keyword`,
+`notkeyword`, and values are strings.
+
 #### citeproc-clear `(proc)`
 
-Clear the citation list of citation processor `proc`.
+Clear the citation and bibliography lists of citation processor `proc`.
 
 ### Rendering citations and bibliographies
 
-#### citeproc-render-citations `(proc format &optional no-links)`
+#### citeproc-render-citations `(proc format &optional internal-links)`
 
 Render all citations in citation processor `proc` in the given `format`. Return
 a list of formatted citations. `format` is one of the [supported output
-formats](#supported-output-formats) as a symbol. If the optional `no-links` is
-non-nil then don’t link cites to the referred items.
+formats](#supported-output-formats) as a symbol. 
 
-#### citeproc-render-bib `(proc format &optional no-link-targets no-external-links bib-formatter-fun)`
+If the optional `internal-links` is `bib-links` then link cites
+to the bibliography regardless of the style type, if `no-links`
+then don't add internal links, if nil or `auto` then add internal
+links based on the style type (cite-cite links for note styles
+and cite-bib links else). For legacy reasons, any other value is
+treated as `no-links`.
+
+#### citeproc-render-bib `(proc format &optional internal-links no-external-links bib-formatter-fun)`
 
 Render a bibliography of the citations in citation processor `proc` in the
 given`format`. `format` is one of the [supported output
-formats](#supported-output-formats) as a symbol. If optional `no-link-targets`,
-`no-external-links` are non-nil then don't generate targets for citation links and
-external links, respecively. If the optional `bib-formatter-fun` is given then
-it will be used to join the bibliography items instead of the content of the
-chosen formatter’s `bib` slot (see the documentation of the `citeproc-formatter`
-structure type for details).
+formats](#supported-output-formats) as a symbol. 
+
+For the optional `internal-links` argument see `citeproc-render-citations`. If
+the optional `no-external-links` is non-nil then don't generate external links.
+If the optional `bib-formatter-fun` is given then it will be used to join the
+bibliography items instead of the content of the chosen formatter’s `bib` slot
+(see the documentation of the `citeproc-formatter` structure type for details).
 
 Returns a `(FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS)` pair, in which
+`FORMATTED-BIBLIOGRAPHY` is either a single bibliography or a list of
+sub-bibliograhies if filters were added to the processor, and
 `FORMATTING-PARAMETERS` is an alist containing the values of the following
 formatting parameters keyed to the parameter names as symbols:
 
@@ -236,10 +269,10 @@ external links in the item.
 
 ### Supported output formats
 
-Currently `html`, `org`, `plain` (plain text), `latex`, `csl-test` (for the CSL
-test suite) and `raw` (internal rich-text format, for debugging) are supported
-as output formats. New ones can easily be added — see `citeproc-formatters.el`
-for examples.
+Currently `html`, `org`, `plain` (plain text), `latex`, `org-odt` (for Org ODT
+export), `csl-test` (for the CSL test suite) and `raw` (internal rich-text
+format, for debugging) are supported as output formats. New ones can easily be
+added — see `citeproc-formatters.el` for examples.
 
 -------------------------------------------------------------------------------
 

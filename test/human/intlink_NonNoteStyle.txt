@@ -1,0 +1,109 @@
+>>===== OUTPUT-FORMAT =====>>
+org
+<<===== OUTPUT-FORMAT =====<<
+
+>>===== MODE =====>>
+citation
+<<===== MODE =====<<
+
+
+>>===== RESULT =====>>
+Smith ([[citeproc_bib_item_1][1986]])
+([[citeproc_bib_item_1][Smith 1986]])
+<<===== RESULT =====<<
+
+
+>>===== CITATIONS =====>>
+[
+    [
+        {
+            "citationID": "CITATION-1",
+            "citationItems": [
+                {
+                    "id": "ITEM-1"
+                }
+            ],
+            "properties": {
+                "noteIndex": 0,
+		"mode": "textual"
+            }
+        },
+        [],
+        []
+    ],
+    [
+        {
+            "citationID": "CITATION-2",
+            "citationItems": [
+                {
+                    "id": "ITEM-1"
+                }
+            ],
+            "properties": {
+                "noteIndex": 1
+            }
+        },
+        [],
+        []
+    ]
+
+]
+<<===== CITATIONS =====<<
+
+
+
+>>===== CSL =====>>
+<style 
+      xmlns="http://purl.org/net/xbiblio/csl"
+      class="note"
+      version="1.0">
+  <info>
+    <id />
+    <title />
+    <updated>2009-08-10T04:49:00+09:00</updated>
+  </info>
+  <citation 
+         et-al-min="3"
+         et-al-use-first="1"
+         disambiguate-add-names="true"
+         disambiguate-add-givenname="true"
+         disambiguate-add-year-suffix="true">
+    <layout delimiter="; "
+       	 prefix="("
+	 suffix=")">
+      <group delimiter=" ">
+        <names delimiter=", " variable="author">
+          <name and="symbol" delimiter-precedes-last="never" form="short"/>
+        </names>
+        <date variable="issued">
+          <date-part name="year"/>
+        </date>
+      </group>
+    </layout>
+  </citation>
+</style>
+<<===== CSL =====<<
+
+
+>>===== INPUT =====>>
+[
+    {
+        "author": [
+            {
+                "family": "Smith", 
+                "given": "John"
+            }
+        ], 
+        "issued": {
+            "date-parts": [
+                [
+                    1986
+                ]
+            ]
+        }, 
+        "type": "book",
+        "id": "ITEM-1"
+    } 
+]
+<<===== INPUT =====<<
+

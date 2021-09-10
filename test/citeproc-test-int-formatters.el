@@ -1,6 +1,7 @@
 ;;; citeproc-test-int-formatters.el --- formatter tests -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'citeproc)
 (require 'citeproc-formatters)
 
 (ert-deftest citeproc-test-formatters-html ()
@@ -35,6 +36,6 @@
     (should (string= (funcall f '(((href . "http://orgmode.org")) "Org website"))
 		     "Org website"))))
 
-(provide 'citeproc-test-int-formatters.el)
+(provide 'citeproc-test-int-formatters)
 
 ;;; citeproc-test-int-formatters.el ends here

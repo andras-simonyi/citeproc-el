@@ -1,12 +1,13 @@
 ;;; citeproc-test-int-biblatex.el --- biblatex tests -*- lexical-binding: t; -*-
 
 (require 'ert)
-(require 'parsebib)
 (require 'yaml)
-(require 'citeproc-biblatex)
-(require 'citeproc-lib)
 (require 'string-inflection)
 (require 'ht)
+(require 'parsebib)
+
+(require 'citeproc-biblatex)
+(require 'citeproc-lib)
 
 (defun citeproc-test-blt--parse (file)
   "Parse a biblatex->CSL test file.
@@ -29,7 +30,8 @@ the CSL part."
       (with-temp-buffer
 	(insert blt-string)
 	(goto-char 1)
-	(setq blt (ht->alist (car (parsebib-parse-buffer nil nil t t)))))
+	(setq blt (ht->alist
+		   (car (parsebib-parse-bib-buffer :expand-strings t :inheritance t)))))
       (forward-line 2)
       (move-beginning-of-line nil)
       (setq csl (yaml-parse-string
@@ -96,7 +98,7 @@ All sorts are alphanumerically increasing."
 (defun citeproc-test-blt--output (blt)
   "Generate normalized output from biblatex parse BLT."
   (let* ((processed (mapcar (lambda (x)
-			      (let ((csl-entry (citeproc-blt-entry-to-csl (cdr x))))
+			      (let ((csl-entry (citeproc-blt-entry-to-csl (cdr x) t)))
 				(push (cons 'id (car x)) csl-entry)
 				(citeproc-test-blt--simplify-dates 
 				 csl-entry)))
@@ -125,6 +127,6 @@ All sorts are alphanumerically increasing."
 
 (citeproc-test-blt-create-from-dir "./test/biblatex_csl")
 
-(provide 'citeproc-test-int-biblatex.el)
+(provide 'citeproc-test-int-biblatex)
 
 ;;; citeproc-test-int-biblatex.el ends here

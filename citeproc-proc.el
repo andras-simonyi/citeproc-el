@@ -47,8 +47,11 @@ CITATIONS is a queue containing citations,
 NAMES is hash table that maps name alists to ids,
 FINALIZED is non-nil iff the processor is finalized
   (bibliography items are properly sorted, citation positions are
-  updated etc)."
-  style getter itemdata citations names finalized)
+  updated etc),
+UNCITED is a list of lists of uncited itemids to be added during
+  finalization,
+BIB-FILTERS is a list of filters defining sub-bibliographies."
+  style getter itemdata citations names finalized uncited bib-filters)
 
 (defun citeproc-proc--internalize-name (name proc)
   "Find or add name-alist NAME in/to the names stored in PROC.
@@ -109,7 +112,6 @@ Return the itemdata struct that was added."
 			     (or item `((unprocessed-with-id . ,itemid)))
 			     itemid)))
 
-
 (defun citeproc-proc-put-items-by-id (proc itemids)
   "Add items with ITEMIDS into the itemlist of PROC."
   (let* ((received (funcall (citeproc-proc-getter proc) itemids))
@@ -126,6 +128,21 @@ Return the itemdata struct that was added."
   "Put the DATA of item with ID in processor PROC."
   (let ((itemdata (citeproc-proc-itemdata proc)))
     (puthash id data itemdata)))
+
+(defun citeproc-proc-process-uncited (proc)
+  "Add uncited items to the itemdata in PROC."
+  (when-let ((unciteds (citeproc-proc-uncited proc)))
+   (let* ((itemids (cl-delete-duplicates (apply #'append unciteds))))
+     (when (member "*" itemids)
+       (setq itemids (funcall (citeproc-proc-getter proc) 'itemids)))
+     (let* ((itemdata (citeproc-proc-itemdata proc))
+	    (new-ids (--remove (gethash it itemdata) itemids))
+	    (id-items (funcall (citeproc-proc-getter proc) new-ids)))
+       (pcase-dolist (`(,id . ,item) id-items)
+	 (citeproc-proc--put-item
+	  proc
+	  (or item `((unprocessed-with-id . ,id)))
+	  id))))))
 
 (defun citeproc-proc-delete-occurrence-info (proc)
   "Remove all itemdata occurrence info from PROC."

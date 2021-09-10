@@ -7,7 +7,7 @@
 ;; URL: https://github.com/andras-simonyi/citeproc-el
 ;; Keywords: bib
 ;; Package-Requires: ((emacs "25") (dash "2.13.0") (s "1.12.0") (f "0.18.0") (queue "0.2") (string-inflection "1.0") (org "9") (parsebib "2.4"))
-;; Version: 0.1.2
+;; Version: 0.9
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@
 (require 'citeproc-sort)
 (require 'citeproc-formatters)
 (require 'citeproc-itemgetters)
+(require 'citeproc-subbibs)
 
 ;;; Public API
 
@@ -94,39 +95,63 @@ CITATIONS is a list of `citeproc-citation' structures."
 	(queue-append (citeproc-proc-citations proc) citation))
       (setf (citeproc-proc-finalized proc) nil))))
 
-(defun citeproc-render-citations (proc format &optional no-links)
+(defun citeproc-add-uncited (itemids proc)
+  "Add uncited bib items with ITEMIDS to PROC.
+As an extension, an itemid can be the string \"*\" which has the
+effect of adding all items available in the itemgetter."
+  ;; We simply store the added ids here, real processing is performed when the
+  ;; processor is finalized.
+  (push itemids (citeproc-proc-uncited proc))
+  (setf (citeproc-proc-finalized proc) nil))
+
+(defun citeproc-add-subbib-filters (filters proc)
+  "Add subbib FILTERS to PROC.
+FILTERS should be a list of alists in which the keys are one of
+the symbols `type', `nottype', `keyword', `notkeyword', and
+values are strings."
+  (setf (citeproc-proc-bib-filters proc) filters
+	(citeproc-proc-finalized proc) nil))
+
+(defun citeproc-render-citations (proc format &optional internal-links)
   "Render all citations in PROC in the given FORMAT.
-Return a list of formatted citations. If optional NO-LINKS is
-non-nil then don't link cites to the referred items."
+Return a list of formatted citations.
+  If the optional INTERNAL-LINKS is `bib-links' then link cites
+to the bibliography regardless of the style type, if `no-links'
+then don't add internal links, if nil or `auto' then add internal
+links based on the style type (cite-cite links for note styles
+and cite-bib links else). For legacy reasons, any other value is
+treated as `no-links'."
   (citeproc-proc-finalize proc)
-  (--map (citeproc-citation--render-formatted-citation it proc format no-links)
+  (--map (citeproc-citation--render-formatted-citation it proc format internal-links)
 	 (queue-head (citeproc-proc-citations proc))))
 
-(defun citeproc-render-bib (proc format &optional no-link-targets
+(defun citeproc-render-bib (proc format &optional internal-links
 				 no-external-links bib-formatter-fun)
   "Render a bibliography of items in PROC in FORMAT.
-If optional NO-LINK-TARGETS, NO-EXTERNAL-LINKS are non-nil then
-don't generate targets for citation links and external links,
-respecively. If the optional BIB-FORMATTER-FUN is given then it
-will be used to join the bibliography items instead of the
-content of the chosen formatter's `bib' slot (see
-`citeproc-formatter' for details).
+For the optional INTERNAL-LINKS argument see
+`citeproc-render-citations'. If the optional NO-EXTERNAL-LINKS is
+non-nil then don't generate external links. If the optional
+BIB-FORMATTER-FUN is given then it will be used to join the
+bibliography items instead of the content of the chosen
+formatter's `bib' slot (see `citeproc-formatter' for details).
 
 Returns an error message string if the style of PROC doesn't
 contain a bibliography section. Otherwise it returns
-a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons cell, in
-which FORMATTING-PARAMETERS is an alist containing the following
+a (FORMATTED-BIBLIOGRAPHY . FORMATTING-PARAMETERS) cons cell,
+where FORMATTED-BIBLIOGRAPHY is either a single bibliography or a
+list of sub-bibliograhies if filters were added to the processor,
+and FORMATTING-PARAMETERS is an alist containing the following
 formatting parameters keyed to the parameter names as symbols:
-`max-offset' (integer): The width of the widest first field in the
-  bibliography, measured in characters.
-`line-spacing' (integer): Vertical line distance specified as a
+- `max-offset' (integer): The width of the widest first field in
+  the bibliography, measured in characters.
+- `line-spacing' (integer): Vertical line distance specified as a
   multiple of standard line height.
-`entry-spacing' (integer): Vertical distance between
+- `entry-spacing' (integer): Vertical distance between
   bibliographic entries, specified as a multiple of standard line
   height.
-`second-field-align' (`flush' or `margin'): The position of
+- `second-field-align' (`flush'or `margin'): The position of
   second-field alignment.
-`hanging-indent' (boolean): Whether the bibliography items should
+- `hanging-indent' (boolean): Whether the bibliography items should
   be rendered with hanging-indents."
   (if (null (citeproc-style-bib-layout (citeproc-proc-style proc)))
       "[NO BIBLIOGRAPHY LAYOUT IN CSL STYLE]"
@@ -143,31 +168,69 @@ formatting parameters keyed to the parameter names as symbols:
 	   (punct-in-quote (string= (alist-get 'punctuation-in-quote
 					       (citeproc-style-locale-opts style))
 				    "true"))
-	   (sorted (citeproc-proc-get-itd-list proc))
-	   (raw-bib (--map (citeproc-rt-finalize
-			    (citeproc-render-varlist-in-rt
-			     (citeproc-itemdata-varvals it)
-			     style 'bib 'display no-link-targets
-			     (or formatter-no-external-links no-external-links))
-			    punct-in-quote)
-			   sorted))
-	   (substituted
-	    (-if-let (subs-auth-subst
-		      (alist-get 'subsequent-author-substitute bib-opts))
-		(citeproc-rt-subsequent-author-substitute raw-bib subs-auth-subst)
-	      raw-bib))
-	   (max-offset (if (alist-get 'second-field-align bib-opts)
-			   (citeproc-rt-max-offset raw-bib)
-			 0)))
-      (let ((format-params (cons (cons 'max-offset max-offset)
-				 (citeproc-style-bib-opts-to-formatting-params bib-opts))))
-	(cons (funcall bib-formatter
-		       (--map (funcall bibitem-formatter
-				       (funcall
-					rt-formatter (citeproc-rt-cull-spaces-puncts it))
-				       format-params)
-			      substituted)
-		       format-params)
+	   (itemdata (citeproc-proc-itemdata proc))
+	   (filters (citeproc-proc-bib-filters proc)))
+      ;; Render raw bibitems for each itemdata struct and store them in the
+      ;; `rawbibitem' slot.
+      (maphash (lambda (_ itd)
+		 (setf (citeproc-itemdata-rawbibitem itd)
+		       (citeproc-rt-finalize
+			(citeproc-render-varlist-in-rt
+			 (citeproc-itemdata-varvals itd)
+			 style 'bib 'display internal-links
+			 (or formatter-no-external-links no-external-links))
+			punct-in-quote)))
+	       itemdata)
+      (let* ((raw-bib
+	      (if filters
+		  ;; There are filters, we need to select and sort the subbibs.
+		  (let ((result (make-list (length filters) nil))
+			(bib-sort (citeproc-style-bib-sort (citeproc-proc-style proc))))
+		    ;; Put the itds into subbib lists.
+		    (maphash
+		     (lambda (_ itd)
+		       (dolist (subbib-no (citeproc-itemdata-subbib-nos itd))
+			 (push itd (elt result subbib-no))))
+		     itemdata)
+		    ;; Sort the itds in each list according to the sort settings
+		    (setq result
+			  (--map (if bib-sort
+				     (citeproc-sort-itds it (citeproc-style-bib-sort-orders
+							     (citeproc-proc-style proc)))
+				   (citeproc-sort-itds-on-citnum it))
+				 result))
+		    ;; Generate the raw bibs.
+		    (--map (mapcar #'citeproc-itemdata-rawbibitem it) result))
+		;; No filters, so raw-bib is a list containg a single raw bibliograhy.
+		(list (mapcar #'citeproc-itemdata-rawbibitem
+			      (citeproc-sort-itds-on-citnum (hash-table-values itemdata))))))
+	     ;; Perform author-substitution.
+	     (substituted
+	      (-if-let (subs-auth-subst
+			(alist-get 'subsequent-author-substitute bib-opts))
+		  (--map (citeproc-rt-subsequent-author-substitute it subs-auth-subst)
+			 raw-bib)
+		raw-bib))
+	     ;; Calculate formatting params.
+	     (max-offset (if (alist-get 'second-field-align bib-opts)
+			     (citeproc-rt-max-offset itemdata)
+			   0))
+	     (format-params (cons (cons 'max-offset max-offset)
+				  (citeproc-style-bib-opts-to-formatting-params bib-opts)))
+	     (formatted-bib
+	      (--map (funcall bib-formatter
+			      (mapcar
+			       (lambda (x)
+				 (funcall
+				  bibitem-formatter
+				  (funcall
+				   rt-formatter (citeproc-rt-cull-spaces-puncts x))
+				  format-params))
+			       it)
+			      format-params)
+		     substituted)))
+	;; Generate final return value.
+	(cons (if filters formatted-bib (car formatted-bib))
 	      format-params)))))
 
 (defun citeproc-clear (proc)
@@ -219,7 +282,7 @@ external links in the item."
 	     (citeproc-rt-cull-spaces-puncts
 	      (citeproc-rt-finalize
 	       (citeproc-render-varlist-in-rt
-		internal-varlist style mode 'display t no-external-links))))))
+		internal-varlist style mode 'display 'no-links no-external-links))))))
 
 (provide 'citeproc)
 

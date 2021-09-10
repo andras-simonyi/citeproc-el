@@ -1,0 +1,32 @@
+---
+@Online{ctan,
+  title        = {{CTAN}},
+  date         = 2006,
+  url          = {http://www.ctan.org},
+  subtitle     = {{The Comprehensive TeX Archive Network}},
+  urldate      = {2006-10-01},
+  label        = {CTAN},
+  annotation   = {This is an online entry. The \textsc{url}, which is
+                  given in the url field, is transformed into a
+                  clickable link if hyperref support has been
+                  enabled. Note the format of the urldate field
+                  (yyyy-mm-dd) in the database file. Also note the
+                  label field which may be used as a fallback by
+                  citation styles which need an author and/or a
+                  year}}
+---
+- URL: "http://www.ctan.org"
+  accessed: 2006-10-01
+  annote: This is an online entry. The url, which is given
+    in the url field, is transformed into a clickable link if hyperref
+    support has been enabled. Note the format of the urldate field
+    (yyyy-mm-dd) in the database file. Also note the label field which
+    may be used as a fallback by citation styles which need an author
+    and/or a year
+  citation-label: CTAN
+  id: ctan
+  issued: 2006
+  title: "CTAN: The Comprehensive TeX Archive Network"
+  title-short: CTAN
+  type: webpage
+

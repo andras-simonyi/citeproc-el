@@ -246,24 +246,73 @@ CSL tests."
     (vertical-align-sub . ,(lambda (x) (concat "\\textsubscript{" x "}")))
     (font-style-oblique . ,(lambda (x) (concat "\\textsl{" x "}")))))
 
+;; Org-ODT
+
+(defconst citeproc-fmt--org-odt-alist
+  `((unformatted . citeproc-fmt--xml-escape)
+    (href . ,(lambda (x y) (concat "<text:a xlink:type=\"simple\" xlink:href=\""
+				   y "\">" x "</text:a>")))
+    (cited-item-no
+     . ,(lambda (x y) (concat "<text:a xlink:type=\"simple\" xlink:href=\"#citeproc_bib_item_"
+			      y "\">" x "</text:a>")))
+    (bib-item-no
+     . ,(lambda (x y)
+	  (concat "<text:bookmark-start text:name=\"OrgXref.citeproc_bib_item_" y "\"/>"
+		  "<text:bookmark text:name=\"citeproc_bib_item_" y "\"/>"
+		  "<text:bookmark-end text:name=\"OrgXref.citeproc_bib_item_" y "\"/>" x)))
+    (font-style-italic
+     . ,(lambda (x) (concat "<text:span text:style-name=\"Emphasis\">" x "</text:span>")))
+    (font-style-oblique
+     . ,(lambda (x) (concat "<text:span text:style-name=\"Emphasis\">" x "</text:span>")))
+    ;; NOTE: small caps support requires the availability of the OrgSmallcaps ODT style
+    ;; this requires an addition to or replacement of the default OrgOdtStyles.xml
+    (font-variant-small-caps
+     . ,(lambda (x) (concat "<text:span text:style-name=\"OrgSmallCaps\">" x "</text:span>")))
+    (font-weight-bold
+     . ,(lambda (x) (concat "<text:span text:style-name=\"Bold\">" x "</text:span>")))
+    (text-decoration-underline
+     . ,(lambda (x) (concat "<text:span text:style-name=\"Underline\">" x "</text:span>")))
+    (vertical-align-sub
+     . ,(lambda (x) (concat "<text:span text:style-name=\"OrgSubscript\">" x "</text:span>")))
+    (vertical-align-sup
+     . ,(lambda (x)
+	  (concat "<text:span text:style-name=\"OrgSuperscript\">" x "</text:span>")))
+    ;; TODO:
+    ;; - display-left-margin 
+    ;; - display-right-inline 
+    ;; - display-block 
+    ;; - display-indent 
+    ))
+
+(defun citeproc-fmt--org-odt-bib-formatter (items _bib-format)
+  "Return a html bibliography from already formatted ITEMS."
+  (mapconcat (lambda (i)
+	       (concat "<text:p text:style-name=\"Text_20_body\">" i "</text:p>"))
+	     items
+	     "\n"))
+
 ;; Define the formatters alist
 
- (defvar citeproc-fmt--formatters-alist
-   `((html . ,(citeproc-formatter-create
-	       :rt (citeproc-formatter-fun-create citeproc-fmt--html-alist)
-	       :bib #'citeproc-fmt--html-bib-formatter))
-     (csl-test . ,(citeproc-formatter-create
-		   :rt (citeproc-formatter-fun-create citeproc-fmt--csl-test-alist)
-		   :bib #'citeproc-fmt--html-bib-formatter
-		   :no-external-links t))
-     (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
-     (org . ,(citeproc-formatter-create
-	      :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)))
-     (latex . ,(citeproc-formatter-create
-		:rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
-     (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain
-					  :no-external-links t)))
-   "Alist mapping supported output formats to formatter structs.")
+(defvar citeproc-fmt--formatters-alist
+  `((org-odt . ,(citeproc-formatter-create
+		 :rt (citeproc-formatter-fun-create citeproc-fmt--org-odt-alist)
+		 :bib #'citeproc-fmt--org-odt-bib-formatter
+		 ))
+    (html . ,(citeproc-formatter-create
+	      :rt (citeproc-formatter-fun-create citeproc-fmt--html-alist)
+	      :bib #'citeproc-fmt--html-bib-formatter))
+    (csl-test . ,(citeproc-formatter-create
+		  :rt (citeproc-formatter-fun-create citeproc-fmt--csl-test-alist)
+		  :bib #'citeproc-fmt--html-bib-formatter
+		  :no-external-links t))
+    (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
+    (org . ,(citeproc-formatter-create
+	     :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)))
+    (latex . ,(citeproc-formatter-create
+	       :rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
+    (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain
+					 :no-external-links t)))
+  "Alist mapping supported output formats to formatter structs.")
 
 (defun citeproc-formatter-for-format (format)
   "Return the formatter struct belonging to FORMAT.
