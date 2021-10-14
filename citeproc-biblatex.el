@@ -221,7 +221,7 @@ if V is undefined in B."
     (citeproc-bt--to-csl blt-val with-nocase)))
 
 (defun citeproc-blt-entry-to-csl (b &optional omit-nocase)
-  "Return a CSL form of normalized parsed biblatex entry B.
+  "Return a CSL form of parsed biblatex entry B.
 If the optional OMIT-NOCASE is non-nil then no no-case XML
 markers are generated.
 
