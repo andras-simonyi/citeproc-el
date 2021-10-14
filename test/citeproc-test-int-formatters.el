@@ -26,9 +26,14 @@
 
 (ert-deftest citeproc-test-formatters-latex ()
   (let ((f (citeproc-formatter-rt
-	     (citeproc-formatter-for-format 'latex))))
+	    (citeproc-formatter-for-format 'latex))))
     (should (string= (funcall f '(((href . "http://orgmode.org")) "Org website"))
-		     "\\href{http://orgmode.org}{Org website}"))))
+		     "\\href{http://orgmode.org}{Org website}"))
+    (should (string=
+	     (funcall f
+	      '(((href . "https://scholar.google.com/scholar?q=%22functional+data%22"))
+		"https://scholar.google.com/scholar?q=%22functional+data%22"))
+	     "\\href{https://scholar.google.com/scholar?q=\\%22functional+data\\%22}{https://scholar.google.com/scholar?q=\\%22functional+data\\%22}"))))
 
 (ert-deftest citeproc-test-formatters-csl ()
   (let ((f (citeproc-formatter-rt
