@@ -75,14 +75,7 @@ IGNORE-ET-AL is non-nil if et-al settings should be ignored for
 GROUPED is used internally to indicate whether the cites were
   grouped by the csl processor."
   (citeproc-citation--create
-   ;; Add suitable cite-level information to the first cite alist.
-   :cites (progn
-	    (-when-let (mode-rep
-			(alist-get mode citeproc-cite--from-mode-alist))
-	      (push mode-rep (car cites)))
-	    (when ignore-et-al
-	      (push '(ignore-et-al . t) (car cites)))
-	    cites)
+   :cites cites
    :note-index note-index
    :capitalize-first capitalize-first
    :suppress-affixes suppress-affixes
@@ -331,6 +324,18 @@ For the optional INTERNAL-LINKS argument see
     (dolist (citation (queue-head (citeproc-proc-citations proc)))
       (citeproc-citation--sort-cites citation proc))))
 
+(defun citeproc-proc-apply-citation-modes (proc)
+  "Apply mode to the first cite in each citation in PROC."
+  (dolist (citation (queue-head (citeproc-proc-citations proc)))
+    (let ((mode (citeproc-citation-mode citation))
+	  (cites (citeproc-citation-cites citation))
+	  (ignore-et-al (citeproc-citation-ignore-et-al citation)))
+      (-when-let (mode-rep
+		  (alist-get mode citeproc-cite--from-mode-alist))
+	(push mode-rep (car cites)))
+      (when ignore-et-al
+	(push '(ignore-et-al . t) (car cites))))))
+
 (defun citeproc-proc-group-and-collapse-cites (proc)
   "Group and collapse cites in all citations of PROC."
   (let* ((cite-opts (citeproc-style-cite-opts (citeproc-proc-style proc)))
@@ -522,6 +527,7 @@ Possible values are 'last, 'first and 'subsequent.")
     (citeproc-proc-update-positions proc)
     (citeproc-proc-disamb proc)
     (citeproc-proc-sort-cites proc)
+    (citeproc-proc-apply-citation-modes proc)
     (citeproc-proc-group-and-collapse-cites proc)
     (setf (citeproc-proc-finalized proc) t)))
 
