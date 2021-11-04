@@ -242,9 +242,10 @@ biblatex variables in B."
 	 result)
     ;; set type and genre
     (push (cons 'type type) result)
-    (when-let ((~reftype (alist-get 'type b))
-	       (genre (assoc-default ~reftype citeproc-blt--reftype-to-genre)))
-      (push (cons 'genre genre) result))
+    (when-let ((~reftype (alist-get 'type b)))
+      (push (cons 'genre (or (assoc-default ~reftype citeproc-blt--reftype-to-genre)
+			     (citeproc-bt--to-csl ~reftype)))
+	    result))
     ;; names
     (when-let ((~editortype (alist-get 'editortype b))
 	       (~editor (alist-get 'editor b))
