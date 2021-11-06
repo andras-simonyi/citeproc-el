@@ -224,7 +224,7 @@ CSL tests."
 ;; LaTeX
 
 (defconst citeproc-fmt--latex-esc-regex
-  (regexp-opt '("_" "{" "}" "&" "#" "%" "$"))
+  (regexp-opt '("_" "&" "#" "%" "$"))
   "Regular expression matching characters to be escaped in LaTeX output.")
 
 (defun citeproc-fmt--latex-escape (s)
