@@ -41,25 +41,8 @@
 (require 'citeproc-sort)
 (require 'citeproc-subbibs)
 
-(cl-defstruct (citeproc-citation (:constructor citeproc-citation--create))
+(cl-defstruct (citeproc-citation (:constructor citeproc-citation-create))
   "A struct representing a citation.
-The public constructor is `citeproc-citation-create', see its
-documentation for a description of the fields."
-  cites note-index mode suppress-affixes capitalize-first
-  ignore-et-al grouped)
-
-(defconst citeproc-cite--from-mode-alist
-  '((textual . (suppress-author . t))
-    (suppress-author . (suppress-author . t))
-    (author-only . (stop-rendering-at . names))
-    (year-only . (stop-rendering-at . issued)))
-  "Alist mapping citation modes to corresponding cite-level
-key-value pair representations.")
-
-(cl-defun citeproc-citation-create
-    (&key cites note-index mode suppress-affixes capitalize-first
-	  ignore-et-al grouped)
-  "Create a `citeproc-citation' structure.
 CITES is a list of alists describing individual cites,
 NOTE-INDEX is the note index of the citation if it occurs in a
   note,
@@ -74,14 +57,16 @@ IGNORE-ET-AL is non-nil if et-al settings should be ignored for
   the first cite.
 GROUPED is used internally to indicate whether the cites were
   grouped by the csl processor."
-  (citeproc-citation--create
-   :cites cites
-   :note-index note-index
-   :capitalize-first capitalize-first
-   :suppress-affixes suppress-affixes
-   :ignore-et-al ignore-et-al
-   :mode mode
-   :grouped grouped))
+  cites note-index mode suppress-affixes capitalize-first
+  ignore-et-al grouped)
+
+(defconst citeproc-cite--from-mode-alist
+  '((textual . (suppress-author . t))
+    (suppress-author . (suppress-author . t))
+    (author-only . (stop-rendering-at . names))
+    (year-only . (stop-rendering-at . issued)))
+  "Alist mapping citation modes to corresponding cite-level
+key-value pair representations.")
 
 (defun citeproc-cite--varlist (cite)
   "Return the varlist belonging to CITE."
