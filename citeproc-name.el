@@ -400,7 +400,11 @@ VAR is a symbol."
     (if (or (string= var "number-of-pages")
 	    (string= var "number-of-volumes"))
 	(> (string-to-number content) 1)
-      (> (length (s-split "[^[:digit:]]+" content t)) 1))))
+      (string-match-p
+       (concat "[[:digit:]] *\\([-,;–&—―]+\\|[,;]? *"
+	       (citeproc-term-get-text "and" context)
+	       "\\) *[a-zA-Z]?[[:digit:]]")
+       content))))
 
 (defun citeproc--label (attrs context &rest _body)
   "Render a CSL label element with the given ATTRS in CONTEXT."
