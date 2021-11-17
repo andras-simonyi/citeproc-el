@@ -98,29 +98,30 @@
 	     (let ((val (citeproc-var-value (intern .variable) context (citeproc-lib-intern
 									.form))))
 	       (setq content val)
-	       (if val
-		   (let ((var (intern .variable)))
-		     (setq type 'present-var)
-		     (push `(rendered-var . ,var) attrs)
-		     (when (and (not no-external-links)
-				(memq var citeproc--linked-vars))
-		       (let ((target
-			      (concat
-			       (alist-get var citeproc--link-prefix-alist
-					  "")
-			       content)))
-			 (-when-let (match-pos
-				     (and .prefix (s-matched-positions-all
-						   citeproc-generic-elements--url-prefix-re
-						   .prefix)))
-			   ;; If the prefix ends with an URL then it is moved
-			   ;; from the prefix to the rendered variable content.
-			   (let ((start (caar match-pos)))
-			     (setq content (concat (substring .prefix start) content))
-			     (push (cons 'prefix (substring .prefix 0 start))
-				   attrs)))
-			 (push (cons 'href target) attrs))))
-		 (setq type 'empty-vars))))
+	       (cond
+		(val (let ((var (intern \.variable)))
+		       (setq type 'present-var)
+		       (push `(rendered-var . ,var) attrs)
+		       (when (and (not no-external-links)
+				  (memq var citeproc--linked-vars))
+			 (let ((target
+				(concat
+				 (alist-get var citeproc--link-prefix-alist
+					    "")
+				 content)))
+			   (-when-let (match-pos
+				       (and .prefix (s-matched-positions-all
+						      citeproc-generic-elements--url-prefix-re
+						      .prefix)))
+			     ;; If the prefix ends with an URL then it is moved
+			     ;; from the prefix to the rendered variable
+			     ;; content.
+			     (let ((start (caar match-pos)))
+			       (setq content (concat (substring .prefix start) content))
+			       (push (cons 'prefix (substring .prefix 0 start))
+				     attrs)))
+			   (push (cons 'href target) attrs)))))
+		((not (string= .variable "year-suffix")) (setq type 'empty-vars)))))
 	    (.term (setq .form (if .form (intern .form) 'long)
 			 .plural (if (or (not .plural)
 					 (string= .plural "false"))
