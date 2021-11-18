@@ -400,9 +400,14 @@ successfully added."
 		  (memq (alist-get 'rendered-var (car node)) citeproc--date-vars)))
 	    (add-suffix
 	     (node)
-	     (if (equal (cadr node) "<suppressed-date>")
-		 (list (car node) ys)
-	       (-snoc node `(((rendered-var . year-suffix)) ,ys)))))
+	     (let ((content (cadr node)))
+	      (if (equal content "<suppressed-date>")
+		  (list (car node) ys)
+		(let ((full-ys (if (or (not (stringp content))
+				       (s-matches-p "[[:digit:]]$" content))
+				   ys
+				 (concat "-" ys))))
+		 (-snoc node `(((rendered-var . year-suffix)) ,full-ys)))))))
     (citeproc-rt-transform-first rt #'rendered-date-var-p #'add-suffix)))
 
 (defun citeproc-rt-replace-first-names (rt replacement)

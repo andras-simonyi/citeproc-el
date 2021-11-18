@@ -99,7 +99,7 @@
 									.form))))
 	       (setq content val)
 	       (cond
-		(val (let ((var (intern \.variable)))
+		(val (let ((var (intern .variable)))
 		       (setq type 'present-var)
 		       (push `(rendered-var . ,var) attrs)
 		       (when (and (not no-external-links)
@@ -111,8 +111,8 @@
 				 content)))
 			   (-when-let (match-pos
 				       (and .prefix (s-matched-positions-all
-						      citeproc-generic-elements--url-prefix-re
-						      .prefix)))
+						     citeproc-generic-elements--url-prefix-re
+						     .prefix)))
 			     ;; If the prefix ends with an URL then it is moved
 			     ;; from the prefix to the rendered variable
 			     ;; content.
@@ -121,12 +121,20 @@
 			       (push (cons 'prefix (substring .prefix 0 start))
 				     attrs)))
 			   (push (cons 'href target) attrs)))))
+		;; Don't report empty var for year-suffix, see issue #70.
 		((not (string= .variable "year-suffix")) (setq type 'empty-vars)))))
 	    (.term (setq .form (if .form (intern .form) 'long)
 			 .plural (if (or (not .plural)
 					 (string= .plural "false"))
 				     'single 'multiple)
-			 content (citeproc-term-inflected-text .term .form .plural context)))
+			 content (let ((cont (citeproc-term-inflected-text
+					      .term .form .plural context)))
+				   ;; Annotate the 'no date' term as if it'd be
+				   ;; the value of the 'issue' variable to
+				   ;; handle implicit year suffix addition.
+				   (if (string= .term "no date")
+				       `(((rendered-var . issued)) ,cont)
+				     cont))))
 	    (.macro (let ((macro-val (citeproc-macro-output .macro context)))
 		      (setq content (car macro-val))
 		      (setq type (cdr macro-val)))))
