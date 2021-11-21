@@ -271,7 +271,6 @@ brackets to the corresponding CSL XML spans."
 	    (when with-nocase "<span class=\"nocase\">")
 	    (when with-nocase "</span>"))
 	   (s-replace-all '(("\n" . " ") ("~" . " ") ("--" . "–")) it)
-	   (replace-regexp-in-string "[[:space:]]\\{2,\\}" " " it)
 	   (s-chomp it))
     s))
 
