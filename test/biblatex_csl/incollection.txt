@@ -18,7 +18,8 @@
 	Publisher = {Klett-Cotta},
 	Series = {Handbuch der europäischen Geschichte},
 	Shorttitle = {Die nordischen Länder},
-	Title = {Die nordischen Länder von der Mitte des 11. Jahrhunderts bis 1448}}
+	Title = {Die nordischen Länder von der Mitte des 11. Jahrhunderts bis 1448},
+	Langid = {German}}
 
 @incollection{hyman,
 	Annotation = {An incollection entry with a series and number field},
@@ -80,7 +81,7 @@
   - family: Hyman
     given: Arthur
   collection-number: 9
-  collection-title: Studies in Philosophy and the History of Philosophy
+  collection-title: Studies in philosophy and the history of philosophy
   container-title: Studies in Aristotle
   editor:
   - family: O'Meara
@@ -91,14 +92,14 @@
   page: 161-191
   publisher: The Catholic University of America Press
   publisher-place: Washington, D.C.
-  title: Aristotle's Theory of the Intellect and its Interpretation by Averroes
-  title-short: Aristotle's Theory of the Intellect
+  title: Aristotle's theory of the intellect and its interpretation by Averroes
+  title-short: Aristotle's theory of the intellect
   type: chapter
 - annote: A typical incollection entry. Note the indextitle field
   author:
   - family: Pines
     given: Shlomo
-  container-title: Studies in Medieval Jewish History and Literature
+  container-title: Studies in medieval Jewish history and literature
   editor:
   - family: Twersky
     given: Isadore
@@ -108,7 +109,7 @@
   page: 82-109
   publisher: Harvard University Press
   publisher-place: Cambridge, Mass.
-  title: The Limitations of Human Knowledge According to Al-Farabi, ibn
+  title: The limitations of human knowledge according to Al-Farabi, ibn
     Bajja, and Maimonides
-  title-short: Limitations of Human Knowledge
+  title-short: Limitations of human knowledge
   type: chapter

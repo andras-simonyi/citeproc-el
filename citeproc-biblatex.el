@@ -161,10 +161,6 @@
     (pagetotal . number-of-pages)
     (chapter-number . chapter)
     (pages . page)
-    ;; titles
-    (eventtitle . event-title)
-    (origtitle . original-title)
-    (series . collection-title)
     ;; publisher
     (origpublisher . original-publisher)
     ;; places
@@ -190,6 +186,14 @@
     (label . citation-label))
   "Alist mapping biblatex standard fields to the corresponding CSL ones.
 Only those fields are mapped that do not require further processing.")
+
+(defconst citeproc-blt--to-csl-title-alist
+  '((eventtitle . event-title)
+    (origtitle . original-title)
+    (series . collection-title))
+  "Alist mapping biblatex title fields to the corresponding CSL ones.
+Only those fields are mapped that do not require further
+processing.")
 
 (defun citeproc-blt--to-csl-date (d)
   "Return a CSL version of the biblatex date field given by D."
@@ -220,10 +224,36 @@ if V is undefined in B."
   (-when-let (blt-val (alist-get v b))
     (citeproc-bt--to-csl blt-val with-nocase)))
 
-(defun citeproc-blt-entry-to-csl (b &optional omit-nocase)
+(defun citeproc-blt--get-title (v b &optional with-nocase sent-case)
+  "Return the CSL-normalized value of a title var V from item B.
+If optional WITH-NOCASE is non-nil then convert BibTeX no-case
+brackets to the corresponding CSL XML spans, and if optional
+SENT-CASE is non-nil the convert to sentence-case. Return nil if
+V is undefined in B."
+  (-when-let (blt-val (alist-get v b))
+    (citeproc-blt--to-csl-title blt-val with-nocase sent-case)))
+
+(defun citeproc-blt--to-csl-title (s with-nocase sent-case)
+  "Return the CSL-normalized value of a title string S.
+If optional WITH-NOCASE is non-nil then convert BibTeX no-case
+brackets to the corresponding CSL XML spans, and if optional
+SENT-CASE is non-nil the convert to sentence-case. Return nil if
+V is undefined in B."
+  (if sent-case
+      (citeproc-s-sentence-case-title (citeproc-bt--to-csl s t) (not with-nocase))
+    (citeproc-bt--to-csl s with-nocase)))
+
+(defconst citeproc-blt--titlecase-langids
+  '("american" "british" "canadian" "english" "australian" "newzealand"
+    "USenglish" "UKenglish")
+  "List of biblatex langids with title-cased title fields.")
+
+(defun citeproc-blt-entry-to-csl (b &optional omit-nocase no-sentcase-wo-langid)
   "Return a CSL form of parsed biblatex entry B.
 If the optional OMIT-NOCASE is non-nil then no no-case XML
-markers are generated.
+markers are generated, and if the optional NO-SENTCASE-WO-LANGID
+is non-nil then title fields in items without a `langid' field
+are not converted to sentence-case.
 
 The processing logic follows the analogous
 function (itemToReference) in John MacFarlane's Pandoc, see
@@ -239,6 +269,10 @@ biblatex variables in B."
 	 (is-article (memq ~type citeproc-blt--article-types))
 	 (is-periodical (eq ~type 'periodical))
 	 (is-chapter-like (memq ~type citeproc-blt--chapter-types))
+	 (~langid (alist-get 'langid b))
+	 (sent-case (or (member ~langid citeproc-blt--titlecase-langids)
+			(and (null ~langid) (not no-sentcase-wo-langid))))
+	 (with-nocase (not omit-nocase))
 	 result)
     ;; set type and genre
     (push (cons 'type type) result)
@@ -277,65 +311,64 @@ biblatex variables in B."
 		     result))
 	      (t (push `(number . ,~number) result))))
     ;; titles
-    (let* ((nocase (not omit-nocase))
-	   (~maintitle (citeproc-blt--get-standard 'maintitle b nocase))
+    (let* ((~maintitle (citeproc-blt--get-title 'maintitle b with-nocase sent-case))
 	   (title
-	    (cond (is-periodical (citeproc-blt--get-standard 'issuetitle b nocase))
+	    (cond (is-periodical (citeproc-blt--get-title 'issuetitle b with-nocase sent-case))
 		  ((and ~maintitle (not is-chapter-like)) ~maintitle)
-		  (t (citeproc-blt--get-standard 'title b nocase))))
-	   (subtitle (citeproc-blt--get-standard
+		  (t (citeproc-blt--get-title 'title b with-nocase sent-case))))
+	   (subtitle (citeproc-blt--get-title
 		      (cond (is-periodical 'issuesubtitle)
 			    ((and ~maintitle (not is-chapter-like))
 			     'mainsubtitle)
 			    (t 'subtitle))
-		      b nocase))
+		      b with-nocase sent-case))
 	   (title-addon
-	    (citeproc-blt--get-standard
+	    (citeproc-blt--get-title
 	     (if (and ~maintitle (not is-chapter-like))
 		 'maintitleaddon 'titleaddon)
-	     b nocase))
+	     b with-nocase sent-case))
 	   (volume-title
 	    (when ~maintitle
-	      (citeproc-blt--get-standard
-	       (if is-chapter-like 'booktitle 'title) b nocase)))
+	      (citeproc-blt--get-title
+	       (if is-chapter-like 'booktitle 'title) b with-nocase sent-case)))
 	   (volume-subtitle
 	    (when ~maintitle
-	      (citeproc-blt--get-standard
-	       (if is-chapter-like 'booksubtitle 'subtitle) b nocase)))
+	      (citeproc-blt--get-title
+	       (if is-chapter-like 'booksubtitle 'subtitle) b with-nocase sent-case)))
 	   (volume-title-addon
 	    (when ~maintitle
-	      (citeproc-blt--get-standard
-	       (if is-chapter-like 'booktitleaddon 'titleaddon) b nocase)))
+	      (citeproc-blt--get-title
+	       (if is-chapter-like 'booktitleaddon 'titleaddon) b with-nocase sent-case)))
 	   (container-title
-	    (or (and is-periodical (citeproc-blt--get-standard 'title b nocase))
+	    (or (and is-periodical (citeproc-blt--get-title 'title b with-nocase sent-case))
 		(and is-chapter-like ~maintitle)
-		(and is-chapter-like (citeproc-blt--get-standard
-				      'booktitle b nocase))
-		(or (citeproc-blt--get-standard 'journaltitle b nocase)
+		(and is-chapter-like (citeproc-blt--get-title
+				      'booktitle b with-nocase sent-case))
+		(or (citeproc-blt--get-title 'journaltitle b with-nocase sent-case)
 		    ;; also accept `journal' for BibTeX compatibility
-		    (citeproc-blt--get-standard 'journal b nocase))))
+		    (citeproc-blt--get-title 'journal b with-nocase sent-case))))
 	   (container-subtitle
-	    (or (and is-periodical (citeproc-blt--get-standard
-				    'subtitle b nocase))
-		(and is-chapter-like (citeproc-blt--get-standard
-				      'mainsubtitle b nocase))
-		(and is-chapter-like (citeproc-blt--get-standard
-				      'booksubtitle b nocase))
-		(citeproc-blt--get-standard 'journalsubtitle b nocase)))
+	    (or (and is-periodical (citeproc-blt--get-title
+				    'subtitle b with-nocase sent-case))
+		(and is-chapter-like (citeproc-blt--get-title
+				      'mainsubtitle b with-nocase sent-case))
+		(and is-chapter-like (citeproc-blt--get-title
+				      'booksubtitle b with-nocase sent-case))
+		(citeproc-blt--get-title 'journalsubtitle b with-nocase sent-case)))
 	   (container-title-addon
-	    (or (and is-periodical (citeproc-blt--get-standard
-				    'titleaddon b nocase))
-		(and is-chapter-like (citeproc-blt--get-standard
-				      'maintitleaddon b nocase))
+	    (or (and is-periodical (citeproc-blt--get-title
+				    'titleaddon b with-nocase sent-case))
+		(and is-chapter-like (citeproc-blt--get-title
+				      'maintitleaddon b with-nocase sent-case))
 		(and is-chapter-like
-		     (citeproc-blt--get-standard 'booktitleaddon b nocase))))
+		     (citeproc-blt--get-title 'booktitleaddon b with-nocase sent-case))))
 	   (container-title-short
 	    (or (and is-periodical (not ~maintitle)
-		     (citeproc-blt--get-standard 'titleaddon b nocase))
-		(citeproc-blt--get-standard 'shortjournal b nocase)))
+		     (citeproc-blt--get-title 'titleaddon b with-nocase sent-case))
+		(citeproc-blt--get-title 'shortjournal b with-nocase sent-case)))
 	   (title-short
 	    (or (and (or (not ~maintitle) is-chapter-like)
-		     (citeproc-blt--get-standard 'shorttitle b nocase))
+		     (citeproc-blt--get-title 'shorttitle b with-nocase sent-case))
 		(and (or subtitle title-addon)
 		     (not ~maintitle)
 		     title))))
@@ -369,7 +402,7 @@ biblatex variables in B."
     (let ((csl-place-var
 	   (if (eq ~type 'patent) 'jurisdiction 'publisher-place)))
       (-when-let (~location (or (citeproc-blt--get-standard 'location b)
-				 (citeproc-blt--get-standard 'address b)))
+				(citeproc-blt--get-standard 'address b)))
 	(push (cons csl-place-var ~location) result)))
     ;; url
     (-when-let (url (or (let ((u (alist-get 'url b))) (and u (s-replace "\\" "" u)))   
@@ -406,7 +439,13 @@ biblatex variables in B."
 	(-when-let (csl-key
 		    (alist-get blt-key citeproc-blt--to-csl-dates-alist))
 	  (unless (alist-get csl-key result)
-	    (push (cons csl-key (citeproc-blt--to-csl-date blt-value)) rest))))
+	    (push (cons csl-key (citeproc-blt--to-csl-date blt-value)) rest)))
+	;; remaining title vars
+	(-when-let (csl-key
+		    (alist-get blt-key citeproc-blt--to-csl-title-alist))
+	  (push (cons csl-key
+		      (citeproc-blt--to-csl-title blt-value with-nocase sent-case))
+		rest)))
       (append result rest))))
 
 (provide 'citeproc-biblatex)

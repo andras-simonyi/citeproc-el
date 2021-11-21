@@ -33,12 +33,12 @@ year="2007"
   issued: 2005
   publisher: Cambridge University Press
   publisher-place: Cambridge
-  title: First Book
+  title: First book
   type: book
 - author:
   - family: Doe
     given: John
-  container-title: Journal of Generic Studies
+  container-title: Journal of generic studies
   id: item2
   issued: 2006
   page: 33-34
@@ -50,7 +50,7 @@ year="2007"
     given: John
   - family: Roe
     given: Jenny
-  container-title: Third Book
+  container-title: Third book
   editor:
   - family: Smith
     given: Sam
@@ -58,5 +58,5 @@ year="2007"
   issued: 2007
   publisher: Oxford University Press
   publisher-place: Oxford
-  title: Why Water Is Wet
+  title: Why water is wet
   type: chapter

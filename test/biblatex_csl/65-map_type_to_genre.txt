@@ -9,7 +9,8 @@
   year = {2014},
   pages = {264-272},
   title     = {UsedSoft II},
-  commentator = {Malte Stieper}
+  commentator = {Malte Stieper},
+  langid = {german}
 }
 ---
 - author:

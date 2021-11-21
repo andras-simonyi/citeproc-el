@@ -14,7 +14,7 @@
   location     = {Berlin},
   pages        = {165-485},
   shorthand    = {KU},
-  hyphenation  = {german},
+  langid  = {german},
   annotation   = {An edition of Kant's Collected Works, volume five.}}
 ---
 - annote: An edition of Kant's Collected Works, volume five.

@@ -10,7 +10,7 @@
 	Publisher = {Publisher},
 	Series = {Series},
 	Subtitle = {Subtitle},
-	Title = {Title of the Book},
+	Title = {Title of the book},
 	Titleaddon = {Titleaddon},
 }
 ---
@@ -25,4 +25,4 @@
   publisher-place: Location
   title: "Maintitle: Mainsubtitle. Maintitleaddon"
   type: book
-  volume-title: "Title of the Book: Subtitle. Titleaddon"
+  volume-title: "Title of the book: Subtitle. Titleaddon"
