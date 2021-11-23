@@ -17,6 +17,7 @@
                   number. Note the concatenation of the editor
                   and translator fields as well as the
                   indextitle field},
+  langid = {english}
 }
 ---
 - annote: A book entry with a series and a number. Note the
@@ -25,8 +26,7 @@
   author:
   - family: Averroes
   collection-number: 7
-  collection-title: "Moreshet: Studies in Jewish History, Literature and
-    Thought"
+  collection-title: "Moreshet: Studies in Jewish history, literature and thought"
   editor:
   - family: Bland
     given: Kalman P.
@@ -35,9 +35,9 @@
   keyword: primary
   publisher: Jewish Theological Seminary of America
   publisher-place: New York
-  title: The Epistle on the Possibility of Conjunction with the Active
-    Intellect by Ibn Rushd with the Commentary of Moses Narboni
-  title-short: Possibility of Conjunction
+  title: The epistle on the possibility of conjunction with the active
+    intellect by Ibn Rushd with the commentary of Moses Narboni
+  title-short: Possibility of conjunction
   translator:
   - family: Bland
     given: Kalman P.

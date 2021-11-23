@@ -14,7 +14,8 @@
 	Shorthand = {KpV},
 	Shorttitle = {Kritik der praktischen Vernunft},
 	Title = {Kritik der praktischen Vernunft},
-	Volume = 5}
+	Volume = 5,
+	Langid = {german}}
 
 @inbook{kant:ku,
 	Annotation = {An edition of Kant's Collected Works, volume five. This is an inbook entry which explicitly refers to the Critique of Judgment only, not to the entire fifth volume},
@@ -28,6 +29,7 @@
 	Publisher = {Walter de Gruyter},
 	Shorthand = {KU},
 	Title = {Kritik der Urtheilskraft},
+	Langid = {german},
 	Volume = 5}
 
 @inbook{nietzsche:historie,
@@ -50,7 +52,8 @@
 	Sortyear = {1988-2},
 	Subtitle = {Vom Nutzen und Nachtheil der Historie für das Leben},
 	Title = {Unzeitgemässe Betrachtungen. Zweites Stück},
-	Volume = 1}
+	Volume = 1,
+	Langid = {german}}
 ---
 - annote: An edition of Kant's Collected Works, volume five. This is
     an inbook entry which explicitly refers to the Critique of

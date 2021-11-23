@@ -121,16 +121,15 @@
 	t files)
        result))))
 
-(defun citeproc-hash-itemgetter-from-any (file-or-files)
+(defun citeproc-hash-itemgetter-from-any (file-or-files &optional no-sentcase-wo-langid)
   "Return a getter for FILE-OR-FILES in any supported format.
 The format is determined on the basis of file extensions.
 Supported formats:
 - CSL-JSON (.json extension) the recommended native format;
-- biblatex (.bib extension), broadly compatible with BibTeX, the
-  use of the dedicated BibTeX reader can be enforced by using the
-  .bibtex extension in the filename;
-- BibTeX (.bibtex extension);
-- org-bibtex (.org extension)."
+- BibTeX/biblatex (.bib or .bibtex extension),
+- org-bibtex (.org extension).
+If NO-SENTCASE-WO-LANGID is non-nil then title fields in items
+without a `langid' field are not converted to sentence-case."
   (let ((files (if (listp file-or-files)
 		   file-or-files
 		 (list file-or-files)))
@@ -146,13 +145,10 @@ Supported formats:
          (with-temp-buffer
 	   (insert-file-contents file)
 	   (bibtex-set-dialect (if (string= ext "bib") 'biblatex 'BibTeX) t)
-	   (let ((to-csl-fun (if (eq bibtex-dialect 'biblatex)
-				 #'citeproc-blt-entry-to-csl
-			       #'citeproc-bt-entry-to-csl))
-                 (entries (car (citeproc-itemgetters--parsebib-buffer))))
+	   (let ((entries (car (citeproc-itemgetters--parsebib-buffer))))
              (maphash 
 	      (lambda (key entry)
-                (puthash key (funcall to-csl-fun entry)
+                (puthash key (citeproc-blt-entry-to-csl entry nil no-sentcase-wo-langid)
                          cache))
               entries))))
 	("org"
@@ -170,8 +166,8 @@ Supported formats:
 	('itemids
 	 (hash-table-keys cache))
 	((pred listp) (mapcar (lambda (id)
-				  (cons id (gethash id cache)))
-				x))
+				(cons id (gethash id cache)))
+			      x))
 	(_ (error "Unsupported citeproc itemgetter retrieval method"))))))
 
 (provide 'citeproc-itemgetters)

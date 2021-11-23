@@ -23,6 +23,6 @@
   number-of-volumes: 32
   publisher: Encyclopædia Britannica
   publisher-place: Chicago, Ill.
-  title: The New Encyclopædia Britannica
+  title: The new encyclopædia Britannica
   title-short: Encyclopædia Britannica
   type: book

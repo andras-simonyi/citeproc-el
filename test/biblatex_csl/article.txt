@@ -3,7 +3,8 @@
     Author = {Author, Ann},
     Date = {2013-01-01},
     Journaltitle = {The Journaltitle},
-    Title = {An article entry with just the required fields}}
+    Title = {An article entry with just the required fields},
+    Langid = {english}},
 
 @article{article-opt,
     Addendum = {The Addendum},
@@ -44,12 +45,13 @@
     Urldate = {2013-01-01},
     Version = {version},
     Volume = {volume},
+    Langid = {english}
 }
 ---
 - author:
   - family: Author
     given: Ann
-  container-title: The Journaltitle
+  container-title: The journaltitle
   id: article-req
   issued: 2013-01-01
   title: An article entry with just the required fields
@@ -60,7 +62,7 @@
     given: Ann A.
     suffix: Jr.
   collection-title: new series
-  container-title: "The Journaltitle: The Journalsubtitle"
+  container-title: "The journaltitle: The journalsubtitle"
   DOI: 10.1086/520976
   editor:
   - family: Editor

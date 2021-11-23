@@ -58,7 +58,7 @@
   issued: 1978
   number: RC-6947
   publisher: IBM
-  title: A Hybrid Hierarchical Model of a Multiple Virtual Storage (MVS) Operating System
+  title: A hybrid hierarchical model of a Multiple Virtual Storage (MVS) operating system
   type: report
 - abstract: The steady state performance of a bulk transfer TCP flow
     (i.e., a flow with a large amount of data to send, such as FTP
@@ -97,5 +97,5 @@
   number: 99-02
   publisher: University of Massachusetts
   publisher-place: Amherst, Mass.
-  title: A Stochastic Model of TCP Reno Congestion Avoidance and Control
+  title: A stochastic model of TCP Reno congestion avoidance and control
   type: report

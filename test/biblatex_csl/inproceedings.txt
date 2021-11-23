@@ -17,7 +17,8 @@
 	Publisher = cup,
 	Shorttitle = {De Anima dans la tradition grècque},
 	Subtitle = {Quelques aspects de l'interpretation du traité, de Theophraste à Themistius},
-	Title = {Le De Anima dans la tradition grècque}}
+	Title = {Le De Anima dans la tradition grècque},
+	Langid = {french}}
 
 @inproceedings{salam,
 	Author = {Salam, Abdus},
@@ -61,7 +62,7 @@
   - family: Salam
     given: Abdus
   container-title: "Elementary particle theory: Relativistic groups and
-    analyticity. Proceedings of the Eighth Nobel Symposium"
+    analyticity. Proceedings of the eighth Nobel symposium"
   editor:
   - family: Svartholm
     given: Nils
@@ -72,5 +73,5 @@
   page: 367-377
   publisher: Almquist & Wiksell
   publisher-place: Stockholm
-  title: Weak and Electromagnetic Interactions
+  title: Weak and electromagnetic interactions
   type: paper-conference

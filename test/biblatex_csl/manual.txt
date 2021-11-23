@@ -34,7 +34,7 @@
   issued: 2003
   publisher: University of Chicago Press
   publisher-place: Chicago, Ill.
-  title: "The Chicago Manual of Style: The Essential Guide for Writers,
-    Editors, and Publishers"
-  title-short: Chicago Manual of Style
+  title: "The Chicago manual of style: The essential guide for writers,
+    editors, and publishers"
+  title-short: Chicago manual of style
   type: book
