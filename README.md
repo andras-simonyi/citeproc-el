@@ -125,17 +125,16 @@ BibTeX/org-bibtex files. Similarly to `citeproc-itemgetter-from-csl-json`, these
 functions open and read directly from the specified files each time they are
 called.
 
-#### citeproc-hash-itemgetter-from-any `(file-or-files)`
+#### citeproc-hash-itemgetter-from-any `(file-or-files & no-sentcase-wo-langid)`
 Return a getter for `file-or-files` in any supported format.
 The format is determined on the basis of file extensions.
 Supported formats:
 
 - CSL-JSON (.json extension) the recommended native format;
-- biblatex (.bib extension), broadly compatible with BibTeX, the
-  use of the dedicated BibTeX reader can be enforced by using the
-  .bibtex extension in the filename;
-- BibTeX (.bibtex extension);
-- org-bibtex (.org extension).
+- BibTeX/biblatex (.bib or .bibtex extension),
+- org-bibtex (.org extension). If `no-sentcase-wo-langid`
+is non-nil then title fields in items without a `langid' field are not converted
+to sentence-case.
 
 #### citeproc-locale-getter-from-dir `(directory)`
 
