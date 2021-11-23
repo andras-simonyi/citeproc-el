@@ -132,9 +132,10 @@ Supported formats:
 
 - CSL-JSON (.json extension) the recommended native format;
 - BibTeX/biblatex (.bib or .bibtex extension),
-- org-bibtex (.org extension). If `no-sentcase-wo-langid`
-is non-nil then title fields in items without a `langid' field are not converted
-to sentence-case.
+- org-bibtex (.org extension). 
+
+If `no-sentcase-wo-langid` is non-nil then title fields in items without a
+`langid' field are not converted to sentence-case.
 
 #### citeproc-locale-getter-from-dir `(directory)`
 

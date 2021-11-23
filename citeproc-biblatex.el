@@ -28,7 +28,7 @@
 (require 'parse-time)
 (require 'citeproc-bibtex)
 
-(defconst citeproc-blt--to-csl-types-alist
+(defvar citeproc-blt-to-csl-types-alist
   '((article . "article-journal")
     (book . "book")
     (periodical . "book")
@@ -91,9 +91,9 @@
        ("magazine" "article-magazine")
        ("newspaper" "article-newspaper")
        (_ "article-journal")))
-    (_ (assoc-default type citeproc-blt--to-csl-types-alist))))
+    (_ (assoc-default type citeproc-blt-to-csl-types-alist))))
 
-(defconst citeproc-blt--reftype-to-genre
+(defvar citeproc-blt-reftype-to-genre
   '(("mastersthesis" . "Master's thesis")
     ("phdthesis" . "PhD thesis")
     ("mathesis" . "Master's thesis")
@@ -104,29 +104,29 @@
     ("patentus" . "U.S. patent"))
   "Alist mapping biblatex reftypes to CSL genres.")
 
-(defconst citeproc-blt--article-types
+(defvar citeproc-blt-article-types
   '(article periodical suppperiodical review)
   "Article-like biblatex types.")
 
-(defconst citeproc-blt--chapter-types
+(defvar citeproc-blt-chapter-types
  '(inbook incollection inproceedings inreference bookinbook)
   "Chapter-like biblatex types.")
 
-(defconst citeproc-blt--collection-types
+(defvar citeproc-blt-collection-types
   '(book collection proceedings reference
     mvbook mvcollection mvproceedings mvreference
     bookinbook inbook incollection inproceedings
     inreference suppbook suppcollection)
   "Collection or collection part biblatex types.")
 
-(defconst citeproc-blt--to-csl-names-alist
+(defvar citeproc-blt-to-csl-names-alist
   '((author . author)
     (editor . editor)
     (bookauthor . container-author)
     (translator . translator))
   "Alist mapping biblatex name fields to the corresponding CSL ones.")
 
-(defconst citeproc-blt--editortype-to-csl-name-alist
+(defvar citeproc-blt-editortype-to-csl-name-alist
   '(("organizer" . organizer)
     ("director" . director)
     ("compiler" . compiler)
@@ -134,7 +134,7 @@
     ("collaborator" . contributor))
   "Alist mapping biblatex editortypes to CSL fields.")
 
-(defconst citeproc-blt--to-csl-dates-alist
+(defvar citeproc-blt-to-csl-dates-alist
   '((eventdate . event-date)
     (origdate . original-date)
     (urldate . accessed))
@@ -151,7 +151,7 @@
     ("googlebooks" . "https://books.google.com?id="))
   "Alist mapping biblatex date fields to the corresponding CSL ones.")
 
-(defconst citeproc-blt--to-csl-standard-alist
+(defvar citeproc-blt-to-csl-standard-alist
   '(;; locators
     (volume . volume)
     (part .  part)
@@ -187,7 +187,7 @@
   "Alist mapping biblatex standard fields to the corresponding CSL ones.
 Only those fields are mapped that do not require further processing.")
 
-(defconst citeproc-blt--to-csl-title-alist
+(defvar citeproc-blt-to-csl-title-alist
   '((eventtitle . event-title)
     (origtitle . original-title)
     (series . collection-title))
@@ -266,9 +266,9 @@ biblatex variables in B."
 	 (~type (intern (downcase (alist-get '=type= b))))
 	 (~entrysubtype (alist-get 'entrysubtype b))
 	 (type (citeproc-blt--to-csl-type ~type ~entrysubtype))
-	 (is-article (memq ~type citeproc-blt--article-types))
+	 (is-article (memq ~type citeproc-blt-article-types))
 	 (is-periodical (eq ~type 'periodical))
-	 (is-chapter-like (memq ~type citeproc-blt--chapter-types))
+	 (is-chapter-like (memq ~type citeproc-blt-chapter-types))
 	 (~langid (alist-get 'langid b))
 	 (sent-case (or (member ~langid citeproc-blt--titlecase-langids)
 			(and (null ~langid) (not no-sentcase-wo-langid))))
@@ -277,20 +277,20 @@ biblatex variables in B."
     ;; set type and genre
     (push (cons 'type type) result)
     (when-let ((~reftype (alist-get 'type b)))
-      (push (cons 'genre (or (assoc-default ~reftype citeproc-blt--reftype-to-genre)
+      (push (cons 'genre (or (assoc-default ~reftype citeproc-blt-reftype-to-genre)
 			     (citeproc-bt--to-csl ~reftype)))
 	    result))
     ;; names
     (when-let ((~editortype (alist-get 'editortype b))
 	       (~editor (alist-get 'editor b))
 	       (csl-var (assoc-default ~editortype
-				       citeproc-blt--editortype-to-csl-name-alist)))
+				       citeproc-blt-editortype-to-csl-name-alist)))
       (push (cons csl-var (citeproc-bt--to-csl-names ~editor))
 	    result))
     (when-let ((~editoratype (alist-get 'editoratype b))
 	       (~editora (alist-get 'editora b))
 	       (csl-var (assoc-default ~editoratype
-				       citeproc-blt--editortype-to-csl-name-alist)))
+				       citeproc-blt-editortype-to-csl-name-alist)))
       (push (cons csl-var (citeproc-bt--to-csl-names ~editora))
 	    result))
     ;; TODO: do this for editorb and editorc as well... dates
@@ -302,7 +302,7 @@ biblatex variables in B."
       (push (cons 'issued issued) result))
     ;; locators
     (-if-let (~number (alist-get 'number b))
-	(cond ((memq ~type citeproc-blt--collection-types) ; collection
+	(cond ((memq ~type citeproc-blt-collection-types) ; collection
 	       (push `(collection-number . ,~number) result))
 	      (is-article		; article
 	       (push `(issue . ,(-if-let (~issue (alist-get 'issue b))
@@ -427,22 +427,22 @@ biblatex variables in B."
       (pcase-dolist (`(,blt-key . ,blt-value) b)
 	;; remaining standard vars
 	(-when-let (csl-key
-		    (alist-get blt-key citeproc-blt--to-csl-standard-alist))
+		    (alist-get blt-key citeproc-blt-to-csl-standard-alist))
 	  (unless (alist-get csl-key result)
 	    (push (cons csl-key (citeproc-bt--to-csl blt-value)) rest)))
 	;; remaining name vars
 	(-when-let (csl-key
-		    (alist-get blt-key citeproc-blt--to-csl-names-alist))
+		    (alist-get blt-key citeproc-blt-to-csl-names-alist))
 	  (unless (alist-get csl-key result)
 	    (push (cons csl-key (citeproc-bt--to-csl-names blt-value)) rest)))
 	;; remaining date vars
 	(-when-let (csl-key
-		    (alist-get blt-key citeproc-blt--to-csl-dates-alist))
+		    (alist-get blt-key citeproc-blt-to-csl-dates-alist))
 	  (unless (alist-get csl-key result)
 	    (push (cons csl-key (citeproc-blt--to-csl-date blt-value)) rest)))
 	;; remaining title vars
 	(-when-let (csl-key
-		    (alist-get blt-key citeproc-blt--to-csl-title-alist))
+		    (alist-get blt-key citeproc-blt-to-csl-title-alist))
 	  (push (cons csl-key
 		      (citeproc-blt--to-csl-title blt-value with-nocase sent-case))
 		rest)))
