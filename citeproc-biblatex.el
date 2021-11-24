@@ -405,7 +405,7 @@ biblatex variables in B."
 				(citeproc-blt--get-standard 'address b)))
 	(push (cons csl-place-var ~location) result)))
     ;; url
-    (-when-let (url (or (let ((u (alist-get 'url b))) (and u (s-replace "\\" "" u)))   
+    (-when-let (url (or (let ((u (alist-get 'url b))) (and u (citeproc-s-replace "\\" "" u)))
 			(when-let ((~eprinttype (or (alist-get 'eprinttype b)
 						    (alist-get 'archiveprefix b)))
 				   (~eprint (alist-get 'eprint b))

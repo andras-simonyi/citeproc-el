@@ -94,9 +94,10 @@ optional FORM can be nil, 'short or 'long."
 	(cq (citeproc-term-get-text "close-quote" context))
 	(oiq (citeproc-term-get-text "open-inner-quote" context))
 	(ciq (citeproc-term-get-text "close-inner-quote" context)))
-    `(,oq ,@(citeproc-rt-replace-all `((,oq . ,oiq) (,cq . ,ciq)
-				       (,oiq . ,oq) (,ciq . ,cq))
-				     rt)
+    `(,oq ,@(citeproc-rt-replace-all-sim `((,oq . ,oiq) (,cq . ,ciq)
+					   (,oiq . ,oq) (,ciq . ,cq))
+					 (format "\\(%s\\|%s\\|%s\\|%s\\)" oq cq oiq ciq)
+					 rt)
 	  ,cq)))
 
 (defun citeproc-rt-join-formatted (attrs rts context)
