@@ -28,6 +28,11 @@
 (require 'thingatpt)
 (require 's)
 
+;; Handle the unavailability of `string-replace' in early Emacs versions
+(if (fboundp 'string-replace)
+    (defalias 'citeproc-s-replace #'string-replace)
+  (defalias 'citeproc-s-replace #'s-replace))
+
 (defun citeproc-s-camelcase-p (s)
   "Return whether string S is in camel case."
   (let ((case-fold-search nil))
@@ -221,17 +226,37 @@ OQ is the opening quote, CQ is the closing quote to use."
 	(insert (if w-a-p oq cq))))
     (buffer-string)))
 
+(defun citeproc-s-replace-all-seq (s replacements)
+  "Make replacements in S according to REPLACEMENTS sequentially.
+REPLACEMENTS is an alist with (FROM . TO) elements."
+  (let ((result s))
+    (pcase-dolist (`(,from . ,to) replacements)
+      (setq result (citeproc-s-replace from to result)))
+    result))
+
+(defun citeproc-s-replace-all-sim (s regex replacements)
+  "Replace all matches of REGEX in S according to REPLACEMENTS simultaneously.
+REPLACEMENTS is an alist with (FROM . TO) elements."
+  (replace-regexp-in-string regex
+			    (lambda (match) (cdr (assoc-string match replacements)))
+			    s t t))
+
 (defun citeproc-s-smart-apostrophes (s)
   "Replace dumb apostophes in string S with smart ones.
 The replacement character used is the unicode character 'modifier
 letter apostrophe.'"
-  (s-replace-all '(("'" . "ʼ") ("’" . "ʼ")) s))
+  (subst-char-in-string ?' ?ʼ (subst-char-in-string ?’ ?ʼ s t) t))
+
+(defconst citeproc-s--cull-spaces-alist
+  '(("  " . " ") (";;" . ";") ("..." . ".") (",," . ",") (".." . "."))
+  "Alist describing replacements for space and punct culling.")
+
+(defconst citeproc-s--cull-spaces-alist-rx
+  (regexp-opt (mapcar #'car citeproc-s--cull-spaces-alist)))
 
 (defun citeproc-s-cull-spaces-puncts (s)
   "Replace unnecessary characters with delete chars in string S."
-  (let ((result (s-replace-all '(("  " . " ") (";;" . ";") ("..." . ".")
-				 (",," . ",") (".." . "."))
-			       s)))
+  (let ((result (citeproc-s-replace-all-seq s citeproc-s--cull-spaces-alist)))
     (dolist (match-rep '(("\\([:;!?]\\):" . "\\1")
 			 ("\\([:.;!?]\\)\\." . "\\1")
 			 ("\\([:;!]\\)!" . "!")

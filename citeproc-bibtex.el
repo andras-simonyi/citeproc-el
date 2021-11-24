@@ -256,7 +256,7 @@ replacements."
   (let ((wo-quotes (if (and (string= (substring s 0 1) "\"")
 			    (string= (substring s -1) "\""))
 		       (substring s 1 -1) s)))
-    (s-replace "\\&" "&" wo-quotes)))
+    (citeproc-s-replace "\\&" "&" wo-quotes)))
 
 (defun citeproc-bt--to-csl (s &optional with-nocase)
   "Convert a BibTeX field S to a CSL one.
@@ -270,7 +270,7 @@ brackets to the corresponding CSL XML spans."
 	    it
 	    (when with-nocase "<span class=\"nocase\">")
 	    (when with-nocase "</span>"))
-	   (s-replace-all '(("\n" . " ") ("~" . " ") ("--" . "–")) it)
+	   (citeproc-s-replace-all-seq it '(("\n" . " ") ("~" . " ") ("--" . "–")))
 	   (s-chomp it))
     s))
 

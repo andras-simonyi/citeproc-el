@@ -152,8 +152,7 @@ If ANCHOR is string= to TARGET then return ANCHOR."
   "Return the xml-escaped version of string S.
 Only '&', '<' and '>' are escaped to keep compatibility with the
 CSL tests."
-  (s-replace-all '(("&" . "&#38;") ("<" . "&#60;") (">" . "&#62;"))
-		 s))
+  (citeproc-s-replace-all-seq s '(("&" . "&#38;") ("<" . "&#60;") (">" . "&#62;"))))
 
 (defconst citeproc-fmt--html-alist
   `((unformatted . citeproc-fmt--xml-escape)

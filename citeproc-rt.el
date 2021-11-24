@@ -141,14 +141,14 @@ If optional SKIP-NOCASE is non-nil then skip spans with the
 		    (cons (car rt) (citeproc-rt-map-strings fun (cdr rt) skip-nocase))))
     (_ (funcall fun rt))))
 
-(defun citeproc-rt-replace-all (replacements rts)
-  "Make all REPLACEMENTS in the strings if rich-texts RTS."
-  (citeproc-rt-map-strings (lambda (x) (s-replace-all replacements x))
+(defun citeproc-rt-replace-all-sim (replacements regex rts)
+  "Make all REPLACEMENTS sequentially in the strings of rich-texts RTS."
+  (citeproc-rt-map-strings (lambda (x) (citeproc-s-replace-all-sim x regex replacements))
 			   rts))
 
 (defun citeproc-rt-strip-periods (rts)
   "Remove all periods from rich-texts RTS."
-  (citeproc-rt-replace-all `(("." . "")) rts))
+  (citeproc-rt-map-strings (lambda (x) (citeproc-s-replace "." "" x)) rts))
 
 (defun citeproc-rt-length (rt)
   "Return the length of rich-text RT as a string."
