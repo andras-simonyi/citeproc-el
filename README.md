@@ -125,7 +125,7 @@ BibTeX/org-bibtex files. Similarly to `citeproc-itemgetter-from-csl-json`, these
 functions open and read directly from the specified files each time they are
 called.
 
-#### citeproc-hash-itemgetter-from-any `(file-or-files & no-sentcase-wo-langid)`
+#### citeproc-hash-itemgetter-from-any `(file-or-files &optional no-sentcase-wo-langid)`
 Return a getter for `file-or-files` in any supported format.
 The format is determined on the basis of file extensions.
 Supported formats:
