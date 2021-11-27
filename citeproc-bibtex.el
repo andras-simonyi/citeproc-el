@@ -271,13 +271,20 @@ brackets to the corresponding CSL XML spans."
 	    (when with-nocase "<span class=\"nocase\">")
 	    (when with-nocase "</span>"))
 	   (citeproc-s-replace-all-seq it '(("\n" . " ") ("~" . " ") ("--" . "–")))
-	   (s-chomp it))
+	   (s-trim it))
     s))
 
 (defun citeproc-bt--to-csl-names (n)
   "Return a CSL version of BibTeX names field N."
-  (mapcar #'citeproc-bt--to-csl-name
-	  (s-split "\\band\\b" (citeproc-bt--to-csl n))))
+  (let ((name-fields (s-split "\\band\\b" n)))
+    (mapcar
+     (lambda (x)
+      (let ((trimmed (s-trim x)))
+	(if (and (string= "{" (substring trimmed 0 1))
+		 (string= "}" (substring trimmed -1)))
+	    `((family . ,(citeproc-bt--to-csl (substring trimmed 1 -1))))
+	  (citeproc-bt--to-csl-name (citeproc-bt--to-csl trimmed)))))
+     name-fields)))
 
 (defun citeproc-bt--parse-family (f)
   "Parse family name tokens F into a csl name-part alist."
