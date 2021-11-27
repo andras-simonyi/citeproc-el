@@ -1,0 +1,39 @@
+---
+@legislation{bt12-4022,
+	author = {{Deutscher Bundestag}},
+	title = {Entwurf eines Zweiten Gesetzes zur Änderung des Urheberrechtsgesetzes},
+	langid = {german},
+	date = {1992-12-18}}
+
+@book{CUDA,
+	author    = {{NVIDIA Corporation}},
+	title     = {{NVIDIA CUDA} Compute Unified Device Architecture Programming Guide},
+	publisher = {NVIDIA Corporation},
+	year      = {2007}}
+
+@book{corp,
+	author = {{Big corporation} and Smith, John},
+	title = {A book by a corporation and an actual person},
+	year = {1998}}
+---
+- author:
+  - family: Deutscher Bundestag
+  issued: 1992-12-18
+  id: "bt12-4022"
+  title: Entwurf eines Zweiten Gesetzes zur Änderung des Urheberrechtsgesetzes
+  type: bill
+- author:
+  - family: NVIDIA Corporation
+  id: "CUDA"
+  issued: 2007
+  publisher: NVIDIA Corporation
+  title: NVIDIA CUDA compute unified device architecture programming guide
+  type: book
+- author:
+  - family: Big corporation
+  - family: Smith
+    given: John
+  id: "corp"
+  issued: 1998
+  title: A book by a corporation and an actual person
+  type: book 
