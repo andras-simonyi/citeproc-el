@@ -279,11 +279,13 @@ brackets to the corresponding CSL XML spans."
   (let ((name-fields (s-split "\\band\\b" n)))
     (mapcar
      (lambda (x)
-      (let ((trimmed (s-trim x)))
-	(if (and (string= "{" (substring trimmed 0 1))
-		 (string= "}" (substring trimmed -1)))
-	    `((family . ,(citeproc-bt--to-csl (substring trimmed 1 -1))))
-	  (citeproc-bt--to-csl-name (citeproc-bt--to-csl trimmed)))))
+       (let ((trimmed (s-trim x)))
+	 (cond ((string= trimmed "") '((family . "")))
+	       ;; Brackets indicate corporate entities without name parts.
+	       ((and (string= "{" (substring trimmed 0 1))
+		     (string= "}" (substring trimmed -1)))
+		`((family . ,(citeproc-bt--to-csl (substring trimmed 1 -1)))))
+	       (t (citeproc-bt--to-csl-name (citeproc-bt--to-csl trimmed))))))
      name-fields)))
 
 (defun citeproc-bt--parse-family (f)

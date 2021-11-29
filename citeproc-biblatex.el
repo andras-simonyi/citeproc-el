@@ -262,7 +262,8 @@ Many thanks to him.
 
 Note: in the code, var names starting with ~ refer to values of
 biblatex variables in B."
-  (let* ((b (mapcar (lambda (x) (cons (intern (downcase (car x))) (cdr x))) b))
+  (let* ((b (cl-remove-if (lambda (x) (equal "" (cdr x))) b))
+	 (b (mapcar (lambda (x) (cons (intern (downcase (car x))) (cdr x))) b))
 	 (~type (intern (downcase (alist-get '=type= b))))
 	 (~entrysubtype (alist-get 'entrysubtype b))
 	 (type (citeproc-blt--to-csl-type ~type ~entrysubtype))
