@@ -288,6 +288,11 @@ brackets to the corresponding CSL XML spans."
 	       (t (citeproc-bt--to-csl-name (citeproc-bt--to-csl trimmed))))))
      name-fields)))
 
+(defvar citeproc-bt-dropping-particles
+  '("dela" "il" "sen" "z" "ze")
+  "List containing dropping particles. Everything else is
+classified as non-dropping.")
+
 (defun citeproc-bt--parse-family (f)
   "Parse family name tokens F into a csl name-part alist."
   (let (family result particle)
@@ -296,7 +301,11 @@ brackets to the corresponding CSL XML spans."
 	  (while (and firsts (s-lowercase-p (car firsts)))
 	    (push (pop firsts) particle))
 	  (when particle
-	    (push `(dropping-particle . ,(nreverse particle)) result))
+	    (push (cons (if (member particle citeproc-bt-dropping-particles)
+			    'dropping-particle
+			  'non-dropping-particle)
+			(nreverse particle))
+		  result))
 	  (setq family (-concat firsts (last f))))
       (setq family f))
     (push `(family . ,family) result)
