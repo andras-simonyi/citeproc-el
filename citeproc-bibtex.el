@@ -290,8 +290,8 @@ brackets to the corresponding CSL XML spans."
 
 (defvar citeproc-bt-dropping-particles
   '("dela" "il" "sen" "z" "ze")
-  "List containing dropping particles. Everything else is
-classified as non-dropping.")
+  "List containing dropping particles. Particles whose first word
+is not on this list are classified as non-dropping.")
 
 (defun citeproc-bt--parse-family (f)
   "Parse family name tokens F into a csl name-part alist."
@@ -301,7 +301,7 @@ classified as non-dropping.")
 	  (while (and firsts (s-lowercase-p (car firsts)))
 	    (push (pop firsts) particle))
 	  (when particle
-	    (push (cons (if (member particle citeproc-bt-dropping-particles)
+	    (push (cons (if (member (car particle) citeproc-bt-dropping-particles)
 			    'dropping-particle
 			  'non-dropping-particle)
 			(nreverse particle))
