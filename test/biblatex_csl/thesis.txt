@@ -24,9 +24,9 @@
     the format of the printed name and compare the useprefix option in
     the options field as well as vangennep
   author:
-  - dropping-particle: de
-    family: Geer
+  - family: Geer
     given: Ingrid
+    non-dropping-particle: de
   genre: PhD thesis
   id: geer
   issued: 1985

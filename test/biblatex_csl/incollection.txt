@@ -56,7 +56,7 @@
     options field as well as vangennep. Also note the indextitle, and
     indexsorttitle fields
   author:
-  - dropping-particle: von
+  - non-dropping-particle: von
     family: Brandt
     given: Ahasver
   - family: Hoffmann
