@@ -280,12 +280,16 @@ brackets to the corresponding CSL XML spans."
     (mapcar
      (lambda (x)
        (let ((trimmed (s-trim x)))
-	 (cond ((string= trimmed "") '((family . "")))
-	       ;; Brackets indicate corporate entities without name parts.
-	       ((and (string= "{" (substring trimmed 0 1))
-		     (string= "}" (substring trimmed -1)))
-		`((family . ,(citeproc-bt--to-csl (substring trimmed 1 -1)))))
-	       (t (citeproc-bt--to-csl-name (citeproc-bt--to-csl trimmed))))))
+	 (cond
+	  ((string= trimmed "") '((family . "")))
+	  ;; Presence of equal sign signals extended specification.
+	  ((string-match "=" trimmed) (citeproc-bt--ext-desc-to-csl-name trimmed))
+	  ;; Brackets indicate corporate entities without name parts.
+	  ((and (string= "{" (substring trimmed 0 1))
+		(string= "}" (substring trimmed -1)))
+	   `((family . ,(citeproc-bt--to-csl (substring trimmed 1 -1)))))
+	  ;; Else standard bib(la)tex name field processing.
+	  (t (citeproc-bt--to-csl-name (citeproc-bt--to-csl trimmed))))))
      name-fields)))
 
 (defvar citeproc-bt-dropping-particles
@@ -310,6 +314,39 @@ is not on this list are classified as non-dropping.")
       (setq family f))
     (push `(family . ,family) result)
     result))
+
+(defun citeproc-bt--parse-attr-val-field (f)
+  "Parse biblatex key-val field F into an alist."
+  (let* ((bracketless (replace-regexp-in-string "[{}]" "" f))
+	 (equal-split (split-string bracketless "=" t " "))
+	 (first-attr (intern (string-trim (pop equal-split) "[ \"]+" "[ \"]+")))
+	 (reversed (nreverse equal-split))
+	 (result (list (string-trim (pop reversed) "[ \"]+" "[ \"]+"))))
+    (dolist (elt reversed)
+      (let ((pos (- (length elt) 2))
+	    found)
+	(while (and (< 0 pos) (null found))
+	  (if (= (aref elt pos) ?,)
+	      (setq found t)
+	    (cl-decf pos)))
+	(unless found (error "Could not parse biblatex key-value list \"%s\"" f))
+	(let ((key (intern (s-trim (substring elt (1+ pos)))))
+	      (val (string-trim (substring elt 0 pos) "[ \"]+" "[ \"]+")))
+	  (push key (car result))
+	  (push val result))))
+    (push first-attr (car result))
+    result))
+
+(defun citeproc-bt--ext-desc-to-csl-name (name)
+  "Return a CSL version of extended biblatex description NAME."
+  (let* ((parsed (citeproc-bt--parse-attr-val-field name))
+	 (dropping (string= (alist-get 'useprefix parsed) "false")))
+    (--keep (pcase (car it)
+	      ((or 'family 'given 'suffix) it)
+	      ('prefix (cons (if dropping 'dropping-particle 'non-dropping-particle)
+			     (cdr it)))
+	      (_ nil))
+	    parsed)))
 
 (defun citeproc-bt--to-csl-name (name)
   "Return a CSL version of BibTeX name string NAME."
