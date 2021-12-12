@@ -21,6 +21,7 @@
   genre: Urteil
   id: bgh2013usedsoft-ii
   issued: 2014
+  language: de-DE
   number: I ZR 129/08
   page: 264-272
   title: UsedSoft II

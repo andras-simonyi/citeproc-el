@@ -19,7 +19,7 @@
 	Series = {Handbuch der europäischen Geschichte},
 	Shorttitle = {Die nordischen Länder},
 	Title = {Die nordischen Länder von der Mitte des 11. Jahrhunderts bis 1448},
-	Langid = {German}}
+	Langid = {german}}
 
 @incollection{hyman,
 	Annotation = {An incollection entry with a series and number field},
@@ -69,6 +69,7 @@
     given: Ferdinand
   id: brandt
   issued: 1987
+  language: de-DE
   page: 884-917
   publisher: Klett-Cotta
   publisher-place: Stuttgart

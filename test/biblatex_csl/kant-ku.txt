@@ -27,6 +27,7 @@
   container-title: Kants Werke. Akademie Textausgabe
   id: kant:ku
   issued: 1968
+  language: de-DE
   page: 165-485
   publisher: Walter de Gruyter
   publisher-place: Berlin

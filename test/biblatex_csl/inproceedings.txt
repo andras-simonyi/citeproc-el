@@ -50,6 +50,7 @@
   event-date: 1975
   id: moraux
   issued: 1979
+  language: fr-FR
   keyword: secondary
   page: 281-324
   publisher: Cambridge University Press
