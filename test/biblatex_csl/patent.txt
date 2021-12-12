@@ -62,6 +62,7 @@
     given: Fernando
   id: almendro
   issued: 1998
+  language: de-DE
   jurisdiction: France; United Kingdom; Germany
   number: EU-29702195U
   title: Elektromagnetisches Signalhorn
@@ -78,6 +79,7 @@
   genre: French patent request
   id: kowalik
   issued: 1995-01-11
+  language: fr-FR
   number: 9500261
   title: Estimateur d'un défaut de fonctionnement d'un modulateur en
     quadrature et étage de modulation l'utilisant
@@ -120,6 +122,7 @@
   genre: European patent
   id: laufenberg
   issued: 2006-09-13
+  language: de-DE
   number: 1700367
   title: Elektrische Einrichtung und Betriebsverfahren
   type: patent

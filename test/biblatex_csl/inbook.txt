@@ -70,6 +70,7 @@
   container-title: Kants Werke. Akademie Textausgabe
   id: "kant:kpv"
   issued: 1968
+  language: de-DE
   page: 1-163
   publisher: Walter de Gruyter
   publisher-place: Berlin
@@ -91,6 +92,7 @@
   container-title: Kants Werke. Akademie Textausgabe
   id: "kant:ku"
   issued: 1968
+  language: de-DE
   page: 165-485
   publisher: Walter de Gruyter
   publisher-place: Berlin
@@ -118,6 +120,7 @@
     given: Mazzino
   id: "nietzsche:historie"
   issued: 1988
+  language: de-DE
   page: 243-334
   publisher: Deutscher Taschenbuch-Verlag and Walter de Gruyter
   publisher-place: München and Berlin and New York

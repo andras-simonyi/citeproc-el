@@ -20,6 +20,7 @@
   - family: Deutscher Bundestag
   issued: 1992-12-18
   id: "bt12-4022"
+  language: de-DE
   title: Entwurf eines Zweiten Gesetzes zur Änderung des Urheberrechtsgesetzes
   type: bill
 - author:

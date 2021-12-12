@@ -54,6 +54,7 @@
   container-title: The journaltitle
   id: article-req
   issued: 2013-01-01
+  language: en-US
   title: An article entry with just the required fields
   type: article-journal
 - accessed: 2013-01-01
@@ -71,7 +72,7 @@
   ISSN: issn
   issue: number, issue
   issued: 2013-01-01
-  language: language
+  language: en-US
   note: The Note. The Addendum
   page: pages
   status: in press
