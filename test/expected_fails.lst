@@ -106,11 +106,6 @@ citeproc-suite-label-plural-with-localized-ampersand
 citeproc-suite-locale-empty-plus-override-date
 citeproc-suite-locale-non-existent-locale-def
 citeproc-suite-locale-overload-with-empty-string
-citeproc-suite-locale-title-case-empty-lang-non-english-locale
-citeproc-suite-locale-title-case-garbage-lang-empty-locale
-citeproc-suite-locale-title-case-garbage-lang-english-locale
-citeproc-suite-locale-title-case-garbage-lang-non-english-locale
-citeproc-suite-locale-title-case-non-english-lang-upper-empty-locale
 citeproc-suite-locator-simple-locators
 citeproc-suite-locator-tricky-entry-for-plurals
 citeproc-suite-locator-with-leading-space
@@ -235,7 +230,6 @@ citeproc-suite-textcase-repeated-title-bug
 citeproc-suite-textcase-sentence-capitalization
 citeproc-suite-textcase-skip-name-particles-in-title-case
 citeproc-suite-textcase-stop-word-before-hyphen
-citeproc-suite-textcase-title-case-non-english
 citeproc-suite-variables-container-title-short
 citeproc-suite-variables-container-title-short2
 citeproc-suite-variables-title-short-on-abbrev-with-title
