@@ -40,7 +40,7 @@
 (cl-defstruct (citeproc-context (:constructor citeproc-context--create))
   "A struct representing the context for rendering CSL elements."
   vars macros terms date-text date-numeric opts locale-opts
-  mode render-mode render-year-suffix no-external-links)
+  mode render-mode render-year-suffix no-external-links locale)
 
 (defun citeproc-context-create (var-alist style mode render-mode
 					  &optional no-external-links)
@@ -53,6 +53,7 @@ MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
    :date-text (citeproc-style-date-text style)
    :date-numeric (citeproc-style-date-numeric style)
    :opts (citeproc-style-global-opts style mode)
+   :locale (citeproc-style-locale style)
    :locale-opts (citeproc-style-locale-opts style)
    :mode mode
    :render-mode render-mode
@@ -100,11 +101,37 @@ optional FORM can be nil, 'short or 'long."
 					 rt)
 	  ,cq)))
 
+(defun citeproc-rt-textcased (rts case context)
+  "Return rich-text content RTS in text-case CASE using CONTEXT.
+CASE is one of the following: 'lowercase, 'uppercase,
+'capitalize-first, 'capitalize-all, 'sentence, 'title."
+  (pcase case
+    ('uppercase
+     (citeproc-rt-map-strings #'upcase rts t))
+    ('lowercase
+     (citeproc-rt-map-strings #'downcase rts t))
+    ('capitalize-first
+     (--map (citeproc-rt-change-case it #'citeproc-s-capitalize-first) rts))
+    ('capitalize-all
+     (--map (citeproc-rt-change-case it #'citeproc-s-capitalize-all) rts))
+    ('sentence
+     (--map (citeproc-rt-change-case it #'citeproc-s-sentence-case) rts))
+    ('title
+     (let ((locale (citeproc-context-locale context))
+	   (language (citeproc-var-value 'language context)))
+       (if (or (and language (string-prefix-p "en" language))
+	       (and (null language)
+		    (or (and locale (string-prefix-p "en" locale))
+			(null locale))))
+	   (--map (citeproc-rt-change-case it #'citeproc-s-title-case) rts)
+	 rts)))))
+
 (defun citeproc-rt-join-formatted (attrs rts context)
   "Join and format according to ATTRS the rich-texts in RTS."
   (let-alist attrs
     (let ((result (delq nil rts)))
-      (when .text-case (setq result (citeproc--textcased result (intern .text-case))))
+      (when .text-case
+	(setq result (citeproc-rt-textcased result (intern .text-case) context)))
       (when (string= .strip-periods "true") (setq result (citeproc-rt-strip-periods result)))
       (when (string= .quotes "true") (setq result (citeproc-rt-quote result context)))
       (push (citeproc-rt-select-attrs attrs citeproc-rt-ext-format-attrs) result)

@@ -196,24 +196,6 @@ returning a string of the same length."
   (let ((plain (citeproc-rt-to-plain rt)))
     (citeproc-rt-update-from-plain rt (funcall case-fun plain) t)))
 
-(defun citeproc--textcased (rts case)
-  "Return rich-text content RTS in text-case CASE.
-CASE is one of the following: 'lowercase, 'uppercase,
-'capitalize-first, 'capitalize-all, 'sentence, 'title."
-  (pcase case
-    ('uppercase
-     (citeproc-rt-map-strings #'upcase rts t))
-    ('lowercase
-     (citeproc-rt-map-strings #'downcase rts t))
-    ('capitalize-first
-     (--map (citeproc-rt-change-case it #'citeproc-s-capitalize-first) rts))
-    ('capitalize-all
-     (--map (citeproc-rt-change-case it #'citeproc-s-capitalize-all) rts))
-    ('sentence
-     (--map (citeproc-rt-change-case it #'citeproc-s-sentence-case) rts))
-    ('title
-     (--map (citeproc-rt-change-case it #'citeproc-s-title-case) rts))))
-
 (defun citeproc-rt-pred-counts-tree (rt pred)
   "Return a dominated count tree for rich text RT based on PRED.
 The returned tree has the same structure as RT but the car of

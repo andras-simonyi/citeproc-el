@@ -51,6 +51,7 @@ CITE-LAYOUT-ATTRS contains the attributes of the citation layout
   as an alist,
 CITE-NOTE is non-nil iff the style's citation-format is \"note\",
 DATE-TEXT and DATE-NUMERIC are the style's date formats,
+LOCALE contains the locale to be used or nil if not set,
 MACROS is an alist with macro names as keys and corresponding
   anonymous rendering functions,
 TERMS is the style's parsed term-list,
@@ -59,7 +60,7 @@ USES-YS-VAR is non-nil iff the style uses the YEAR-SUFFIX
   info opts bib-opts bib-sort bib-sort-orders
   bib-layout cite-opts cite-note cite-sort cite-sort-orders
   cite-layout cite-layout-attrs locale-opts macros terms
-  uses-ys-var date-text date-numeric)
+  uses-ys-var date-text date-numeric locale)
 
 (defun citeproc-style-parse (style)
   "Return the parsed representation of csl STYLE.
@@ -91,7 +92,9 @@ in-style locale information will be loaded (if available)."
 	 (style-opts (cadr parsed-style))
 	 locale-loaded)
     (setf (citeproc-style-opts style) style-opts
-	  (citeproc-style-uses-ys-var style) year-suffix)
+	  (citeproc-style-uses-ys-var style) year-suffix
+	  (citeproc-style-locale style)
+	  (or locale (alist-get 'default-locale style-opts)))
     (--each (cddr parsed-style)
       (pcase (car it)
 	('info
