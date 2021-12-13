@@ -71,7 +71,7 @@ If optional FORCE-LOC is non-nil then use locale LOC even if
 	(names (make-hash-table :test 'equal))
 	(itemdata (make-hash-table :test 'equal))
 	(citations (make-queue)))
-    (citeproc-proc--create :style style :getter it-getter :names names
+    (citeproc-proc--create :style style :getter it-getter :names names 
 			   :itemdata itemdata :citations citations :finalized t)))
 
 (defun citeproc-append-citations (citations proc)
@@ -260,6 +260,7 @@ then use LOCALE even if the style's default locale is different."
 		  (not (not year-suffix)) act-locale)))
     (citeproc-style--update-locale style act-parsed-locale)
     (citeproc-style--set-opt-defaults style)
+    (setf (citeproc-style-locale style) (or locale act-locale))
     style))
 
 ;; REVIEW: this should be rethought -- should we apply the specific wrappers as
