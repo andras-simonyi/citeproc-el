@@ -22,7 +22,6 @@ citeproc-suite-bugreports-overwrite-citation-items
 citeproc-suite-bugreports-parse-name
 citeproc-suite-bugreports-single-quote-xml
 citeproc-suite-bugreports-small-caps-escape
-citeproc-suite-bugreports-two-full-stops
 citeproc-suite-bugreports-undefined-not-string
 citeproc-suite-bugreports-undefined-str
 citeproc-suite-bugreports-year-suffix-in-harvard1
@@ -32,14 +31,9 @@ citeproc-suite-collapse-citation-number-ranges-insert
 citeproc-suite-date-date-no-date-no-test
 citeproc-suite-date-empty-strings
 citeproc-suite-date-in-press
-citeproc-suite-date-lone-japanese-month
 citeproc-suite-date-other-alone
 citeproc-suite-date-other-with-date
 citeproc-suite-date-range-delimiter
-citeproc-suite-date-raw-parse-simple-date
-citeproc-suite-date-raw-season-range1
-citeproc-suite-date-raw-season-range2
-citeproc-suite-date-raw-season-range3
 citeproc-suite-date-season-range1
 citeproc-suite-date-season-range2
 citeproc-suite-date-season-range3
@@ -59,7 +53,6 @@ citeproc-suite-disambiguate-based-on-subsequent-form-with-backref2
 citeproc-suite-disambiguate-by-cite-incremental2
 citeproc-suite-disambiguate-citation-label-default
 citeproc-suite-disambiguate-citation-label-in-data
-citeproc-suite-disambiguate-disambiguate-true-in-bibliography-only
 citeproc-suite-disambiguate-disambiguation-hang
 citeproc-suite-disambiguate-incremental-extra-text
 citeproc-suite-disambiguate-initialize-with-but-no-disambiguation
@@ -87,9 +80,7 @@ citeproc-suite-flipflop-quotes-node-level-markup
 citeproc-suite-flipflop-single-before-colon
 citeproc-suite-flipflop-small-caps
 citeproc-suite-fullstyles-a-bd-nt
-citeproc-suite-fullstyles-abd-nt
 citeproc-suite-fullstyles-chicago-author-date-simple
-citeproc-suite-integration-cross-citation-ibid-on-insert
 citeproc-suite-integration-delete-name
 citeproc-suite-integration-disambiguate-add-givenname1
 citeproc-suite-integration-disambiguate-add-givenname2
@@ -164,13 +155,8 @@ citeproc-suite-name-substitute-on-names-span-group-span-fail
 citeproc-suite-name-substitute-on-names-span-names-span-fail
 citeproc-suite-name-substitute-partial-each
 citeproc-suite-name-with-non-breaking-space
-citeproc-suite-nameattr-et-al-subsequent-min-on-citation-in-citation
-citeproc-suite-nameattr-et-al-subsequent-min-on-style-in-citation
-citeproc-suite-nameattr-et-al-subsequent-use-first-on-citation-in-citation
-citeproc-suite-nameattr-et-al-subsequent-use-first-on-style-in-citation
 citeproc-suite-nameorder-long-name-as-sort-demote-display-and-sort
 citeproc-suite-nameorder-long-name-as-sort-demote-never
-citeproc-suite-number-edition-sort
 citeproc-suite-number-limit-ordinals-to-day-one
 citeproc-suite-number-new-ordinals-edition
 citeproc-suite-number-new-ordinals-with-gender-change
@@ -190,7 +176,6 @@ citeproc-suite-punctuation-full-monty-quotes-in
 citeproc-suite-quotes-punctuation-with-inner-quote
 citeproc-suite-sort-bibliography-citation-number-descending-via-composite-macro
 citeproc-suite-sort-bibliography-citation-number-descending-via-macro
-citeproc-suite-sort-bibliography-nosort-option
 citeproc-suite-sort-case-insensitive-bibliography
 citeproc-suite-sort-case-insensitive-citation
 citeproc-suite-sort-chicago-year-suffix1
@@ -199,7 +184,6 @@ citeproc-suite-sort-citation-number-primary-descending-via-macro-bibliography
 citeproc-suite-sort-citation-number-primary-descending-via-macro-citation
 citeproc-suite-sort-citation-number-primary-descending-via-variable-bibliography
 citeproc-suite-sort-citation-number-primary-descending-via-variable-citation
-citeproc-suite-sort-citation-unsorted
 citeproc-suite-sort-conditional-macro-dates
 citeproc-suite-sort-drop-name-label-in-sort
 citeproc-suite-sort-family-only
@@ -232,7 +216,4 @@ citeproc-suite-textcase-skip-name-particles-in-title-case
 citeproc-suite-textcase-stop-word-before-hyphen
 citeproc-suite-variables-container-title-short
 citeproc-suite-variables-container-title-short2
-citeproc-suite-variables-title-short-on-abbrev-with-title
-citeproc-suite-variables-title-short-on-abbrev-with-title-condition
-citeproc-suite-variables-title-short-on-abbrev-with-title-group
 citeproc-suite-variables-title-short-on-short-title-no-title-condition
