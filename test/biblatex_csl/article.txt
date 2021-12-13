@@ -62,7 +62,7 @@
   - family: Author
     given: Ann A.
     suffix: Jr.
-  collection-title: new series
+  collection-title: New series
   container-title: "The journaltitle: The journalsubtitle"
   DOI: 10.1086/520976
   editor:

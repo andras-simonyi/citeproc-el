@@ -170,7 +170,8 @@ If optional OMIT-NOCASE is non-nil then omit the nocase tags from the output."
 	   (_ (cond ((< 0 protect-level) (setq first nil) slice)
 		    ((not first) (downcase slice))
 		    (t (setq first nil)
-		       (concat (substring slice 0 1) (downcase (substring slice 1)))))))
+		       (concat (upcase (substring slice 0 1))
+			       (downcase (substring slice 1)))))))
 	 result))
       (apply #'concat (nreverse result)))))
 
