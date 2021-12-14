@@ -45,6 +45,10 @@
 Only those locales are given for which the default variant is not
 simply the result of upcasing.")
 
+(defconst citeproc-locale--simple-locales
+  '("la" "eu" "ar")
+  "List of simple locale names (without dash).")
+
 (defun citeproc-locale--extend (loc)
   "Extend simple locale LOC to default variant."
   (let ((variant (assoc-default loc citeproc-locale--default-variants-alist)))
@@ -62,7 +66,10 @@ If the requested locale couldn't be read then return the parsed
 en-US locale, which must exist."
   (let ((default-loc-file (f-join dir "locales-en-US.xml")))
     (lambda (loc)
-      (let* ((ext-loc (if (s-contains-p "-" loc) loc (citeproc-locale--extend loc)))
+      (let* ((ext-loc (if (or (member loc citeproc-locale--simple-locales)
+			      (s-contains-p "-" loc))
+			  loc
+			(citeproc-locale--extend loc)))
 	     (loc-file (concat dir "/locales-" ext-loc ".xml"))
 	     (loc-available (f-readable-p loc-file)))
 	(citeproc-lib-remove-xml-comments
