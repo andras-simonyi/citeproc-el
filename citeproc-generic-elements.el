@@ -131,9 +131,12 @@
 					      .term .form .plural context)))
 				   ;; Annotate the 'no date' term as if it'd be
 				   ;; the value of the 'issue' variable to
-				   ;; handle implicit year suffix addition.
+				   ;; handle implicit year suffix addition
+				   ;; and suppression issues.
 				   (if (string= .term "no date")
-				       `(((rendered-var . issued)) ,cont)
+				       (progn
+					 (setq type 'present-var)
+					 `(((rendered-var . issued)) ,cont))
 				     cont))))
 	    (.macro (let ((macro-val (citeproc-macro-output .macro context)))
 		      (setq content (car macro-val))

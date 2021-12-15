@@ -21,8 +21,6 @@ citeproc-suite-bugreports-overwrite-citation-items
 citeproc-suite-bugreports-parse-name
 citeproc-suite-bugreports-single-quote-xml
 citeproc-suite-bugreports-small-caps-escape
-citeproc-suite-bugreports-undefined-not-string
-citeproc-suite-bugreports-undefined-str
 citeproc-suite-bugreports-year-suffix-in-harvard1
 citeproc-suite-collapse-author-collapse-no-date-sorted
 citeproc-suite-collapse-chicago-after-collapse
