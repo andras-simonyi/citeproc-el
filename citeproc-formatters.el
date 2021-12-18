@@ -230,10 +230,15 @@ CSL tests."
   "Return the LaTeX-escaped version of string S."
   (replace-regexp-in-string citeproc-fmt--latex-esc-regex "\\\\\\&" s))
 
+(defun citeproc-fmt--latex-href (text uri)
+  (let ((escaped-uri (replace-regexp-in-string "%" "\\\\%" uri)))
+   (if (string-prefix-p "http" text)
+       (concat "\\url{" escaped-uri "}")
+     (concat "\\href{" escaped-uri "}{" text "}"))))
+
 (defconst citeproc-fmt--latex-alist
   `((unformatted . ,#'citeproc-fmt--latex-escape)
-    (href . ,(lambda (x y) (concat "\\href{" (replace-regexp-in-string "%" "\\\\%" y)
-				   "}{" x "}")))
+    (href . ,#'citeproc-fmt--latex-href)
     (font-style-italic . ,(lambda (x) (concat "\\textit{" x "}")))
     (font-weight-bold . ,(lambda (x) (concat "\\textbf{" x "}")))
     (cited-item-no . ,(lambda (x y) (concat "\\citeprocitem{" y "}{" x "}")))

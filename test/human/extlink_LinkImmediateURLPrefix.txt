@@ -9,7 +9,7 @@ bibliography
 
 
 >>===== RESULT =====>>
-A title. \href{https://doi.org/10.1000/xyz123}{https://doi.org/10.1000/xyz123}
+A title. \url{https://doi.org/10.1000/xyz123}
 <<===== RESULT =====<<
 
 

@@ -33,7 +33,7 @@
 	     (funcall f
 	      '(((href . "https://scholar.google.com/scholar?q=%22functional+data%22"))
 		"https://scholar.google.com/scholar?q=%22functional+data%22"))
-	     "\\href{https://scholar.google.com/scholar?q=\\%22functional+data\\%22}{https://scholar.google.com/scholar?q=\\%22functional+data\\%22}"))))
+	     "\\url{https://scholar.google.com/scholar?q=\\%22functional+data\\%22}"))))
 
 (ert-deftest citeproc-test-formatters-csl ()
   (let ((f (citeproc-formatter-rt
