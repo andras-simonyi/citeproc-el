@@ -227,6 +227,9 @@ character was found."
       "}"				; }
       ))
 
+(defconst citeproc-bt--command-wo-arg-rx
+  (rx "\\" (1+ (any "a-z" "A-Z")) word-end)) ; \TEX-COMMAND + word-end
+
 (defconst citeproc-bt--braces-rx
   (rx "{" (group (*? anything)) "}")) 	; {TEXT}
 
@@ -240,6 +243,9 @@ The default is to remove them."
     (while match
       (cond ((string-match citeproc-bt--command-rx result)
 	     (setq result (replace-match "\\1" t nil result)
+		   match t))
+	    ((string-match citeproc-bt--command-wo-arg-rx result)
+	     (setq result (replace-match "" t nil result)
 		   match t))
 	    ((string-match citeproc-bt--braces-rx result)
 	     (setq result (replace-match
