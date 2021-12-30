@@ -40,13 +40,14 @@
 (require 'citeproc-bibtex)
 (require 'citeproc-biblatex)
 
-(defun citeproc-itemgetters--parsebib-buffer ()
+(defun citeproc-itemgetters--parsebib-buffer (entries strings)
   "Parse a BibTeX/biblatex buffer with Parsebib."
   ;; Note: this is needed to support different Parsebib versions in use.
   (cond ((fboundp 'parsebib-parse-buffer)
-	 (parsebib-parse-buffer nil nil t t))
+	 (parsebib-parse-buffer entries strings t t))
 	((fboundp 'parsebib-parse-bib-buffer)
-	 (parsebib-parse-bib-buffer :expand-strings t :inheritance t))
+	 (parsebib-parse-bib-buffer :entries entries :strings strings
+				    :expand-strings t :inheritance t))
 	(t (error "No Parsebib buffer parsing function is available"))))
 
 (defun citeproc-hash-itemgetter-from-csl-json (file)
@@ -133,7 +134,9 @@ without a `langid' field are not converted to sentence-case."
   (let ((files (if (listp file-or-files)
 		   file-or-files
 		 (list file-or-files)))
-	(cache (make-hash-table :test #'equal)))
+	(cache (make-hash-table :test #'equal))
+	(bt-entries (make-hash-table :test #'equal))
+	(bt-strings (make-hash-table :test #'equal)))
     (dolist (file files)
       (pcase (file-name-extension file)
         ("json"
@@ -145,12 +148,7 @@ without a `langid' field are not converted to sentence-case."
          (with-temp-buffer
 	   (insert-file-contents file)
 	   (bibtex-set-dialect (if (string= ext "bib") 'biblatex 'BibTeX) t)
-	   (let ((entries (car (citeproc-itemgetters--parsebib-buffer))))
-             (maphash 
-	      (lambda (key entry)
-                (puthash key (citeproc-blt-entry-to-csl entry nil no-sentcase-wo-langid)
-                         cache))
-              entries))))
+	   (citeproc-itemgetters--parsebib-buffer bt-entries bt-strings)))
 	("org"
 	 (org-map-entries
 	  (lambda ()
@@ -161,6 +159,11 @@ without a `langid' field are not converted to sentence-case."
 	  t (list file)))
         (ext
          (user-error "Unknown bibliography extension: %S" ext))))
+    (maphash
+     (lambda (key entry)
+       (puthash key (citeproc-blt-entry-to-csl entry nil no-sentcase-wo-langid)
+		cache))
+     bt-entries)
     (lambda (x)
       (pcase x
 	('itemids
