@@ -89,6 +89,14 @@ sorted."
 	   item)))
     (when page-first (push (cons 'page-first page-first) result))
     (unless label (push (cons 'label "page") result))
+    ;; Generate the editor-translator variable if needed
+    ;; (required by CSL 1.02)
+    (when-let* (((null (alist-get 'editor-translator result)))
+		(editor (alist-get 'editor result))
+		(translator (alist-get 'translator result))
+		((string= (alist-get 'name-id editor)
+			  (alist-get 'name-id translator))))
+      (push (cons 'editor-translator editor) result))
     result))
 
 (defun citeproc-proc--put-item (proc item itemid)
