@@ -57,24 +57,31 @@ END-PREFIX is an optional non-numeric prefix preceding END. All
 arguments are strings, END has the same length as START."
   (citeproc-prange--end-significant start end 2))
 
-(defun citeproc-prange--end-chicago (start end _end-pref)
+(defun citeproc-prange--end-chicago (start end _end-pref &optional 15th-ed)
   "Render the end of range START END in `chicago' format.
 END-PREFIX is an optional non-numeric prefix preceding END. All
-arguments are strings, END has the same length as START."
-  (let ((len (length start)))
+arguments are strings, END has the same length as START. If
+optional 15TH-ED is non-nil then use the special 4digit rule of
+the 15th edition."
+  (let ((len (length start))) 
     (cond ((or (< len 3) (string= (substring start -2) "00"))
 	   end)
 	  ((string= (substring start -2 -1) "0")
 	   (citeproc-prange--end-significant start end 1))
-	  ((= 4 (length start))
+	  ((and 15th-ed (= 4 (length start)))
 	   (let ((min-two (citeproc-prange--end-significant start end 2)))
 	     (if (> (length min-two) 2) end min-two)))
 	  (t (citeproc-prange--end-significant start end 2)))))
 
-(defconst citeproc-prange-formatters-alist '((chicago . citeproc-prange--end-chicago)
-					     (minimal . citeproc-prange--end-minimal)
-					     (minimal-two . citeproc-prange--end-minimal-two)
-					     (expanded . citeproc-prange--end-expanded))
+(defconst citeproc-prange-formatters-alist
+  `((chicago . ,(lambda (start end end-pref)
+		  (citeproc-prange--end-chicago start end end-pref t)))
+    (chicago-15 . ,(lambda (start end end-pref)
+		     (citeproc-prange--end-chicago start end end-pref t)))
+    (chicago-16 . citeproc-prange--end-chicago)
+    (minimal . citeproc-prange--end-minimal)
+    (minimal-two . citeproc-prange--end-minimal-two)
+    (expanded . citeproc-prange--end-expanded))
   "Alist mapping page range formats to formatter functions.")
 
 (defun citeproc-prange-render (p format sep)

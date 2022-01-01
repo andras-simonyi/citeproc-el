@@ -42,10 +42,11 @@
   "CSL date variables.")
 
 (defconst citeproc--name-vars
-  '(author chair collection-editor compiler composer container-author contributor curator
-	   director editor editorial-director executive-producer guest host illustrator
-	   interviewer narrator organizer original-author performer producer recipient
-	   reviewed-author script-writer series-creator translator)
+  '(author chair collection-editor compiler composer container-author contributor
+	   curator director editor editorial-director editor-translator executive-producer
+	   guest host illustrator interviewer narrator organizer original-author
+	   performer producer recipient reviewed-author script-writer series-creator
+	   translator)
   "CSL name variables.")
 
 (defconst citeproc--linked-vars

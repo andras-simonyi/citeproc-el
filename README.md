@@ -7,7 +7,7 @@ v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org
 [![MELPA Stable](http://stable.melpa.org/packages/citeproc-badge.svg)](http://stable.melpa.org/#/citeproc)
 
 
-A CSL 1.01 Citation Processor for Emacs.
+A CSL 1.0.2 Citation Processor for Emacs.
 
 **Table of Contents**
 
@@ -30,7 +30,7 @@ bibliographies in styles described in the Citation Style Language (CSL), an
 XML-based, open format to describe the formatting of bibliographic references
 (see http://citationstyles.org/ for further information on CSL).
 
-The library implements most of the [CSL 1.01
+The library implements most of the [CSL 1.0.2
 specification](http://docs.citationstyles.org/en/stable/specification.html),
 including such features as citation disambiguation, cite collapsing and
 subsequent author substitution, and passes more than 70% of the tests in the
