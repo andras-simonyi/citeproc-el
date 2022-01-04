@@ -159,7 +159,7 @@
     (version . version)
     (volumes . number-of-volumes)
     (pagetotal . number-of-pages)
-    (chapter-number . chapter)
+    (chapter . chapter-number)
     (pages . page)
     ;; publisher
     (origpublisher . original-publisher)
