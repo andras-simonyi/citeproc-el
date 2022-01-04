@@ -349,6 +349,7 @@ biblatex variables in B."
 			     (citeproc-bt--to-csl ~reftype)))
 	    result))
     ;; names
+    ;; TODO: handle  editorb and editorc as well...
     (when-let ((~editortype (alist-get 'editortype b))
 	       (~editor (alist-get 'editor b))
 	       (csl-var (assoc-default ~editortype
@@ -361,7 +362,7 @@ biblatex variables in B."
 				       citeproc-blt-editortype-to-csl-name-alist)))
       (push (cons csl-var (citeproc-bt--to-csl-names ~editora))
 	    result))
-    ;; TODO: do this for editorb and editorc as well... dates
+    ;; dates
     (-when-let (issued (-if-let (~issued (alist-get 'date b))
 			   (citeproc-blt--to-csl-date ~issued)
 			 (-when-let (~year (alist-get 'year b))
