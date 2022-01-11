@@ -12,11 +12,13 @@
 
 (ert-deftest citeproc-test-formatters-org ()
   (let ((f (citeproc-formatter-rt
-	     (citeproc-formatter-for-format 'org))))
+	    (citeproc-formatter-for-format 'org))))
     (should (string= (funcall f '(((href . "http://orgmode.org")) "Org website"))
 		     "[[http://orgmode.org][Org website]]"))
     (should (string= (funcall f '(((href . "http://orgmode.org")) "http://orgmode.org"))
-		     "http://orgmode.org"))))
+		     "http://orgmode.org"))
+    (should (string= (funcall f '(((bib-item-no . "1")) "text"))
+		     "<<citeproc_bib_item_1>>text"))))
 
 (ert-deftest citeproc-test-formatters-plain ()
   (let ((f (citeproc-formatter-rt

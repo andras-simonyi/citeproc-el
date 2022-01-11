@@ -136,7 +136,12 @@ If ANCHOR is string= to TARGET then return ANCHOR."
   `((unformatted . identity)
     (href . ,#'citeproc-fmt--org-link)
     (cited-item-no . ,(lambda (x y) (concat "[[citeproc_bib_item_" y "][" x "]]")))
-    (bib-item-no . ,(lambda (x y) (concat "<<citeproc_bib_item_" y ">>" x)))
+    ;; If the text after the '>>' Org link target closing starts with an Org
+    ;; formatting character then we add an invisible zero width space at the end
+    ;; to properly export formatting.
+    (bib-item-no . ,(lambda (x y) (concat "<<citeproc_bib_item_" y ">>"
+					  (when (memql (aref x 0) '(?/ ?* ?_)) "​")
+					  x)))
     (font-style-italic . ,(lambda (x) (concat "/" x "/")))
     (font-style-oblique . ,(lambda (x) (concat "/" x "/")))
     (font-variant-small-caps . ,(lambda (x) (upcase x)))
