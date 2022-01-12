@@ -195,13 +195,18 @@ Only those fields are mapped that do not require further processing.")
 Only those fields are mapped that do not require further
 processing.")
 
+(defun citeproc-blt--parse-date (d)
+  "Parse single biblatex date-time expression D."
+  ;; Remove time part, if present.
+  (-when-let (time-sep-pos (cl-position ?T d))
+    (setq d (substring d 0 time-sep-pos)))
+  (--map (string-to-number it) (split-string d "-")))
+
 (defun citeproc-blt--to-csl-date (d)
   "Return a CSL version of the biblatex date field given by D."
   (let* ((interval-strings (split-string d "/"))
 	 (interval-date-parts
-	  (mapcar (lambda (x)
-		    (--map (string-to-number it) (split-string x "-")))
-		  interval-strings)))
+	  (mapcar #'citeproc-blt--parse-date interval-strings)))
     (list (cons 'date-parts interval-date-parts))))
 
 (defun citeproc-blt--get-standard (v b &optional with-nocase)
