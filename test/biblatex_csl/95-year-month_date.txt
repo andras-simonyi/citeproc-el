@@ -1,0 +1,17 @@
+---
+@article{article-req,
+    Author = {Author, Ann},
+    Date = {2013-01},
+    Journaltitle = {The Journaltitle},
+    Title = {An article entry with just the required fields},
+    Langid = {english}}
+---
+- author:
+  - family: Author
+    given: Ann
+  container-title: The journaltitle
+  id: article-req
+  issued: 2013-01
+  language: en-US
+  title: An article entry with just the required fields
+  type: article-journal
