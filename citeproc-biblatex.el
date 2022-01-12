@@ -200,18 +200,7 @@ processing.")
   (let* ((interval-strings (split-string d "/"))
 	 (interval-date-parts
 	  (mapcar (lambda (x)
-		    (let* ((parsed (parse-time-string x))
-			   ;; TODO: use more elegant accessors for the parsed
-			   ;; time while keeping Emacs 26 compatibility.
-			   (year (elt parsed 5))
-			   (month (elt parsed 4))
-			   (day (elt parsed 3))
-			   date)
-		      (when year
-			(when day (push day date))
-			(when month (push month date))
-			(push year date)
-			date)))
+		    (--map (string-to-number it) (split-string x "-")))
 		  interval-strings)))
     (list (cons 'date-parts interval-date-parts))))
 
