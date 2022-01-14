@@ -136,20 +136,38 @@ If ANCHOR is string= to TARGET then return ANCHOR."
   `((unformatted . identity)
     (href . ,#'citeproc-fmt--org-link)
     (cited-item-no . ,(lambda (x y) (concat "[[citeproc_bib_item_" y "][" x "]]")))
-    ;; If the text after the '>>' Org link target closing starts with an Org
-    ;; formatting character then we add an invisible zero width space at the end
-    ;; to properly export formatting.
-    (bib-item-no . ,(lambda (x y) (concat "<<citeproc_bib_item_" y ">>"
-					  (when (memql (aref x 0) '(?/ ?* ?_)) "​")
-					  x)))
-    (font-style-italic . ,(lambda (x) (concat "/" x "/")))
-    (font-style-oblique . ,(lambda (x) (concat "/" x "/")))
+    (bib-item-no . ,(lambda (x y) (concat "<<citeproc_bib_item_" y ">>" x)))
+    ;; Warning: The next four formatter lines put protective zero-width spaces
+    ;; around the Org format characters ('/' etc.).
+    (font-style-italic . ,(lambda (x) (concat "​/" x "/​")))
+    (font-style-oblique . ,(lambda (x) (concat "​/" x "/​")))
+    (font-weight-bold . ,(lambda (x) (concat "​*" x "*​")))
+    (text-decoration-underline . ,(lambda (x) (concat "​_" x "_​")))
+    ;; End of zero-width space protected formatters.
     (font-variant-small-caps . ,(lambda (x) (upcase x)))
-    (font-weight-bold . ,(lambda (x) (concat "*" x "*")))
-    (text-decoration-underline . ,(lambda (x) (concat "_" x "_")))
     (vertical-align-sub . ,(lambda (x) (concat "_{" x "}")))
     (vertical-align-sup . ,(lambda (x) (concat "^{" x "}")))
     (display-left-margin . ,(lambda (x) (concat x " ")))))
+
+(defvar citeproc-fmt--org-format-rt-1
+  (citeproc-formatter-fun-create citeproc-fmt--org-alist)
+  "Recursive rich-text Org formatter.
+Doesn't do finalization by removing zero-width spaces.")
+
+(defun citeproc-fmt--org-format-rt (rt)
+  "Convert rich-text RT into Org format.
+Performs finalization by removing unnecessary zero-width spaces."
+  ;; First we remove z-w spaces around spaces and before punctuation.
+  (let ((result (citeproc-s-replace-all-seq
+		 (funcall citeproc-fmt--org-format-rt-1 rt)
+		 '((" ​" . " ") ("​ " . " ") ("​," . ",")
+		   ("​;" . ";") ("​:" . ":") ("​." . ".")))))
+    ;; Starting and ending z-w spaces are also removed.
+    (when (= (aref result 0) 8203)
+      (setq result (substring result  1)))
+    (when (= (aref result (- (length result) 1)) 8203)  
+      (setq result (substring result  0 -1)))
+    result))
 
 ;; HTML
 
@@ -316,8 +334,7 @@ CSL tests."
 		  :bib #'citeproc-fmt--html-bib-formatter
 		  :no-external-links t))
     (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
-    (org . ,(citeproc-formatter-create
-	     :rt (citeproc-formatter-fun-create citeproc-fmt--org-alist)))
+    (org . ,(citeproc-formatter-create :rt #'citeproc-fmt--org-format-rt))
     (latex . ,(citeproc-formatter-create
 	       :rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
     (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain
