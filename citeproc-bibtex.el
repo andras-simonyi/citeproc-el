@@ -386,15 +386,21 @@ is not on this list are classified as non-dropping.")
   "Return a CSL version of the date given by YEAR and MONTH.
 YEAR and MONTH are the values of the corresponding BibTeX fields,
 MONTH might be nil."
-  (let ((csl-year (string-to-number (car (s-match "[[:digit:]]+" year))))
-	(csl-month (when month
-		     (assoc-default (downcase month)
-				    citeproc-bt--mon-to-num-alist)))
-	date)
-    (when csl-year
-      (when csl-month (push csl-month date))
-      (push csl-year date))
-    (list (cons 'date-parts (list date)))))
+  (condition-case nil
+      (let ((csl-year (string-to-number (car (s-match "[[:digit:]]+" year))))
+	    (csl-month (when month
+			 (assoc-default (downcase month)
+					citeproc-bt--mon-to-num-alist)))
+	    date)
+	(when csl-year
+	  (when csl-month (push csl-month date))
+	  (push csl-year date))
+	(list (cons 'date-parts (list date))))
+    (error
+     (error (concat "Couldn't parse year: '%s'"
+		    (when month " and month: '%s'")
+		    " as a date")
+	    year month))))
 
 (defun citeproc-bt-entry-to-csl (b)
   "Return a CSL form of normalized parsed BibTeX entry B."

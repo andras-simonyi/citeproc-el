@@ -153,16 +153,26 @@ without a `langid' field are not converted to sentence-case."
 	 (org-map-entries
 	  (lambda ()
 	    (-when-let (key-w-entry (citeproc-bt-from-org-headline))
-	      (puthash (car key-w-entry) (citeproc-bt-entry-to-csl
-					  (cdr key-w-entry))
-		       cache)))
+	      (condition-case err
+		  (puthash (car key-w-entry) (citeproc-bt-entry-to-csl
+					      (cdr key-w-entry))
+			   cache)
+		(error
+		 (user-error
+		  "Couldn't parse the bib(la)tex entry with key '%s', the error was: %s" 
+		  (car key-w-entry) err)))))
 	  t (list file)))
         (ext
          (user-error "Unknown bibliography extension: %S" ext))))
     (maphash
      (lambda (key entry)
-       (puthash key (citeproc-blt-entry-to-csl entry nil no-sentcase-wo-langid)
-		cache))
+       (condition-case err
+	   (puthash key (citeproc-blt-entry-to-csl entry nil no-sentcase-wo-langid)
+		    cache)
+	 (error
+	  (user-error
+	   "Couldn't parse the bib(la)tex entry with key '%s', the error was: %s"
+	   key err))))
      bt-entries)
     (lambda (x)
       (pcase x

@@ -200,7 +200,11 @@ processing.")
   ;; Remove time part, if present.
   (-when-let (time-sep-pos (cl-position ?T d))
     (setq d (substring d 0 time-sep-pos)))
-  (--map (string-to-number it) (split-string d "-")))
+  (--map (let ((converted (string-to-number it)))
+	   (if (not (= converted 0))
+	       converted
+	     (error "Couldn't parse '%s' as a date" d)))
+	 (split-string d "-")))
 
 (defun citeproc-blt--to-csl-date (d)
   "Return a CSL version of the biblatex date field given by D."
