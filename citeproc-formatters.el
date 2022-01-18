@@ -157,16 +157,17 @@ Doesn't do finalization by removing zero-width spaces.")
 (defun citeproc-fmt--org-format-rt (rt)
   "Convert rich-text RT into Org format.
 Performs finalization by removing unnecessary zero-width spaces."
-  ;; First we remove z-w spaces around spaces and before punctuation.
-  (let ((result (citeproc-s-replace-all-seq
-		 (funcall citeproc-fmt--org-format-rt-1 rt)
-		 '((" ​" . " ") ("​ " . " ") ("​," . ",")
-		   ("​;" . ";") ("​:" . ":") ("​." . ".")))))
-    ;; Starting and ending z-w spaces are also removed.
-    (when (= (aref result 0) 8203)
-      (setq result (substring result  1)))
-    (when (= (aref result (- (length result) 1)) 8203)  
-      (setq result (substring result  0 -1)))
+  (let ((result (funcall citeproc-fmt--org-format-rt-1 rt)))
+    (when (> (length result) 2)
+      ;; First we remove z-w spaces around spaces and before punctuation.
+      (setq result (citeproc-s-replace-all-seq
+		    result '((" ​" . " ") ("​ " . " ") ("​," . ",") ("​;" . ";")
+			     ("​:" . ":") ("​." . "."))))
+      ;; Starting and ending z-w spaces are also removed.
+      (when (= (aref result 0) 8203)
+	(setq result (substring result 1)))
+      (when (= (aref result (- (length result) 1)) 8203)
+	(setq result (substring result 0 -1))))
     result))
 
 ;; HTML
