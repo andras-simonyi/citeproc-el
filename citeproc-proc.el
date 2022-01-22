@@ -158,6 +158,19 @@ Return the itemdata struct that was added."
 	     (setf (citeproc-itemdata-occurred-before itd) nil))
 	   (citeproc-proc-itemdata proc)))
 
+(defun citeproc-proc--parse-csl-json-name (rep)
+  "Parse the json representation REP of a csl name variable."
+  (if-let ((literal (alist-get 'literal rep)))
+      (list (cons 'family (citeproc-s-smart-apostrophes literal)))
+    (let ((filtered (-remove (lambda (x) (eq (car x) 'isInstitution)) rep)))
+      (--map (cons
+	      (car it)
+	      (let ((text-field (cdr it)))
+		(if (stringp text-field)
+		    (citeproc-s-smart-apostrophes text-field)
+		  text-field)))
+	     filtered))))
+
 (defun citeproc-proc--parse-csl-var-val (rep var proc)
   "Parse the json representation REP of csl variable VAR.
 VAR is a csl variable as symbol;
@@ -166,16 +179,9 @@ REP is its value in standard csl json representation as parsed by
 PROC is the target citeproc-processor of the internal representation.
 Return the PROC-internal representation of REP."
   (cond ((memq var citeproc--name-vars)
-	 (--map
-	  (let* ((filtered (-remove (lambda (x) (eq (car x) 'isInstitution)) it))
-		 (w-smart-aposts (--map (cons
-					 (car it)
-					 (let ((text-field (cdr it)))
-					   (if (stringp text-field)
-					       (citeproc-s-smart-apostrophes text-field)
-					     text-field)))
-					filtered)))
-	    (citeproc-proc--internalize-name w-smart-aposts proc))
+	 (--map (citeproc-proc--internalize-name
+		 (citeproc-proc--parse-csl-json-name it)
+		 proc)
 	  rep))
 	((memq var citeproc--date-vars)
 	 (citeproc-date-parse rep))

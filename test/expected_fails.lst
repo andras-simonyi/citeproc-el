@@ -8,7 +8,6 @@ citeproc-suite-bugreports-caps-after-one-word-prefix
 citeproc-suite-bugreports-chicago-author-date-looping
 citeproc-suite-bugreports-creeping-add-names
 citeproc-suite-bugreports-demo-page-full-cite-cruft-on-subsequent
-citeproc-suite-bugreports-double-encoded-angle-braces
 citeproc-suite-bugreports-env-and-urb
 citeproc-suite-bugreports-french-apostrophe
 citeproc-suite-bugreports-ikey-one
@@ -21,7 +20,6 @@ citeproc-suite-bugreports-overwrite-citation-items
 citeproc-suite-bugreports-parse-name
 citeproc-suite-bugreports-single-quote-xml
 citeproc-suite-bugreports-small-caps-escape
-citeproc-suite-bugreports-year-suffix-in-harvard1
 citeproc-suite-collapse-author-collapse-no-date-sorted
 citeproc-suite-collapse-chicago-after-collapse
 citeproc-suite-collapse-citation-number-ranges-insert
@@ -104,7 +102,6 @@ citeproc-suite-magic-name-suffix-no-comma
 citeproc-suite-magic-name-suffix-with-comma
 citeproc-suite-magic-punctuation-in-quote-nested
 citeproc-suite-magic-superscript-chars
-citeproc-suite-magic-suppress-duplicate-variable-rendering
 citeproc-suite-magic-suppress-layout-delimiter-if-prefix-comma
 citeproc-suite-magic-term-capitalization-with-prefix
 citeproc-suite-name-articular-name-as-sort-order
@@ -132,9 +129,6 @@ citeproc-suite-name-initials-initialize-true
 citeproc-suite-name-initials-initialize-true-empty
 citeproc-suite-name-initials-initialize-true-period
 citeproc-suite-name-initials-initialize-true-period-space
-citeproc-suite-name-institution
-citeproc-suite-name-institution-decoration
-citeproc-suite-name-literal-with-comma
 citeproc-suite-name-long-abbreviation
 citeproc-suite-name-lowercase-surname-suffix
 citeproc-suite-name-namepart-affixes
@@ -175,8 +169,6 @@ citeproc-suite-sort-bibliography-citation-number-descending-via-composite-macro
 citeproc-suite-sort-bibliography-citation-number-descending-via-macro
 citeproc-suite-sort-case-insensitive-bibliography
 citeproc-suite-sort-case-insensitive-citation
-citeproc-suite-sort-chicago-year-suffix1
-citeproc-suite-sort-chicago-year-suffix2
 citeproc-suite-sort-citation-number-primary-descending-via-macro-bibliography
 citeproc-suite-sort-citation-number-primary-descending-via-macro-citation
 citeproc-suite-sort-citation-number-primary-descending-via-variable-bibliography
@@ -193,7 +185,6 @@ citeproc-suite-sort-quotes
 citeproc-suite-sort-range-unaffected
 citeproc-suite-sort-separate-authors-and-others
 citeproc-suite-sort-with-and-in-one-entry
-citeproc-suite-substitute-shared-macro
 citeproc-suite-substitute-substitute-only-once-string
 citeproc-suite-substitute-substitute-only-once-term
 citeproc-suite-substitute-substitute-only-once-term-empty
