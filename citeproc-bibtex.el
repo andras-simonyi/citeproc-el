@@ -293,7 +293,7 @@ brackets to the corresponding CSL XML spans."
 	  ;; Brackets indicate corporate entities without name parts.
 	  ((and (string= "{" (substring trimmed 0 1))
 		(string= "}" (substring trimmed -1)))
-	   `((family . ,(citeproc-bt--to-csl (substring trimmed 1 -1)))))
+	   `((literal . ,(citeproc-bt--to-csl (substring trimmed 1 -1)))))
 	  ;; Else standard bib(la)tex name field processing.
 	  (t (citeproc-bt--to-csl-name (citeproc-bt--to-csl trimmed))))))
      name-fields)))
