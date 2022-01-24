@@ -84,7 +84,7 @@
   "Alist mapping biblatex item types to CSL item types.")
 
 (defun citeproc-blt--to-csl-type (type entrysubtype)
-  "Return the csltype corresponding to blt TYPE and ENTRYSUBTYPE."
+  "Return the CSL type corresponding to blt TYPE and ENTRYSUBTYPE."
   (pcase type
     ((or 'article 'periodical 'supperiodical)
      (pcase entrysubtype
@@ -235,8 +235,7 @@ V is undefined in B."
   "Return the CSL-normalized value of a title string S.
 If optional WITH-NOCASE is non-nil then convert BibTeX no-case
 brackets to the corresponding CSL XML spans, and if optional
-SENT-CASE is non-nil the convert to sentence-case. Return nil if
-V is undefined in B."
+SENT-CASE is non-nil the convert to sentence-case."
   (if sent-case
       (citeproc-s-sentence-case-title (citeproc-bt--to-csl s t) (not with-nocase))
     (citeproc-bt--to-csl s with-nocase)))
