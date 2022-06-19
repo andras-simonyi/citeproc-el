@@ -260,7 +260,9 @@ sort order."
 	  (rmode (citeproc-context-render-mode context)))
     (if (citeproc-name--lat-cyr-greek-p name-alist)
 	(let ((g
-	       (cond ((and show-given (= show-given 2)) g-uninited)
+	       (cond ((or (null g-uninited)
+			  (and show-given (= show-given 2)))
+		      g-uninited)
 		     ((and init-with init)
 		      (list (citeproc-rt-attrs g-uninited)
 			    (citeproc-name--initialize
@@ -318,8 +320,6 @@ NAME-ALIST is like in `citeproc-name--render-formatted'"
 		     (cdr x)))
 		 name-alist)))
 
-;;NOTE: missing given names are currently dealt here by handling the names =
-;;nil case there should be a more appropriate place.
 (defun citeproc-name--initialize (names suffix &optional remove-hyphens)
   "Initialize NAMES and add SUFFIX.
 NAMES is a string containing one or more space-separated names,
@@ -327,16 +327,15 @@ while SUFFIX is either nil or a string (e.g. \".\"). If the
 optional REMOVE-HYPHENS is non-nil then don't keep hyphens
 between initalized given names, e.g., initialize Jean-Paul to
 J.P. instead of the default J.-P."
-  (if (not names) nil
-    (let ((trimmed-suffix (s-trim suffix)))
-      (concat (s-join
-	       suffix
-	       (--map
-		(if (s-match "-" it)
-		    (citeproc-name--initialize-hyphenated it suffix remove-hyphens)
-		  (s-left 1 it))
-		(s-split " +" names)))
-	      trimmed-suffix))))
+  (let ((trimmed-suffix (s-trim suffix)))
+    (concat (s-join
+	     suffix
+	     (--map
+	      (if (s-match "-" it)
+		  (citeproc-name--initialize-hyphenated it suffix remove-hyphens)
+		(s-left 1 it))
+	      (s-split " +" names)))
+	    trimmed-suffix)))
 
 (defun citeproc-name--initialize-hyphenated (name suffix &optional remove-hyphens)
   "Initialize space-less but hyphenated NAME with SUFFIX.
