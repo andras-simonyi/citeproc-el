@@ -11,19 +11,15 @@ citeproc-suite-bugreports-demo-page-full-cite-cruft-on-subsequent
 citeproc-suite-bugreports-env-and-urb
 citeproc-suite-bugreports-french-apostrophe
 citeproc-suite-bugreports-ikey-one
-citeproc-suite-bugreports-matched-author-and-date
 citeproc-suite-bugreports-move-punctuation-inside-quotes-for-locator
 citeproc-suite-bugreports-no-case-escape
-citeproc-suite-bugreports-no-event-in-nested-macro-with-old-processor
 citeproc-suite-bugreports-no-title
 citeproc-suite-bugreports-number-affix-escape
 citeproc-suite-bugreports-number-in-macro-with-vertical-align
 citeproc-suite-bugreports-overwrite-citation-items
 citeproc-suite-bugreports-parse-name
-citeproc-suite-bugreports-processor-hang1
 citeproc-suite-bugreports-single-quote-xml
 citeproc-suite-bugreports-small-caps-escape
-citeproc-suite-bugreports-style-error001
 citeproc-suite-collapse-author-collapse-no-date-sorted
 citeproc-suite-collapse-chicago-after-collapse
 citeproc-suite-collapse-citation-number-ranges-insert
@@ -45,7 +41,6 @@ citeproc-suite-date-year-suffix-with-no-date
 citeproc-suite-decorations-nested-quotes-inner-reverse
 citeproc-suite-decorations-no-normal-without-decoration
 citeproc-suite-decorations-simple-flip-flop
-citeproc-suite-disambiguate-all-names-base-name-count-on-failure-if-year-suffix-available
 citeproc-suite-disambiguate-all-names-generally
 citeproc-suite-disambiguate-all-names-simple-sequence
 citeproc-suite-disambiguate-all-names-with-initials-generally
@@ -54,7 +49,6 @@ citeproc-suite-disambiguate-by-cite-incremental2
 citeproc-suite-disambiguate-citation-label-default
 citeproc-suite-disambiguate-citation-label-in-data
 citeproc-suite-disambiguate-disambiguation-hang
-citeproc-suite-disambiguate-fail-with-year-suffix
 citeproc-suite-disambiguate-incremental-extra-text
 citeproc-suite-disambiguate-initialize-with-but-no-disambiguation
 citeproc-suite-disambiguate-primary-name-generally
@@ -116,7 +110,6 @@ citeproc-suite-name-articular-with-comma-name-as-sort-order
 citeproc-suite-name-asian-glyphs
 citeproc-suite-name-celts-and-toffs-crowded-initials
 citeproc-suite-name-celts-and-toffs-spaced-initials
-citeproc-suite-name-cite-group-delimiter-with-year-collapse
 citeproc-suite-name-cite-group-delimiter-with-year-suffix-collapse
 citeproc-suite-name-cite-group-delimiter-with-year-suffix-collapse2
 citeproc-suite-name-cite-group-delimiter-with-year-suffix-collapse3
@@ -169,11 +162,9 @@ citeproc-suite-position-ibid-with-prefix-full-stop
 citeproc-suite-position-if-ibid-with-locator-is-true-then-ibid-is-true
 citeproc-suite-position-near-note-false
 citeproc-suite-position-reset-note-numbers
-citeproc-suite-punctuation-default-year-suffix-delimiter
 citeproc-suite-punctuation-french-orthography
 citeproc-suite-punctuation-full-monty-quotes-in
 citeproc-suite-quotes-punctuation-with-inner-quote
-citeproc-suite-sort-author-date-with-year-suffix
 citeproc-suite-sort-bibliography-citation-number-descending-via-composite-macro
 citeproc-suite-sort-bibliography-citation-number-descending-via-macro
 citeproc-suite-sort-case-insensitive-bibliography
@@ -187,7 +178,6 @@ citeproc-suite-sort-drop-name-label-in-sort
 citeproc-suite-sort-family-only
 citeproc-suite-sort-leading-a
 citeproc-suite-sort-leading-apostrophe-on-name-particle
-citeproc-suite-sort-name-implicit-sort-order-and-form
 citeproc-suite-sort-name-variable
 citeproc-suite-sort-omitted-bib-ref-mixed-numeric-style
 citeproc-suite-sort-omitted-bib-ref-non-numeric-style
@@ -195,7 +185,6 @@ citeproc-suite-sort-quotes
 citeproc-suite-sort-range-unaffected
 citeproc-suite-sort-separate-authors-and-others
 citeproc-suite-sort-with-and-in-one-entry
-citeproc-suite-substitute-shared-macro
 citeproc-suite-substitute-substitute-only-once-string
 citeproc-suite-substitute-substitute-only-once-term
 citeproc-suite-substitute-substitute-only-once-term-empty
