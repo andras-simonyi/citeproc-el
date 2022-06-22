@@ -44,7 +44,7 @@ formats](#supported-output-formats) for the full list).
 
 ## Requirements
 
-Emacs 25 or later compiled with libxml2 support. (The library is regularly
+Emacs 26 or later compiled with libxml2 support. (The library is regularly
 tested on Emacs 26.3, 27.1, 27.2 and recent snapshots of the development
 version.)
 
@@ -278,7 +278,7 @@ added — see `citeproc-formatters.el` for examples.
 
 ## License
 
-Copyright (C) 2018-2021 András Simonyi
+Copyright (C) 2018-2022 András Simonyi
 
 Authors: András Simonyi
 
