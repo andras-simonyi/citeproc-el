@@ -120,8 +120,8 @@ in-style locale information will be loaded (if available)."
 
 (defun citeproc-style--parse-layout-and-sort-frag (frag)
   "Parse a citation or bibliography style xml FRAG.
-Return an alist with keys 'layout, 'opts, 'layout-attrs, 'sort
-and 'sort-orders."
+Return an alist with keys `layout', `opts', `layout-attrs', `sort'
+and `sort-orders'."
   (let* ((opts (cadr frag))
 	 (sort-p (eq (cl-caaddr frag) 'sort))
 	 (layout (citeproc-style--transform-xmltree

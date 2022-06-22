@@ -232,7 +232,7 @@ Nature."
 (defun citeproc-name--render-formatted (name-alist attrs sort-o context)
   "Render formatted name described by NAME-ALIST according to ATTRS.
 NAME-ALIST is an alist with symbol keys corresponding to
-name-parts like 'family etc. and values are simple rich-text
+name-parts like `family' etc. and values are simple rich-text
 contents of the form (ATTRS CONTENT) where content must be a
 single string. SORT-O is a boolean determining whether to use
 sort order."

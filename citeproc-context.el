@@ -67,7 +67,7 @@ MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
 (defun citeproc-var-value (var context &optional form)
   "Return the value of csl variable VAR in CONTEXT.
 VAR is a symbol, CONTEXT is a `citeproc-context' struct, and the
-optional FORM can be nil, 'short or 'long."
+optional FORM can be nil, `short' or `long'."
   (if (eq form 'short)
       (-if-let* ((short-var (alist-get var citeproc--short-long-var-alist))
 		 (short-var-val (alist-get short-var (citeproc-context-vars context))))
@@ -103,8 +103,8 @@ optional FORM can be nil, 'short or 'long."
 
 (defun citeproc-rt-textcased (rts case context)
   "Return rich-text content RTS in text-case CASE using CONTEXT.
-CASE is one of the following: 'lowercase, 'uppercase,
-'capitalize-first, 'capitalize-all, 'sentence, 'title."
+CASE is one of the following: `lowercase', `uppercase',
+`capitalize-first', `capitalize-all', `sentence', `title'."
   (pcase case
     ('uppercase
      (citeproc-rt-map-strings #'upcase rts t))

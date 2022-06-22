@@ -441,7 +441,7 @@ INDEX is the actual note-index, NND is the near-note-distance."
 
 (defvar citeproc-disambiguation-cite-pos 'last
   "Which cite position should be the basis of cite disambiguation.
-Possible values are 'last, 'first and 'subsequent.")
+Possible values are `last', `first' and `subsequent'.")
 
 (defun citeproc-proc-update-positions (proc)
   "Update all position-related fields in PROC."
