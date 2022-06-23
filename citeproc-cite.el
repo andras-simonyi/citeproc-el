@@ -68,6 +68,12 @@ GROUPED is used internally to indicate whether the cites were
   "Alist mapping citation modes to corresponding cite-level
 key-value pair representations.")
 
+(defvar citeproc-citation-postprocess-functions nil
+  "A list of functions to postprocess rendered citations.
+Each function takes a single argument, a rich-text, and returns a
+post-processed rich-text value. The functions are applied in the
+order they appear in the list.")
+
 (defun citeproc-cite--varlist (cite)
   "Return the varlist belonging to CITE."
   (let* ((itd (alist-get 'itd cite))
@@ -193,8 +199,9 @@ For the optional INTERNAL-LINKS argument see
 	;; Prepend author to textual citations
 	(when (eq (citeproc-citation-mode c) 'textual)
 	  (let* ((first-elt (car cites)) ;; First elt is either a cite or a cite group.
-		 ;; If the latter then we need to locate the first cite as the
-		 ;; 2nd element of the first cite group.
+		 ;; If the latter then we need to locate the
+		 ;; first cite as the 2nd element of the first
+		 ;; cite group.
 		 (first-cite (if (eq 'group (car first-elt))
 				 (cadr first-elt)
 			       first-elt))
@@ -206,9 +213,12 @@ For the optional INTERNAL-LINKS argument see
 		       (alist-get 'stopped-rendering (car rendered-author)))
 	      (setq result `(nil ,rendered-author " " ,result)))))
 	;; Capitalize first
-	(if (citeproc-citation-capitalize-first c)
-	    (citeproc-rt-change-case result #'citeproc-s-capitalize-first)
-	  result)))))
+	(when (citeproc-citation-capitalize-first c)
+	  (setq result (citeproc-rt-change-case result #'citeproc-s-capitalize-first)))
+	;; Run the citation postprocessing hook
+	(dolist (fn citeproc-citation-postprocess-functions)
+	  (setq result (funcall fn result)))
+	result))))
 
 (defun citeproc-cites--collapse-indexed (cites index-getter no-span-pred)
   "Collapse continuously indexed cites in CITES.

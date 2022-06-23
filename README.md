@@ -21,6 +21,7 @@ A CSL 1.0.2 Citation Processor for Emacs.
     - [Rendering citations and bibliographies](#rendering-citations-and-bibliographies)
 	- [Rendering isolated references](#rendering-isolated-references)
 	- [Supported output formats](#supported-output-formats)
+	- [Hooks](#hooks)
 - [License](#license)
 
 ## Introduction
@@ -272,6 +273,15 @@ Currently `html`, `org`, `plain` (plain text), `latex`, `org-odt` (for Org ODT
 export), `csl-test` (for the CSL test suite) and `raw` (internal rich-text
 format, for debugging) are supported as output formats. New ones can easily be
 added — see `citeproc-formatters.el` for examples.
+
+### Hooks
+
+citeproc-el provides the following hook variables:
+
+#### citeproc-citation-postprocess-functions
+A list of functions to postprocess rendered citations. Each function takes a
+single argument, a rich-text, and returns a post-processed rich-text value. The
+functions are applied in the order they appear in the list.
 
 -------------------------------------------------------------------------------
 
