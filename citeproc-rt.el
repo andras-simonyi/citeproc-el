@@ -142,7 +142,7 @@ If optional SKIP-NOCASE is non-nil then skip spans with the
     (_ (funcall fun rt))))
 
 (defun citeproc-rt-replace-all-sim (replacements regex rts)
-  "Make all REPLACEMENTS sequentially in the strings of rich-texts RTS."
+  "Make all REPLACEMENTS simultaneously in the strings of rich-texts RTS."
   (citeproc-rt-map-strings (lambda (x) (citeproc-s-replace-all-sim x regex replacements))
 			   rts))
 
