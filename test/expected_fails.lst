@@ -154,6 +154,7 @@ citeproc-suite-number-new-ordinals-with-gender-change
 citeproc-suite-number-ordinal-spacing
 citeproc-suite-number-plain-hyphen-or-en-dash-always-plural
 citeproc-suite-number-separate-ordinal-namespaces
+citeproc-suite-page-chicago16
 citeproc-suite-position-first-true-only-once
 citeproc-suite-position-ibid-in-text
 citeproc-suite-position-ibid-with-locator
