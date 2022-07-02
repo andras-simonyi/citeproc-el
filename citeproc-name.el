@@ -36,6 +36,17 @@
 (require 'citeproc-context)
 (require 'citeproc-term)
 
+(defvar citeproc-name-postprocess-functions nil
+  "A list of functions to postprocess rendered names.
+Each function takes three arguments:
+- the rich-text rendering of a name to be post-processed,
+- the rendered name as an alist with CSL name-part
+  keys (`family', `given' etc.), and
+- the rendering context, as a `citeproc-context' structure.
+The output of each function should be the post-processed
+rich-text, and the functions are applied in the order they appear
+in the list.")
+
 ;; OPTIMIZE: Name count could be sped up by only counting the names to be
 ;; rendered without actually rendering them
 (defun citeproc-name-render-vars
@@ -208,15 +219,18 @@ Nature."
 
 (defun citeproc-name--render (name attrs name-part-attrs sort-o context)
   "Render NAME according to the given attributes."
-  (let ((format-attrs
-	 (--filter (memq (car it) (-concat '(prefix suffix) citeproc-rt-format-attrs))
-		   attrs)))
-    (citeproc-rt-format-single
-     (cons `(name-id . ,(alist-get 'name-id name)) format-attrs)
-     (citeproc-name--render-formatted
-      (citeproc-name--format-nameparts name name-part-attrs context)
-      attrs sort-o context)
-     context)))
+  (let* ((format-attrs
+	  (--filter (memq (car it) (-concat '(prefix suffix) citeproc-rt-format-attrs))
+		    attrs))
+	 (result (citeproc-rt-format-single
+		  (cons `(name-id . ,(alist-get 'name-id name)) format-attrs)
+		  (citeproc-name--render-formatted
+		   (citeproc-name--format-nameparts name name-part-attrs context)
+		   attrs sort-o context)
+		  context)))
+    (dolist (fn citeproc-name-postprocess-functions)
+      (setq result (funcall fn result name context)))
+    result)) 
 
 (defun citeproc-name--parts-w-sep (c1 c2 sep context)
   "Join name-parts in lists C1 C2 with spaces and then with SEP."
