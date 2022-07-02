@@ -287,13 +287,14 @@ functions are applied in the order they appear in the list.
 A list of functions to postprocess rendered names.
 Each function takes three arguments:
 
-- the rich-text rendering of a name to be post-processed,
+- the rich-text rendering of a name to be postprocessed,
 - the rendered name as an alist with CSL name-part
   keys (`family`, `given` etc.), and
 - the rendering context, as a `citeproc-context` structure.
 
-The output of each function should be the post-processed rich-text, and
+The output of each function should be the postprocessed rich-text, and
 the functions are applied in the order they appear in the list.
+
 -------------------------------------------------------------------------------
 
 ## License
