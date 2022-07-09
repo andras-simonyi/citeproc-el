@@ -40,6 +40,7 @@
   author:
   - family: Moraux
     given: Paul
+  blt-type: inproceedings
   container-title: Aristotle on Mind and the Senses. Proceedings of the
     Seventh Symposium Aristotelicum
   editor:
@@ -62,6 +63,7 @@
 - author:
   - family: Salam
     given: Abdus
+  blt-type: inproceedings
   container-title: "Elementary particle theory: Relativistic groups and
     analyticity. Proceedings of the eighth Nobel symposium"
   editor:

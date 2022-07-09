@@ -13,7 +13,8 @@
   shorttitle   = {Encyclop{\ae}dia {Britannica}}
 }
 ---
-- citation-label: EB
+- blt-type: collection
+  citation-label: EB
   edition: 15
   editor:
   - family: Preece

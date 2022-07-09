@@ -51,6 +51,7 @@
 - author:
   - family: Author
     given: Ann
+  blt-type: article
   container-title: The journaltitle
   id: article-req
   issued: 2013-01-01
@@ -62,12 +63,14 @@
   - family: Author
     given: Ann A.
     suffix: Jr.
+  blt-type: article
   collection-title: New series
   container-title: "The journaltitle: The journalsubtitle"
   DOI: 10.1086/520976
   editor:
   - family: Editor
     given: Edward
+  blt-type: article
   id: article-opt
   ISSN: issn
   issue: number, issue

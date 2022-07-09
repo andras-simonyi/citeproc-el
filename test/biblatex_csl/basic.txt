@@ -29,6 +29,7 @@ year="2007"
 - author:
   - family: Doe
     given: John
+  blt-type: book
   id: item1
   issued: 2005
   publisher: Cambridge University Press
@@ -38,6 +39,7 @@ year="2007"
 - author:
   - family: Doe
     given: John
+  blt-type: article
   container-title: Journal of generic studies
   id: item2
   issued: 2006
@@ -50,6 +52,7 @@ year="2007"
     given: John
   - family: Roe
     given: Jenny
+  blt-type: incollection
   container-title: Third book
   editor:
   - family: Smith

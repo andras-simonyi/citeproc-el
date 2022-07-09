@@ -21,6 +21,7 @@
   author:
     - given: Immanuel
       family: Kant
+  blt-type: inbook
   container-author:
     - given: Immanuel
       family: Kant

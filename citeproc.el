@@ -105,10 +105,24 @@ effect of adding all items available in the itemgetter."
   (setf (citeproc-proc-finalized proc) nil))
 
 (defun citeproc-add-subbib-filters (filters proc)
-  "Add subbib FILTERS to PROC.
-FILTERS should be a list of alists in which the keys are one of
-the symbols `type', `nottype', `keyword', `notkeyword', and
-values are strings."
+  "Add sub-bibliography FILTERS to PROC.
+FILTERS should be a list of alists containing symbol keys and
+string values, each pair describing an atomic condition to be
+satisified by the printed entries. The following keys are
+supported:
+- `type': print only entries of the given type. Type is the
+  bib(la)tex entry type if available, otherwise the CSL type is
+  used as fallback;
+- `nottype': print only entries not of the given type. Type is
+  the bib(la)tex entry type if available, otherwise the CSL type
+  is used as fallback;
+- `csltype', `notcsltype': same as `type' and `nottype' but uses
+  the entries' CSL type even if the bib(la)tex type is also
+  available;
+- `keyword': print only entries with the given keyword;
+- `notkeyword': print only entries without the given keyword;
+- `filter': print only entries for which the function named by
+  the key returns a non-nil value."
   (setf (citeproc-proc-bib-filters proc) filters
 	(citeproc-proc-finalized proc) nil))
 

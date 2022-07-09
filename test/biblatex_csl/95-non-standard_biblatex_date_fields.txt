@@ -11,6 +11,8 @@
   author:
   - family: Author
     given: Ann
+
+  blt-type: article
   container-title: The journaltitle
   id: article-req
   issued: 2013-01

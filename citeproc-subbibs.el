@@ -30,19 +30,25 @@
 (require 'citeproc-proc)
 (require 'citeproc-itemdata)
 
-(defun citeproc-sb-match-p (vv filter &optional use-blt-type)
-  "Return whether var-vals alist VV matches FILTER.
-If optional USE-BLT-TYPE is non-nil then use the value for key
-`blt-type' to evaluate type-based filter parts."
-  (let* ((type (alist-get (if use-blt-type 'blt-type 'type) vv))
+(defun citeproc-sb--match-p (vv filter)
+  "Return whether var-vals alist VV matches all conditions in FILTER.
+FILTER should be an alist containing symbol keys and string
+values, each pair describing an atomic condition to be
+satisified. For a list and description of the supported keys
+see the documentation of `citeproc-add-subbib-filters'."
+  (let* ((csl-type (alist-get 'type vv))
+	 (type (or (alist-get 'blt-type vv) csl-type))
 	 (keyword (alist-get 'keyword vv))
 	 (keywords (and keyword (split-string keyword "[ ,;]" t))))
     (--every-p
      (pcase it
        (`(type . ,key) (string= type key))
        (`(nottype . ,key) (not (string= type key)))
-       (`(keyword . ,key) (member key keywords)) 
+       (`(keyword . ,key) (member key keywords))
        (`(notkeyword . ,key) (not (member key keywords)))
+       (`(filter . ,key) (funcall (intern key) vv))
+       (`(csltype . ,key) (string= csl-type key))
+       (`(notcsltype . ,key) (not (string= csl-type key)))
        (`(,key . ,_) (error "Unsupported Citeproc filter keyword `%s'" key)))
      filter)))
 
@@ -55,7 +61,7 @@ If optional USE-BLT-TYPE is non-nil then use the value for key
 	      (subbib-nos
 	       (-non-nil
 		(--map-indexed
-		 (when (citeproc-sb-match-p varvals it) it-index)
+		 (when (citeproc-sb--match-p varvals it) it-index)
 		 filters))))
 	 (setf (citeproc-itemdata-subbib-nos itemdata) subbib-nos)))
      (citeproc-proc-itemdata proc))))

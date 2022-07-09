@@ -64,6 +64,7 @@
   author:
   - family: Kant
     given: Immanuel
+  blt-type: inbook
   container-author:
   - family: Kant
     given: Immanuel
@@ -86,6 +87,7 @@
   author:
   - family: Kant
     given: Immanuel
+  blt-type: inbook
   container-author:
   - family: Kant
     given: Immanuel
@@ -109,6 +111,7 @@
   author:
   - family: Nietzsche
     given: Friedrich
+  blt-type: inbook
   container-author:
   - family: Nietzsche
     given: Friedrich

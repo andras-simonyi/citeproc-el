@@ -17,6 +17,7 @@
 - author:
   - family: Author
     given: Al
+  blt-type: book
   collection-number: 3
   collection-title: Series
   id: item1

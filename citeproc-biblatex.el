@@ -345,6 +345,8 @@ biblatex variables in B."
       (push (cons 'genre (or (assoc-default ~reftype citeproc-blt-reftype-to-genre)
 			     (citeproc-bt--to-csl ~reftype)))
 	    result))
+    ;; We store the original bib(la)tex type for filtering purposes.
+    (push (cons 'blt-type (symbol-name ~type)) result)
     ;; names
     ;; TODO: handle  editorb and editorc as well...
     (when-let ((~editortype (alist-get 'editortype b))

@@ -27,6 +27,7 @@
     default, all entries without an author or editor are alphabetized by
     title but we want this entry to be alphabetized under C rather
     than T. There's also an isbn field
+  blt-type: manual
   citation-label: CMS
   edition: 15
   id: cms

@@ -53,6 +53,7 @@
     given: Willy W.
   - family: Chow
     given: We Min
+  blt-type: report
   genre: research report
   id: chiu
   issued: 1978
@@ -91,6 +92,7 @@
     given: Victor
   - family: Towsley
     given: Don
+  blt-type: report
   genre: technical report
   id: padhye
   issued: 1999
