@@ -61,6 +61,7 @@
     given: Ahasver
   - family: Hoffmann
     given: Erich
+  blt-type: incollection  
   collection-number: 2
   collection-title: Handbuch der europäischen Geschichte
   container-title: Europa im Hoch- und Spätmittelalter
@@ -81,6 +82,7 @@
   author:
   - family: Hyman
     given: Arthur
+  blt-type: incollection  
   collection-number: 9
   collection-title: Studies in philosophy and the history of philosophy
   container-title: Studies in Aristotle
@@ -100,6 +102,7 @@
   author:
   - family: Pines
     given: Shlomo
+  blt-type: incollection  
   container-title: Studies in medieval Jewish history and literature
   editor:
   - family: Twersky

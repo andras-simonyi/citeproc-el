@@ -29,6 +29,7 @@
   author:
   - family: Markey
     given: Nicolas
+  blt-type: online
   id: markey
   issued: 2005-10-16
   title: "Tame the BeaST: The B to X of BibTeX"
@@ -43,6 +44,7 @@
     (yyyy-mm-dd) in the database file. Also note the label field which
     may be used as a fallback by citation styles which need an author
     and/or a year
+  blt-type: online
   citation-label: "CTAN"
   id: CTAN
   issued: 2006

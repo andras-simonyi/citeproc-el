@@ -25,6 +25,7 @@
     indextitle field
   author:
   - family: Averroes
+  blt-type: book
   collection-number: 7
   collection-title: "Moreshet: Studies in Jewish history, literature and thought"
   editor:

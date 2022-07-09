@@ -60,6 +60,7 @@
     given: Alberto
   - family: Nozal
     given: Fernando
+  blt-type: patent
   id: almendro
   issued: 1998
   language: de-DE
@@ -76,6 +77,7 @@
     given: F.
   - family: Isard
     given: M.
+  blt-type: patent
   genre: French patent request
   id: kowalik
   issued: 1995-01-11
@@ -119,6 +121,7 @@
     given: Harald
   - family: Ebner
     given: Norbert
+  blt-type: patent
   genre: European patent
   id: laufenberg
   issued: 2006-09-13
@@ -136,6 +139,7 @@
     given: Victor S.
   - family: Vaughn
     given: Steven A.
+  blt-type: patent
   genre: U.S. patent
   id: sorace
   issued: 1997-09-16

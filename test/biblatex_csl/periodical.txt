@@ -9,6 +9,7 @@
 	Year = 2011}
 ---
 - annote: This is a periodical entry with an issn field.
+  blt-type: periodical
   container-title: Computers and graphics
   id: jcg
   ISSN: 0097-8493

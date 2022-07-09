@@ -27,6 +27,7 @@
   - family: Geer
     given: Ingrid
     non-dropping-particle: de
+  blt-type: thesis
   genre: PhD thesis
   id: geer
   issued: 1985
@@ -41,6 +42,7 @@
   author:
   - family: Loh
     given: Nin C.
+  blt-type: thesis
   genre: Master's thesis
   id: loh
   issued: 1992

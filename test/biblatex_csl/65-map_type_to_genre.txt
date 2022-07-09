@@ -15,6 +15,7 @@
 ---
 - author:
   - family: BGH
+  blt-type: jurisdiction
   container-title: Gewerblicher Rechtsschutz und Urheberrecht
   container-title-short: GRUR
   event-date: 2013-07-17

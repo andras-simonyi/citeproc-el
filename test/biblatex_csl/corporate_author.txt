@@ -18,6 +18,7 @@
 ---
 - author:
   - literal: Deutscher Bundestag
+  blt-type: legislation
   issued: 1992-12-18
   id: "bt12-4022"
   language: de-DE
@@ -25,6 +26,7 @@
   type: bill
 - author:
   - literal: NVIDIA Corporation
+  blt-type: book
   id: "CUDA"
   issued: 2007
   publisher: NVIDIA Corporation
@@ -34,6 +36,7 @@
   - literal: Big corporation
   - family: Smith
     given: John
+  blt-type: book
   id: "corp"
   issued: 1998
   title: A book by a corporation and an actual person
