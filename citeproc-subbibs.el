@@ -1,6 +1,6 @@
 ;;; citeproc-subbibs.el --- support for subbibliographies -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021 András Simonyi
+;; Copyright (C) 2021-2022 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
