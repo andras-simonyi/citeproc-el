@@ -196,23 +196,36 @@ formatting parameters keyed to the parameter names as symbols:
 			punct-in-quote)))
 	       itemdata)
       (let* ((raw-bib
-	      (if filters
-		  ;; There are filters, we need to select and sort the subbibs.
-		  (let ((result (make-list (length filters) nil))
-			(bib-sort (citeproc-style-bib-sort (citeproc-proc-style proc))))
+	      (if (cdr filters)
+		  ;; There are several filters, we need to select and sort the subbibs.
+		  (let* ((nr-of-filters (length filters))
+		 	 (result (make-list nr-of-filters nil))
+			 ;; We store boolean to-be-sorted flags for each sub-bib
+			 (to-be-sorted (make-bool-vector nr-of-filters nil))
+			 (bib-sort (citeproc-style-bib-sort (citeproc-proc-style proc))))
 		    ;; Put the itds into subbib lists.
 		    (maphash
 		     (lambda (_ itd)
-		       (dolist (subbib-no (citeproc-itemdata-subbib-nos itd))
-			 (push itd (elt result subbib-no))))
+		       (let ((subbib-nos (citeproc-itemdata-subbib-nos itd)))
+			 ;; Set to-be-sorted for later subbibs if itemdata
+			 ;; occcurs in more than one.
+			 (when-let ((later-subbib-nos (cdr subbib-nos)))
+			   (dolist (subbib-no later-subbib-nos)
+			     (setf (elt to-be-sorted subbib-no) t)))
+			 ;; Push the item in all corresponding subbibs.
+			 (dolist (subbib-no subbib-nos)
+			   (push itd (elt result subbib-no)))))
 		     itemdata)
-		    ;; Sort the itds in each list according to the sort settings
+		    ;; Sort the itds in each individual list
 		    (setq result
-			  (--map (if bib-sort
-				     (citeproc-sort-itds it (citeproc-style-bib-sort-orders
-							     (citeproc-proc-style proc)))
-				   (citeproc-sort-itds-on-citnum it))
-				 result))
+			  (--map-indexed
+			   (if (and bib-sort (elt to-be-sorted it-index))
+			       ;; Subbib contains earlier item, needs to sorted.
+			       (citeproc-sort-itds it (citeproc-style-bib-sort-orders
+						       (citeproc-proc-style proc)))
+			     ;; No earlier item, sorting on citation-number.
+			     (citeproc-sort-itds-on-citnum it))
+			   result))
 		    ;; Generate the raw bibs.
 		    (--map (mapcar #'citeproc-itemdata-rawbibitem it) result))
 		;; No filters, so raw-bib is a list containg a single raw bibliograhy.
