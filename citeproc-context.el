@@ -203,6 +203,23 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
       (citeproc-term-gender match)
     nil))
 
+(defun citeproc-context-int-link-attrval (style internal-links mode cite-pos)
+  "Return an appropriate attribute to represent internal linking info.
+INTERNAL-LINKS is the internal linking mode, see the
+documentation of `citeproc-render-varlist-in-rt', while MODE is
+the rendering mode, `bib' or `cite', and CITE-POS is a cite
+position. Returns an appropriate attribute to be added or nil if
+no internal links should be produced."
+  (let ((note-style (citeproc-style-cite-note style)))
+    (unless (or (and internal-links (not (memq internal-links '(auto bib-links))))
+		(and note-style (eq mode 'bib) (or (null internal-links)
+						   (eq internal-links 'auto))))
+      (if (and note-style (not (eq internal-links 'bib-links)))
+	  ;; For note styles link subsequent cites to the first ones.
+	  (if (eq cite-pos 'first) 'bib-item-no 'cited-item-no)
+	;; Else link each cite to the corresponding bib item.
+	(if (eq mode 'cite) 'cited-item-no 'bib-item-no)))))
+
 (defun citeproc-render-varlist-in-rt (var-alist style mode render-mode &optional
 						internal-links no-external-links)
   "Render an item described by VAR-ALIST with STYLE in rich-text.
@@ -237,25 +254,16 @@ external links."
 					(concat (alist-get var citeproc--link-prefix-alist
 							   "")
 						(alist-get var var-alist))))))
-	  ;; Add appropriate item-no information   
-	  (let ((note-style (citeproc-style-cite-note style)))
-	    (unless (or (and internal-links (not (memq internal-links '(auto bib-links))))
-			(and note-style (eq mode 'bib) (or (null internal-links)
-							   (eq internal-links 'auto))))
-	      (let* ((itemid-attr
-		      (if (and note-style (not (eq internal-links 'bib-links)))
-			  ;; For note styles link subsequent cites to the first ones
-			  (if (eq (alist-get 'position var-alist) 'first)
-			      'bib-item-no
-			    'cited-item-no)
-			;; Else link each cite to the corresponding bib item
-			(if (eq mode 'cite) 'cited-item-no 'bib-item-no)))
-		     (itemid-attr-val (cons itemid-attr
-					    (alist-get 'citation-number var-alist))))
-		(cond ((consp rendered) (setf (car rendered)
-					      (-snoc (car rendered) itemid-attr-val)))
-		      ((stringp rendered) (setq rendered
-						(list (list itemid-attr-val) rendered)))))))
+	  ;; Add appropriate item-no information
+	  (when-let* ((cite-no-attr
+		       (citeproc-context-int-link-attrval
+			style internal-links mode (alist-get 'position var-alist)))
+		      (cite-no-attr-val (cons cite-no-attr
+					     (alist-get 'citation-number var-alist))))
+	    (cond ((consp rendered) (setf (car rendered)
+					  (-snoc (car rendered) cite-no-attr-val)))
+		  ((stringp rendered) (setq rendered
+					    (list (list cite-no-attr-val) rendered)))))
 	  ;; Add year-suffix if needed
 	  (-if-let (year-suffix (alist-get 'year-suffix var-alist))
 	      (car (citeproc-rt-add-year-suffix

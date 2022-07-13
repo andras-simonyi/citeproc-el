@@ -111,8 +111,8 @@
 				 content)))
 			   (-when-let (match-pos
 				       (and .prefix (s-matched-positions-all
-						     citeproc-generic-elements--url-prefix-re
-						     .prefix)))
+						      citeproc-generic-elements--url-prefix-re
+						      .prefix)))
 			     ;; If the prefix ends with an URL then it is moved
 			     ;; from the prefix to the rendered variable
 			     ;; content.
@@ -124,24 +124,27 @@
 		;; Don't report empty var for year-suffix, see issue #70.
 		((not (string= .variable "year-suffix")) (setq type 'empty-vars)))))
 	    (.term (setq .form (if .form (intern .form) 'long)
-			 .plural (if (or (not .plural)
-					 (string= .plural "false"))
-				     'single 'multiple)
-			 content (let ((cont (citeproc-term-inflected-text
-					      .term .form .plural context)))
-				   ;; Annotate the 'no date' term as if it'd be
-				   ;; the value of the 'issue' variable to
-				   ;; handle implicit year suffix addition
-				   ;; and suppression issues.
-				   (if (string= .term "no date")
-				       (progn
-					 (setq type 'present-var)
-					 `(((rendered-var . issued)) ,cont))
-				     cont))))
+			  .plural (if (or (not .plural)
+					   (string= .plural "false"))
+				       'single 'multiple)
+			  content (let ((cont (citeproc-term-inflected-text
+					       .term .form .plural context)))
+				    ;; Annotate the 'no date' term as if it'd be
+				    ;; the value of the 'issue' variable to
+				    ;; handle implicit year suffix addition and
+				    ;; suppression issues.
+				    (if (string= .term "no date")
+					(progn
+					  (setq type 'present-var)
+					  `(((rendered-var . issued)) ,cont))
+				      cont))))
 	    (.macro (let ((macro-val (citeproc-macro-output .macro context)))
-		      (setq content (car macro-val))
-		      (setq type (cdr macro-val)))))
-      (cons (citeproc-rt-format-single attrs content context) type))))
+		       (setq content (car macro-val))
+		       (setq type (cdr macro-val)))))
+      ;; We stop if only the title had to be rendered.
+      (let ((result (cons (citeproc-rt-format-single attrs content context) type)))
+	(citeproc-lib-maybe-stop-rendering
+	 'title context result (or (and .variable (intern .variable)) t))))))
 
 (provide 'citeproc-generic-elements)
 
