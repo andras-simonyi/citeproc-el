@@ -22,6 +22,7 @@ A CSL 1.0.2 Citation Processor for Emacs.
 	- [Rendering isolated references](#rendering-isolated-references)
 	- [Supported output formats](#supported-output-formats)
 	- [Hooks](#hooks)
+- [Acknowledgements](#acknowledgements)
 - [License](#license)
 
 ## Introduction
@@ -310,6 +311,24 @@ Each function takes three arguments:
 
 The output of each function should be the postprocessed rich-text, and
 the functions are applied in the order they appear in the list.
+
+-------------------------------------------------------------------------------
+
+## Acknowledgements
+
+### Code contributions
+
+- [Marvin Gülker](https://github.com/Quintus)
+- [Matt Price](https://github.com/titaniumbones)
+- [Alexey Shiklomanov](https://github.com/ashiklom)
+
+### Advice, discussion
+
+- [Rudolf Adamkovič](https://github.com/salutis)
+- [Bruce D'Arcus](https://github.com/bdarcus)
+- [Marvin Gülker](https://github.com/Quintus)
+- [Denis Maier](https://github.com/denismaier)
+- [Matt Price](https://github.com/titaniumbones)
 
 -------------------------------------------------------------------------------
 
