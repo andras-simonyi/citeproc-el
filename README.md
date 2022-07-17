@@ -160,11 +160,11 @@ Citation structures are created with
      `nil` otherwise;
   * `mode` is either nil (for the default citation mode) or one
     of the symbols `suppress-author`, `textual`, `author-only`,
-    `year-only`,
+    `year-only`, `title-only`, `locator-only`, `bib-entry`;
   * `suppress-affixes` is non-nil if the prefix and the suffix of the citation
-    (e.g., opening and closing brackets) have to be suppressed,
+    (e.g., opening and closing brackets) have to be suppressed;
   * `capitalize-first` is non-nil if the first word of the citation has to be
-    capitalized,
+    capitalized;
   * `ignore-et-al` is non-nil if et-al settings should be ignored for the first
     cite.
   

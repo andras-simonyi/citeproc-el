@@ -48,7 +48,7 @@ NOTE-INDEX is the note index of the citation if it occurs in a
   note,
 MODE is either nil (for the default citation mode) or one
   of the symbols `suppress-author', `textual', `author-only',
-  `year-only',
+  `year-only', `title-only', `bib-entry', `locator-only',
 SUPPRESS-AFFIXES is non-nil if the citation affixes should be
   suppressed,
 CAPITALIZE-FIRST is non-nil if the first word of the rendered
@@ -61,10 +61,13 @@ GROUPED is used internally to indicate whether the cites were
   ignore-et-al grouped)
 
 (defconst citeproc-cite--from-mode-alist
-  '((textual . (suppress-author . t))
-    (suppress-author . (suppress-author . t))
-    (author-only . (stop-rendering-at . names))
-    (year-only . (stop-rendering-at . issued)))
+  '((textual . ((suppress-author . t)))
+    (suppress-author . ((suppress-author . t)))
+    (author-only . ((stop-rendering-at . names)))
+    (year-only . ((stop-rendering-at . issued)))
+    (title-only . ((stop-rendering-at . title) (bib-entry . t)))
+    (bib-entry . ((bib-entry . t)))
+    (locator-only . ((locator-only . t))))
   "Alist mapping citation modes to corresponding cite-level
 key-value pair representations.")
 
@@ -83,7 +86,8 @@ order they appear in the list.")
 	  (--filter (memq (car it)
 			  '(label locator suppress-author suppress-date
 				  stop-rendering-at position near-note
-				  first-reference-note-number ignore-et-al))
+				  first-reference-note-number ignore-et-al
+				  bib-entry locator-only))
 		    cite)))
     (nconc cite-vv item-vv)))
 
@@ -99,25 +103,52 @@ links else). For legacy reasons, any other value is treated as
 `no-links'."
   (-let* ((result nil)
 	  ((&alist 'suffix suff
-		   'prefix pref)
+		   'prefix pref
+		   'bib-entry bib-entry
+		   'locator-only locator-only
+		   'stop-rendering-at stop-rendering-at)
 	   cite)
 	  (rt-pref (citeproc-rt-from-str pref))
 	  (plain-pref (citeproc-rt-to-plain rt-pref))
 	  (rt-suff (citeproc-rt-from-str suff))
 	  (plain-suff (citeproc-rt-to-plain rt-suff))
-	  (rendered-varlist
-	   (citeproc-render-varlist-in-rt (citeproc-cite--varlist cite)
-					  style 'cite 'display internal-links)))
-    (when (s-present-p plain-suff)
-      (push (citeproc-rt-from-str suff) result)
-      (unless (= (aref plain-suff 0) ?\s)
-	(push " " result)))
-    (push rendered-varlist result)
-    (when (s-present-p plain-pref)
-      (unless (= (aref plain-pref (1- (length plain-pref))) ?\s)
-	(push " " result))
-      (push rt-pref result))
-    (citeproc-rt-join-formatted nil result nil)))
+	  (mode (if bib-entry 'bib 'cite))
+	  (varlist (citeproc-cite--varlist cite)))
+    ;; Remove cite-number when cite is the full bibliography entry.
+    (when (and (eq mode 'bib) (not stop-rendering-at))
+      (push '(citation-number) varlist))
+    (let ((rendered-varlist
+	   (citeproc-render-varlist-in-rt
+	    varlist style mode 'display
+	    ;; No link-targets for bib-entry based citations.
+	    (if (eq mode 'bib) 'no-links internal-links)
+	    ;; No external limking for title-only citations, since we link to the
+	    ;; corresponding bibliography entry.
+	    (eq stop-rendering-at 'title))))
+      ;; Locator-only cites require extensive post-processing of full cite.
+      (when locator-only
+	(setq rendered-varlist (citeproc-rt-locator-w-label rendered-varlist)))
+      ;; Title-only cites
+      (when (eq stop-rendering-at 'title)
+	(when-let* ((cite-no-attr
+		     (citeproc-context-int-link-attrval
+		      style internal-links 'cite (alist-get 'position varlist)))
+		    (cite-no-attr-val (cons cite-no-attr
+					    (alist-get 'citation-number varlist))))
+	  ;; Add cited-item-no attr to link to the bibliography entry
+	  (setf (car rendered-varlist)
+		(-snoc (car rendered-varlist) cite-no-attr-val))))
+      ;; Add cite prefix and suffix
+      (when (s-present-p plain-suff)
+	(push (citeproc-rt-from-str suff) result)
+	(unless (= (aref plain-suff 0) ?\s)
+	  (push " " result)))
+      (push rendered-varlist result)
+      (when (s-present-p plain-pref)
+	(unless (= (aref plain-pref (1- (length plain-pref))) ?\s)
+	  (push " " result))
+	(push rt-pref result))
+      (citeproc-rt-join-formatted nil result nil))))
 
 (defun citeproc-cite-or-citegroup--render (c style internal-links top-dl gr-dl ys-dl ac-dl)
   "Render cite or cite-group C with STYLE.
@@ -327,7 +358,7 @@ For the optional INTERNAL-LINKS argument see
 	  (ignore-et-al (citeproc-citation-ignore-et-al citation)))
       (-when-let (mode-rep
 		  (alist-get mode citeproc-cite--from-mode-alist))
-	(push mode-rep (car cites)))
+	(setf (car cites) (nconc (car cites) mode-rep)))
       (when ignore-et-al
 	(push '(ignore-et-al . t) (car cites))))))
 

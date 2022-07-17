@@ -43,7 +43,7 @@
 (defconst citeproc-rt-format-attrs
   '(font-variant font-style font-weight text-decoration vertical-align font-variant
 		 display rendered-var name-id quotes cited-item-no bib-item-no
-		 rendered-names href stopped-rendering)
+		 rendered-names href stopped-rendering rendered-locator-label)
   "The rich-text content format attributes (used in raw output).")
 
 (defconst citeproc-rt-ext-format-attrs
@@ -563,6 +563,86 @@ modified bibliography."
 	     (node)
 	     (push (cons 'href target) (car node))))
     (citeproc-rt-transform-first r #'rendered-var-title-p #'add-link)))
+
+(defun citeproc-rt-locator-p (r)
+  "Return whether rich-text R is a rendered locator."
+  (and (consp r) (string= (alist-get 'rendered-var (car r)) "locator")))
+
+(defun citeproc-rt-locator-label-p (r)
+  "Return whether rich-text R is a rendered locator label."
+  (and (consp r) (alist-get 'rendered-locator-label (car r))))
+
+(defun citeproc-rt-add-locator-label-position (r)
+  "Add information about locator-label position in rich-text R.
+Return value is one of `label', `locator', `label-first',
+`locator-first', `label-only', `locator-only' or nil. This
+information is also added to the tree node attributes."
+  (let ((result
+	 (cond
+	  ((not (consp r)) nil)
+	  ((citeproc-rt-locator-p r) 'locator)
+	  ((citeproc-rt-locator-label-p r) 'label)
+	  (t (let ((content (cdr r))
+		   first second)
+	       (while (and content (not (and first second)))
+		 (let* ((cur (pop content))
+			(cur-order (citeproc-rt-add-locator-label-position cur)))
+		   (pcase cur-order
+		     ('label-first (setq first 'label second 'locator))
+		     ('locator-first (setq first 'locator second 'label))
+		     ((or 'label-only 'label)
+		      (if first (setq second 'label)
+			(setq first 'label)))
+		     ((or 'locator-only 'locator)
+		      (if first (setq second 'locator)
+			(setq first 'locator))))))
+	       (cond
+		((not first) nil)
+		((not second) (if (eq first 'locator) 'locator-only 'label-only))
+		(t (if (eq first 'locator) 'locator-first 'label-first))))))))
+    (when result (push (cons 'l-l-pos result) (car r)))
+    result))
+
+(defun citeproc-rt-locator-w-label (r)
+  "Return locator with label if found from rich-text R.
+Return R if no locator or locator label was found."
+  (let ((l-l-pos (citeproc-rt-add-locator-label-position r)))
+    (if l-l-pos
+	(citeproc-rt-locator-w-label-1 r l-l-pos)
+      ;; We return the full cite if no locator was found.
+      r)))
+
+(defun citeproc-rt-locator-w-label-1 (r l-l-pos)
+  "Return locator-label span from rich-text fragment R.
+L-L-POS is the global position of locator and label, see the
+documentation of `citeproc-rt-add-locator-label-position' for the
+possible values."
+  (if (or (citeproc-rt-locator-label-p r) (citeproc-rt-locator-p r)) r
+    (pcase-let* ((`(,attrs . ,content) r)
+		 (local-llpos (alist-get 'l-l-pos attrs)))
+      (cons attrs
+	    (let (result
+		  (n-boundaries (if (or (and (eq l-l-pos 'locator-first)
+					     (eq local-llpos 'label-only))
+					(and (eq l-l-pos 'label-first)
+					     (eq local-llpos 'locator-only)))
+				    1	; Fragment starts in a between position.
+				  0))) 	; Fragment starts in a before position.
+	      (while (and content (< n-boundaries 2))
+		(let* ((cur-rt (pop content))
+		       (cur-rt-llpos (and (consp cur-rt) (alist-get 'l-l-pos (car cur-rt)))))
+		  (cond (cur-rt-llpos
+			 ;; Element at boundary
+			 (cl-incf n-boundaries
+				  (if (or (eq l-l-pos 'locator-only)
+					  (memq cur-rt-llpos '(label-first locator-first)))
+				      2
+				    1))
+			 (push (citeproc-rt-locator-w-label-1 cur-rt l-l-pos) result))
+			;; Element in between position, simply pushing
+			((= n-boundaries 1)
+			 (push cur-rt result)))))
+	      (nreverse result))))))
 
 (provide 'citeproc-rt)
 

@@ -440,6 +440,10 @@ VAR is a symbol."
 			 (if (citeproc--var-plural-p label context)
 			     'multiple
 			   'single))))
+	  ;; Add rendered locator label info in cite mode.
+	  (when (and (eq label 'locator)
+		     (eq (citeproc-context-mode context) 'cite))
+	   (push '(rendered-locator-label . t) attrs))
 	  (cons (citeproc-rt-format-single attrs (citeproc-term-inflected-text
 						  variable form number context)
 					   context)
