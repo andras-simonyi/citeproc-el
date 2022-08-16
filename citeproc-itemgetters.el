@@ -154,7 +154,7 @@ without a `langid' field are not converted to sentence-case."
 	  (lambda ()
 	    (-when-let (key-w-entry (citeproc-bt-from-org-headline))
 	      (condition-case err
-		  (puthash (car key-w-entry) (citeproc-bt-entry-to-csl
+		  (puthash (car key-w-entry) (citeproc-blt-entry-to-csl
 					      (cdr key-w-entry))
 			   cache)
 		(error
