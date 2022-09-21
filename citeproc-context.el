@@ -68,22 +68,26 @@ MODE is either `bib' or `cite', RENDER-MODE is `display' or `sort'."
   "Return the value of csl variable VAR in CONTEXT.
 VAR is a symbol, CONTEXT is a `citeproc-context' struct, and the
 optional FORM can be nil, `short' or `long'."
-  (if (eq form 'short)
-      (-if-let* ((short-var (alist-get var citeproc--short-long-var-alist))
-		 (short-var-val (alist-get short-var (citeproc-context-vars context))))
-	  short-var-val
-	(alist-get var (citeproc-context-vars context)))
-    (let ((var-val (alist-get var (citeproc-context-vars context))))
-      (if (and var-val (or (and (eq var 'locator)
-				(string= (citeproc-var-value 'label context) "page"))
-			   (eq var 'page)))
-	  (let ((prange-format (citeproc-lib-intern (alist-get 'page-range-format
-							       (citeproc-context-opts context))))
-		(sep (or (citeproc-term-text-from-terms "page-range-delimiter"
-							(citeproc-context-terms context))
-			 "–")))
-	    (citeproc-prange-render var-val prange-format sep))
-	var-val))))
+  (let ((var-vals (citeproc-context-vars context)))
+    (if (or (eq form 'short)
+	    ;; Also use the short form of title when the cite contains the
+	    ;; (use-short-title . t) pair. This is used for title-only citations.
+	    (and (eq var 'title) (alist-get 'use-short-title var-vals)))
+	(-if-let* ((short-var (alist-get var citeproc--short-long-var-alist))
+		   (short-var-val (alist-get short-var var-vals)))
+	    short-var-val
+	  (alist-get var var-vals))
+      (let ((var-val (alist-get var var-vals)))
+	(if (and var-val (or (and (eq var 'locator)
+				  (string= (citeproc-var-value 'label context) "page"))
+			     (eq var 'page)))
+	    (let ((prange-format (citeproc-lib-intern (alist-get 'page-range-format
+								 (citeproc-context-opts context))))
+		  (sep (or (citeproc-term-text-from-terms "page-range-delimiter"
+							  (citeproc-context-terms context))
+			   "–")))
+	      (citeproc-prange-render var-val prange-format sep))
+	  var-val)))))
 
 (defun citeproc-locator-label (context)
   "Return the current locator label variable from CONTEXT."

@@ -65,7 +65,7 @@ GROUPED is used internally to indicate whether the cites were
     (suppress-author . ((suppress-author . t)))
     (author-only . ((stop-rendering-at . names)))
     (year-only . ((stop-rendering-at . issued)))
-    (title-only . ((stop-rendering-at . title) (bib-entry . t)))
+    (title-only . ((stop-rendering-at . title) (bib-entry . t) (use-short-title . t)))
     (bib-entry . ((bib-entry . t)))
     (locator-only . ((locator-only . t))))
   "Alist mapping citation modes to corresponding cite-level
@@ -87,7 +87,7 @@ order they appear in the list.")
 			  '(label locator suppress-author suppress-date
 				  stop-rendering-at position near-note
 				  first-reference-note-number ignore-et-al
-				  bib-entry locator-only))
+				  bib-entry locator-only use-short-title))
 		    cite)))
     (nconc cite-vv item-vv)))
 
