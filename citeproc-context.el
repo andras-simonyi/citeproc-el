@@ -71,8 +71,8 @@ optional FORM can be nil, `short' or `long'."
   (let ((var-vals (citeproc-context-vars context)))
     (if (or (eq form 'short)
 	    ;; Also use the short form of title when the cite contains the
-	    ;; (short-title . t) pair. This is used for title-only citations.
-	    (and (eq var 'title) (alist-get 'short-title var-vals)))
+	    ;; (use-short-title . t) pair. This is used for title-only citations.
+	    (and (eq var 'title) (alist-get 'use-short-title var-vals)))
 	(-if-let* ((short-var (alist-get var citeproc--short-long-var-alist))
 		   (short-var-val (alist-get short-var var-vals)))
 	    short-var-val
