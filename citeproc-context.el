@@ -86,7 +86,7 @@ optional FORM can be nil, `short' or `long'."
 		  (sep (or (citeproc-term-text-from-terms "page-range-delimiter"
 							  (citeproc-context-terms context))
 			   "–")))
-	      (citeproc-prange-render var-val prange-format sep))
+	      (citeproc-rt-from-str (citeproc-prange-render var-val prange-format sep)))
 	  var-val)))))
 
 (defun citeproc-locator-label (context)
