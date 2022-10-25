@@ -276,7 +276,8 @@ on any dominated branch for which PRED holds."
     ((sc . nil) . (font-variant . "small-caps"))
     ((sup . nil) . (vertical-align . "sup"))
     ((sub . nil) . (vertical-align . "sub"))
-    ((span . ((class . "nocase"))) . (nocase . t)))
+    ((span . ((class . "nocase"))) . (nocase . t))
+    ((span . ((class . "underline"))) . (text-decoration . "underline")))
   "A mapping from html tags and attrs to rich text attrs.")
 
 (defun citeproc-rt-from-html (h)
