@@ -409,7 +409,7 @@ contents."
 (defun citeproc--var-plural-p (var context)
   "Return whether the content of variable VAR is plural.
 VAR is a symbol."
-  (let ((content (citeproc-var-value var context)))
+  (let ((content (citeproc-rt-to-plain (citeproc-var-value var context))))
     (if (or (string= var "number-of-pages")
 	    (string= var "number-of-volumes"))
 	(> (string-to-number content) 1)
