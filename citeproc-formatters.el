@@ -28,6 +28,7 @@
 
 ;;; Code:
 
+(require 'let-alist)
 (require 'subr-x)
 (require 's)
 (require 'cl-lib)
@@ -275,6 +276,38 @@ CSL tests."
     (vertical-align-sub . ,(lambda (x) (concat "\\textsubscript{" x "}")))
     (font-style-oblique . ,(lambda (x) (concat "\\textsl{" x "}")))))
 
+;; Org-LaTeX
+
+(defconst citeproc-fmt--org-latex-alist
+  `((unformatted . ,#'citeproc-fmt--latex-escape)
+    (href . ,#'citeproc-fmt--latex-href)
+    (font-style-italic . ,(lambda (x) (concat "\\textit{" x "}")))
+    (font-weight-bold . ,(lambda (x) (concat "\\textbf{" x "}")))
+    (cited-item-no . ,(lambda (x y) (concat "\\citeprocitem{" y "}{" x "}")))
+    (bib-item-no
+     . ,(lambda (x y) (concat "\\leavevmode\\vadjust pre{\\hypertarget{citeproc_bib_item_"
+			      y "}{}}%\n" x)))
+    (font-variant-small-caps . ,(lambda (x) (concat "\\textsc{" x "}")))
+    (text-decoration-underline . ,(lambda (x) (concat "\\underline{" x "}")))
+    (vertical-align-sup . ,(lambda (x) (concat "\\textsuperscript{" x "}")))
+    (display-left-margin . ,(lambda (x) (concat "\\cslleftmargin{" x "}")))
+    (display-right-inline . ,(lambda (x) (concat "\\cslrightinline{" x "}")))
+    (display-block . ,(lambda (x) (concat "\\cslblock{" x "}")))
+    (display-indent . ,(lambda (x) (concat "\\cslindent{" x "}")))
+    (vertical-align-sub . ,(lambda (x) (concat "\\textsubscript{" x "}")))
+    (font-style-oblique . ,(lambda (x) (concat "\\textsl{" x "}")))))
+
+(defun citeproc-fmt--org-latex-bib-formatter (items bib-format)
+  "Return an Org LaTeX bibliography of ITEMS formatted in BIB-FORMAT."
+  (let-alist bib-format
+    (let ((hanging-indent (if .hanging-indent "1" "0"))
+	  (entry-spacing (if (and .entry-spacing (<= 1 .entry-spacing))
+			     (number-to-string (- .entry-spacing 1))
+			   "0")))
+      (concat "\\begin{citeprocbib}{" hanging-indent "}{" entry-spacing "}\n"
+	      (mapconcat #'identity items "\n\n")
+	      "\n\n\\end{citeprocbib}\n"))))
+
 ;; Org-ODT
 
 (defconst citeproc-fmt--org-odt-alist
@@ -336,6 +369,9 @@ CSL tests."
 		  :no-external-links t))
     (raw . ,(citeproc-formatter-create :rt #'identity :bib (lambda (x _) x)))
     (org . ,(citeproc-formatter-create :rt #'citeproc-fmt--org-format-rt))
+    (org-latex . ,(citeproc-formatter-create
+		   :rt (citeproc-formatter-fun-create citeproc-fmt--org-latex-alist)
+		   :bib #'citeproc-fmt--org-latex-bib-formatter))
     (latex . ,(citeproc-formatter-create
 	       :rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
     (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain
