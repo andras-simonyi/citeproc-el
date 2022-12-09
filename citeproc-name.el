@@ -114,12 +114,9 @@ Nature."
 	(push `(plural . ,(if (> (length var-value) 1) "always" "never"))
 	      label-attrs)))
     (if with-label
-	(let ((form (alist-get 'form label-attrs))
-	      (rendered-label (car (citeproc--label label-attrs context))))
+	(let ((rendered-label (car (citeproc--label label-attrs context))))
 	  (citeproc-rt-join-formatted `((rendered-var . ,var))
-				      (if (or label-before-names
-					      (string= form "verb")
-					      (string= form "verb-short"))
+				      (if label-before-names
 					  (list rendered-label rendered-names)
 					(list rendered-names rendered-label))
 				      context))
