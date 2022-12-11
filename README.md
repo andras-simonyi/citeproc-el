@@ -286,10 +286,10 @@ external links in the item.
 
 ### Supported output formats
 
-Currently `html`, `org`, `plain` (plain text), `latex`, `org-odt` (for Org ODT
-export), `csl-test` (for the CSL test suite) and `raw` (internal rich-text
-format, for debugging) are supported as output formats. New ones can easily be
-added — see `citeproc-formatters.el` for examples.
+Currently `html`, `org`, `plain` (plain text), `latex`, `org-odt`, `org-latex`
+(for Org ODT and LaTeX export), `csl-test` (for the CSL test suite) and `raw`
+(internal rich-text format, for debugging) are supported as output formats. New
+ones can easily be added — see `citeproc-formatters.el` for examples.
 
 ### Hooks
 
