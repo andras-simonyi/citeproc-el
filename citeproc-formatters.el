@@ -283,10 +283,8 @@ CSL tests."
     (href . ,#'citeproc-fmt--latex-href)
     (font-style-italic . ,(lambda (x) (concat "\\textit{" x "}")))
     (font-weight-bold . ,(lambda (x) (concat "\\textbf{" x "}")))
-    (cited-item-no . ,(lambda (x y) (concat "\\citeprocitem{" y "}{" x "}")))
-    (bib-item-no
-     . ,(lambda (x y) (concat "\\leavevmode\\vadjust pre{\\hypertarget{citeproc_bib_item_"
-			      y "}{}}%\n" x)))
+    (cited-item-no . ,(lambda (x y) (concat "\\cslcitation{" y "}{" x "}")))
+    (bib-item-no . ,(lambda (x y) (concat "\\cslbibitem{" y "}{" x "}")))
     (font-variant-small-caps . ,(lambda (x) (concat "\\textsc{" x "}")))
     (text-decoration-underline . ,(lambda (x) (concat "\\underline{" x "}")))
     (vertical-align-sup . ,(lambda (x) (concat "\\textsuperscript{" x "}")))
@@ -304,9 +302,9 @@ CSL tests."
 	  (entry-spacing (if (and .entry-spacing (<= 1 .entry-spacing))
 			     (number-to-string (- .entry-spacing 1))
 			   "0")))
-      (concat "\\begin{citeprocbib}{" hanging-indent "}{" entry-spacing "}\n"
+      (concat "\\begin{cslbibliography}{" hanging-indent "}{" entry-spacing "}\n"
 	      (mapconcat #'identity items "\n\n")
-	      "\n\n\\end{citeprocbib}\n"))))
+	      "\n\n\\end{cslbibliography}\n"))))
 
 ;; Org-ODT
 
