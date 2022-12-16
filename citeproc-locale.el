@@ -1,6 +1,6 @@
 ;; citeproc-locale.el --- CSL locale related functions -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2017-2022 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
@@ -41,7 +41,7 @@
     ("ko" . "KR") ("nb" . "NO") ("nn" . "NO") ("sl" . "SI")
     ("sr" . "RS") ("sv" . "SE") ("uk" . "UA") ("vi" . "VN")
     ("zh" . "CN"))
-  "Alist mapping those locales to their default variants.
+  "Alist mapping locales to their default variants.
 Only those locales are given for which the default variant is not
 simply the result of upcasing.")
 
