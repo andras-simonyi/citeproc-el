@@ -164,8 +164,10 @@ Performs finalization by removing unnecessary zero-width spaces."
       (setq result (citeproc-s-replace-all-seq
 		    result '((" ​" . " ") ("​ " . " ") ("​," . ",") ("​;" . ";")
 			     ("​:" . ":") ("​." . "."))))
-      ;; Starting and ending z-w spaces are also removed.
-      (when (= (aref result 0) 8203)
+      ;; Starting and ending z-w spaces are also removed, but not before an
+      ;; asterisk to avoid creating an Org heading.
+      (when (and (= (aref result 0) 8203)
+		 (not (= (aref result 1) ?*)))
 	(setq result (substring result 1)))
       (when (= (aref result (- (length result) 1)) 8203)
 	(setq result (substring result 0 -1))))
