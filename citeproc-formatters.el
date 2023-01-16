@@ -373,7 +373,9 @@ CSL tests."
 		   :rt (citeproc-formatter-fun-create citeproc-fmt--org-latex-alist)
 		   :bib #'citeproc-fmt--org-latex-bib-formatter))
     (latex . ,(citeproc-formatter-create
-	       :rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)))
+	       :rt (citeproc-formatter-fun-create citeproc-fmt--latex-alist)
+	       :bib (lambda (x _) (concat (mapconcat #'identity x "\n\n")
+					  "\\bigskip"))))
     (plain . ,(citeproc-formatter-create :rt #'citeproc-rt-to-plain
 					 :no-external-links t)))
   "Alist mapping supported output formats to formatter structs.")
