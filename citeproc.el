@@ -1,13 +1,13 @@
 ;;; citeproc.el --- A CSL 1.0.2 Citation Processor -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017-2022 András Simonyi
+;; Copyright (C) 2017-2023 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
 ;; URL: https://github.com/andras-simonyi/citeproc-el
 ;; Keywords: bib
 ;; Package-Requires: ((emacs "26") (dash "2.13.0") (s "1.12.0") (f "0.18.0") (queue "0.2") (string-inflection "1.0") (org "9") (parsebib "2.4"))
-;; Version: 0.9
+;; Version: 0.9.3
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
