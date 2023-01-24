@@ -66,6 +66,20 @@ see the documentation of `citeproc-add-subbib-filters'."
 	 (setf (citeproc-itemdata-subbib-nos itemdata) subbib-nos)))
      (citeproc-proc-itemdata proc))))
 
+(defun citeproc-sb-prune-unrendered (proc)
+  "Remove all itemdata about unrendered items from PROC.
+An item is unrendered if
+- there are subbibfilters but none of them matches it, and
+- it is not cited."
+  (when (citeproc-proc-bib-filters proc)
+    (let ((itemdata (citeproc-proc-itemdata proc)))
+     (maphash
+      (lambda (id data)
+	(when (and (citeproc-itemdata-uncited data)
+		   (null (citeproc-itemdata-subbib-nos data)))
+	  (remhash id itemdata)))
+      itemdata))))
+
 (provide 'citeproc-subbibs)
 
 ;;; citeproc-subbibs.el ends here

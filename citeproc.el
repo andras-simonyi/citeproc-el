@@ -196,8 +196,8 @@ formatting parameters keyed to the parameter names as symbols:
 			punct-in-quote)))
 	       itemdata)
       (let* ((raw-bib
-	      (if (cdr filters)
-		  ;; There are several filters, we need to select and sort the subbibs.
+	      (if filters
+		  ;; There are filters , we need to select and sort the subbibs.
 		  (let* ((nr-of-filters (length filters))
 		 	 (result (make-list nr-of-filters nil))
 			 ;; We store boolean to-be-sorted flags for each sub-bib
@@ -228,7 +228,7 @@ formatting parameters keyed to the parameter names as symbols:
 			   result))
 		    ;; Generate the raw bibs.
 		    (--map (mapcar #'citeproc-itemdata-rawbibitem it) result))
-		;; No filters, so raw-bib is a list containg a single raw bibliograhy.
+		;; No filters, so raw-bib is a list containing a single raw bibliograhy.
 		(list (mapcar #'citeproc-itemdata-rawbibitem
 			      (citeproc-sort-itds-on-citnum (hash-table-values itemdata))))))
 	     ;; Perform author-substitution.

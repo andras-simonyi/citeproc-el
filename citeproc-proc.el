@@ -99,11 +99,11 @@ sorted."
       (push (cons 'editor-translator editor) result))
     result))
 
-(defun citeproc-proc--put-item (proc item itemid)
+(defun citeproc-proc--put-item (proc item itemid &optional uncited)
   "Put parsed csl-json ITEM with ITEMID into PROC.
 Return the added itemdata structure."
   (let* ((int-vars (citeproc-proc--internalize-item proc item))
-	 (itemdata (citeproc-itemdata-create :varvals int-vars :rc-uptodate nil)))
+	 (itemdata (citeproc-itemdata-create :varvals int-vars :uncited uncited)))
     (citeproc-proc-put-itd-put itemid itemdata proc)
     (citeproc-itd-setvar itemdata 'citation-number
 			 (number-to-string (hash-table-count
@@ -150,7 +150,7 @@ Return the itemdata struct that was added."
 	 (citeproc-proc--put-item
 	  proc
 	  (or item `((unprocessed-with-id . ,id)))
-	  id))))))
+	  id t))))))
 
 (defun citeproc-proc-delete-occurrence-info (proc)
   "Remove all itemdata occurrence info from PROC."
