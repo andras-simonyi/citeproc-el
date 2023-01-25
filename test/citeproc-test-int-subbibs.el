@@ -58,6 +58,27 @@
 		   '("Doe, Jane. 1972a. The Second 1972 Jane Doe Book.\n\n———. 1972b. The Second Book Title.\n\n———. 1972c. The Third 1972 Jane Doe Book.\n\nSmith, Peter. 1952. The Book Title."
 		     "Doe, Jane. 1972c. The Third 1972 Jane Doe Book.\n\nDoe, John. 2001. “The Title.” The Mind Scientific 103 (1): 45–58.\n\nSmith, Peter. 1952. The Book Title.")))))
 
+(ert-deftest citeproc-test-int-sb/single-filter ()
+  (let* ((ig (citeproc-itemgetter-from-csl-json
+	      (concat citeproc-test-int-root-dir "etc/subbibs.json")))
+	 (lg (citeproc-locale-getter-from-dir
+	      (concat citeproc-test-int-root-dir "locales")))
+	 (proc (citeproc-create
+		(concat citeproc-test-int-root-dir "etc/chicago-author-date.csl") ig lg)))
+    (citeproc-add-uncited '("doe1972" "doe1972b" "doe1972c") proc)
+    ;; Single empty filter
+    (citeproc-add-subbib-filters '(nil) proc)
+    (should (equal (car (citeproc-render-bib proc 'plain))
+		   '("Doe, Jane. 1972a. The Second 1972 Jane Doe Book.\n\n———. 1972b. The Second Book Title.\n\n———. 1972c. The Third 1972 Jane Doe Book.")))
+    (citeproc-clear proc)
+    ;; Single non-empty filter
+    (citeproc-add-uncited '("doe1972" "doe1972b" "doe1972c" "doe2001") proc)
+    (citeproc-add-subbib-filters
+     '(((type . "article-journal")))
+     proc)
+    (should (equal (car (citeproc-render-bib proc 'plain))
+		   '("Doe, John. 2001. “The Title.” The Mind Scientific 103 (1): 45–58.")))))
+
 (provide 'citeproc-test-int-subbibs)
 
 ;;; citeproc-test-int-subbibs.el ends here

@@ -196,8 +196,8 @@ formatting parameters keyed to the parameter names as symbols:
 			punct-in-quote)))
 	       itemdata)
       (let* ((raw-bib
-	      (if filters
-		  ;; There are filters , we need to select and sort the subbibs.
+	      (if (citeproc-proc-filtered-bib-p proc)
+		  ;; There are filters, we need to select and sort the subbibs.
 		  (let* ((nr-of-filters (length filters))
 		 	 (result (make-list nr-of-filters nil))
 			 ;; We store boolean to-be-sorted flags for each sub-bib

@@ -54,31 +54,32 @@ see the documentation of `citeproc-add-subbib-filters'."
 
 (defun citeproc-sb-add-subbib-info (proc)
   "Add subbibliography information to the items in PROC."
-  (let ((filters (citeproc-proc-bib-filters proc)))
-    (maphash
-     (lambda (_ itemdata)
-       (let* ((varvals (citeproc-itemdata-varvals itemdata))
-	      (subbib-nos
-	       (-non-nil
-		(--map-indexed
-		 (when (citeproc-sb--match-p varvals it) it-index)
-		 filters))))
-	 (setf (citeproc-itemdata-subbib-nos itemdata) subbib-nos)))
-     (citeproc-proc-itemdata proc))))
+  (when (citeproc-proc-filtered-bib-p proc)
+    (let ((filters (citeproc-proc-bib-filters proc)))
+      (maphash
+       (lambda (_ itemdata)
+	 (let* ((varvals (citeproc-itemdata-varvals itemdata))
+		(subbib-nos
+		 (-non-nil
+		  (--map-indexed
+		   (when (citeproc-sb--match-p varvals it) it-index)
+		   filters))))
+	   (setf (citeproc-itemdata-subbib-nos itemdata) subbib-nos)))
+       (citeproc-proc-itemdata proc)))))
 
 (defun citeproc-sb-prune-unrendered (proc)
   "Remove all itemdata about unrendered items from PROC.
 An item is unrendered if
 - there are subbibfilters but none of them matches it, and
 - it is not cited."
-  (when (citeproc-proc-bib-filters proc)
+  (when (citeproc-proc-filtered-bib-p proc)
     (let ((itemdata (citeproc-proc-itemdata proc)))
-     (maphash
-      (lambda (id data)
-	(when (and (citeproc-itemdata-uncited data)
-		   (null (citeproc-itemdata-subbib-nos data)))
-	  (remhash id itemdata)))
-      itemdata))))
+      (maphash
+       (lambda (id data)
+	 (when (and (citeproc-itemdata-uncited data)
+		    (null (citeproc-itemdata-subbib-nos data)))
+	   (remhash id itemdata)))
+       itemdata))))
 
 (provide 'citeproc-subbibs)
 
