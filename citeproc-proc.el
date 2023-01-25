@@ -225,6 +225,11 @@ Return the PROC-internal representation of REP."
     (when bib-sort (setf (citeproc-style-bib-sort style) (byte-compile bib-sort)))
     (when cite-sort (setf (citeproc-style-cite-sort style) (byte-compile cite-sort)))))
 
+(defun citeproc-proc-filtered-bib-p (proc)
+  "Return whether PROC has nontrivial filters"
+  (let ((filters (citeproc-proc-bib-filters proc)))
+    (and filters (not (equal filters '(nil))))))
+
 (provide 'citeproc-proc)
 
 ;;; citeproc-proc.el ends here

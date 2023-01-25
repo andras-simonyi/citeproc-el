@@ -169,17 +169,17 @@ MODE is either `cite' or `bib'."
 
 (defun citeproc-proc-sort-itds (proc)
   "Sort the itemdata in PROC."
-  (let ((sorted-bib-p (citeproc-style-bib-sort (citeproc-proc-style proc)))
-	(filters (citeproc-proc-bib-filters proc)))
-    (when (or sorted-bib-p filters)
+  (let ((is-sorted-bib (citeproc-style-bib-sort (citeproc-proc-style proc)))
+	(is-filtered (citeproc-proc-filtered-bib-p proc)))
+    (when (or is-sorted-bib is-filtered)
       (let* ((itds (hash-table-values (citeproc-proc-itemdata proc)))
-	     (sorted (if sorted-bib-p
+	     (sorted (if is-sorted-bib
 			 (let ((sort-orders (citeproc-style-bib-sort-orders
 					     (citeproc-proc-style proc))))
 			   (citeproc-sort-itds itds sort-orders))
 		       (citeproc-sort-itds-on-citnum itds))))
 	;; Additionally sort according to subbibliographies if there are filters.
-	(when filters
+	(when is-filtered
 	  (setq sorted (sort sorted #'citeproc-sort-itds-on-subbib)))
 	;; Set the CSL citation-number field according to the sort order.
 	(--each-indexed sorted
