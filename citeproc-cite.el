@@ -237,11 +237,11 @@ For the optional INTERNAL-LINKS argument see
 				 (cadr first-elt)
 			       first-elt))
 		 (author-cite
-		  (append '((suppress-author . nil) (stop-rendering-at . names))
-			  first-cite))
+		  (append '((suppress-author . nil) (stop-rendering-at . names)
+			    (prefix) (suffix) (locator))
+		   first-cite))
 		 (rendered-author (citeproc-cite--render author-cite style 'no-links)))
-	    (when (and (listp rendered-author)
-		       (alist-get 'stopped-rendering (car rendered-author)))
+	    (when (listp rendered-author)
 	      (setq result `(nil ,rendered-author " " ,result)))))
 	;; Capitalize first
 	(when (citeproc-citation-capitalize-first c)
