@@ -141,7 +141,7 @@ links else). For legacy reasons, any other value is treated as
       ;; Add cite prefix and suffix
       (when (s-present-p plain-suff)
 	(push (citeproc-rt-from-str suff) result)
-	(unless (= (aref plain-suff 0) ?\s)
+	(unless (memql (aref plain-suff 0) '(?, ?\s))
 	  (push " " result)))
       (push rendered-varlist result)
       (when (s-present-p plain-pref)
