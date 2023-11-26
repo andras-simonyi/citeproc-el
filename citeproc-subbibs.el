@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(require 'subr-x)
+(require 'compat)
 (require 'dash)
 
 (require 'citeproc-proc)
