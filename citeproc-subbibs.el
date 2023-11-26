@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(require 'subr-x)
+(require 'compat)
 (require 'dash)
 
 (require 'citeproc-proc)
@@ -39,7 +41,8 @@ see the documentation of `citeproc-add-subbib-filters'."
   (let* ((csl-type (alist-get 'type vv))
 	 (type (or (alist-get 'blt-type vv) csl-type))
 	 (keyword (alist-get 'keyword vv))
-	 (keywords (and keyword (split-string keyword "[ ,;]" t))))
+	 (keywords (and keyword (mapcar #'string-clean-whitespace
+					(split-string keyword "[,;]" t)))))
     (--every-p
      (pcase it
        (`(type . ,key) (string= type key))
