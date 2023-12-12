@@ -172,17 +172,17 @@ MODE is either `cite' or `bib'."
   (let ((is-sorted-bib (citeproc-style-bib-sort (citeproc-proc-style proc)))
 	(is-filtered (citeproc-proc-filtered-bib-p proc)))
     (when (or is-sorted-bib is-filtered)
-      (let* ((itds (hash-table-values (citeproc-proc-itemdata proc)))
-	     (sorted (if is-sorted-bib
-			 (let ((sort-orders (citeproc-style-bib-sort-orders
+      (let* ((itds (citeproc-sort-itds-on-citnum
+		    (hash-table-values (citeproc-proc-itemdata proc)))))
+	(when is-sorted-bib
+	  (let ((sort-orders (citeproc-style-bib-sort-orders
 					     (citeproc-proc-style proc))))
-			   (citeproc-sort-itds itds sort-orders))
-		       (citeproc-sort-itds-on-citnum itds))))
+	    (setq itds (citeproc-sort-itds itds sort-orders))))
 	;; Additionally sort according to subbibliographies if there are filters.
 	(when is-filtered
-	  (setq sorted (sort sorted #'citeproc-sort-itds-on-subbib)))
+	  (setq itds (sort itds #'citeproc-sort-itds-on-subbib)))
 	;; Set the CSL citation-number field according to the sort order.
-	(--each-indexed sorted
+	(--each-indexed itds
 	  (citeproc-itd-setvar it 'citation-number
 			       (number-to-string (1+ it-index))))))))
 
