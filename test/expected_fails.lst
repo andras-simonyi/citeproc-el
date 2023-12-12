@@ -57,7 +57,7 @@ citeproc-suite-disambiguate-trigraph
 citeproc-suite-disambiguate-year-collapse-with-institution
 citeproc-suite-disambiguate-year-suffix-fifty-two-entries
 citeproc-suite-disambiguate-year-suffix-fifty-two-entries-by-cite
-citeproc-suite-disambiguate-year-suffix-with-et-al-subequent
+citeproc-suite-disambiguate-year-suffix-with-et-al-subsequent
 citeproc-suite-display-author-as-heading
 citeproc-suite-etal-use-zero-first
 citeproc-suite-flipflop-apostrophes
