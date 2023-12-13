@@ -239,7 +239,11 @@ formatting parameters keyed to the parameter names as symbols:
 			 raw-bib)
 		raw-bib))
 	     ;; Calculate formatting params.
-	     (max-offset (if (alist-get 'second-field-align bib-opts)
+	     ;; NOTE: This is the only place where we check whether there are
+	     ;; bibliography items in the processor, even though the empty case
+	     ;; could be handled way more efficiently. 
+	     (max-offset (if (and (alist-get 'second-field-align bib-opts)
+				  (not (hash-table-empty-p itemdata)))
 			     (citeproc-rt-max-offset itemdata)
 			   0))
 	     (format-params (cons (cons 'max-offset max-offset)
