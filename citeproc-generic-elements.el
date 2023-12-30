@@ -136,7 +136,7 @@
 				    (if (string= .term "no date")
 					(progn
 					  (setq type 'present-var)
-					  (list '((rendered-var . issued)) cont))
+					  `(((rendered-var . issued)) ,cont))
 				      cont))))
 	    (.macro (let ((macro-val (citeproc-macro-output .macro context)))
 		       (setq content (car macro-val))
