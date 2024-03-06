@@ -168,16 +168,6 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
   "Return the first text associated with TERM in CONTEXT."
   (citeproc-term-text-from-terms term (citeproc-context-terms context)))
 
-(defun citeproc-term-inflected-text (term form number context)
-  "Return the text associated with TERM having FORM and NUMBER."
-  (let ((matches
-	 (--select (string= term (citeproc-term-name it))
-		   (citeproc-context-terms context))))
-    (cond ((not matches) nil)
-	  ((= (length matches) 1)
-	   (citeproc-term-text (car matches)))
-	  (t (citeproc-term--inflected-text-1 matches form number)))))
-
 (defconst citeproc--term-form-fallback-alist
   '((verb-short . verb)
     (symbol . short)
@@ -185,17 +175,21 @@ TYPED RTS is a list of (RICH-TEXT . TYPE) pairs"
     (short . long))
   "Alist containing the fallback form for each term form.")
 
-(defun citeproc-term--inflected-text-1 (matches form number)
-  (let ((match (--first (and (eq form (citeproc-term-form it))
-			     (or (not (citeproc-term-number it))
-				 (eq number (citeproc-term-number it))))
-			matches)))
-    (if match
-	(citeproc-term-text match)
-      (citeproc-term--inflected-text-1
-       matches
-       (alist-get form citeproc--term-form-fallback-alist)
-       number))))
+(defun citeproc-term-inflected-text (term form number context)
+  "Return the text associated with TERM having FORM and NUMBER."
+  (let ((matches
+	 (--select (string= term (citeproc-term-name it))
+		   (citeproc-context-terms context))))
+    (if (not matches) nil
+      (let (match)
+	(while (and (not match) form)
+	  (setq match (--first (and (eq form (citeproc-term-form it))
+				    (or (not (citeproc-term-number it))
+					(eq number (citeproc-term-number it))))
+			       matches))
+	  (unless match
+	    (setq form (alist-get form citeproc--term-form-fallback-alist))))
+	(when match (citeproc-term-text match))))))
 
 (defun citeproc-term-get-gender (term context)
   "Return the gender of TERM or nil if none is given."
