@@ -205,3 +205,7 @@ citeproc-suite-textcase-stop-word-before-hyphen
 citeproc-suite-variables-container-title-short
 citeproc-suite-variables-container-title-short2
 citeproc-suite-variables-title-short-on-short-title-no-title-condition
+citeproc-suite-fullstyles-chicago-article-title-question
+citeproc-suite-label-missing-returns-empty
+citeproc-suite-sort-chicago-year-suffix1
+citeproc-suite-sort-chicago-year-suffix2
