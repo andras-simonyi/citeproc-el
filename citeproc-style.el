@@ -37,6 +37,7 @@
 
 (cl-defstruct (citeproc-style (:constructor citeproc-style--create))
   "A struct representing a parsed and localized CSL style.
+CATEGORY is the style's category as a string,
 INFO is the style's general info (currently simply the
   corresponding fragment of the parsed xml),
 OPTS, BIB-OPTS, CITE-OPTS and LOCALE-OPTS are alists of general
@@ -49,7 +50,6 @@ BIB-SORT-ORDERS and CITE-SORT-ORDERS are the lists of sort orders
   the n-th key should be in ascending or desending order,
 CITE-LAYOUT-ATTRS contains the attributes of the citation layout
   as an alist,
-CITE-NOTE is non-nil iff the style's citation-format is \"note\",
 DATE-TEXT and DATE-NUMERIC are the style's date formats,
 LOCALE contains the locale to be used or nil if not set,
 MACROS is an alist with macro names as keys and corresponding
@@ -57,8 +57,8 @@ MACROS is an alist with macro names as keys and corresponding
 TERMS is the style's parsed term-list,
 USES-YS-VAR is non-nil iff the style uses the YEAR-SUFFIX
   CSL-variable."
-  info opts bib-opts bib-sort bib-sort-orders
-  bib-layout cite-opts cite-note cite-sort cite-sort-orders
+  category info opts bib-opts bib-sort bib-sort-orders
+  bib-layout cite-opts cite-sort cite-sort-orders
   cite-layout cite-layout-attrs locale-opts macros terms
   uses-ys-var date-text date-numeric locale)
 
@@ -98,12 +98,13 @@ in-style locale information will be loaded (if available)."
     (--each (cddr parsed-style)
       (pcase (car it)
 	('info
-	 (let ((info-lst (cddr it)))
-	   (setf (citeproc-style-info style) info-lst
-		 (citeproc-style-cite-note style)
-		 (not (not (member '(category
-				     ((citation-format . "note")))
-				   info-lst))))))
+	 (let* ((info-lst (cddr it))
+		(category-info (cl-find-if
+				(lambda (x) (and (eq 'category (car x))
+						 (eq 'citation-format (caaadr x))))
+				info-lst))
+		(category (cdaadr category-info)))
+	   (setf (citeproc-style-category style) category)))
 	('locale
 	 (let ((lang (alist-get 'lang (cadr it))))
 	   (when (and (citeproc-locale--compatible-p lang locale)
@@ -311,6 +312,10 @@ position and before the (possibly empty) body."
 		       result)))
 	 ;; Handle `author' citation mode by stopping if needed
 	 (citeproc-lib-maybe-stop-rendering 'names context final)))))
+
+(defun citeproc-style-cite-note (style)
+  "Return whether csl STYLE is a note style."
+  (string= (citeproc-style-category style) "note"))
 
 (defun citeproc-style-global-opts (style layout)
   "Return the global opts in STYLE for LAYOUT.
