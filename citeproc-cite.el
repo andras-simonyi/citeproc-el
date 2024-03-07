@@ -41,6 +41,8 @@
 (require 'citeproc-sort)
 (require 'citeproc-subbibs)
 
+(declare-function citeproc-style-category "citeproc-style" (style))
+
 (cl-defstruct (citeproc-citation (:constructor citeproc-citation-create))
   "A struct representing a citation.
 CITES is a list of alists describing individual cites,
@@ -228,7 +230,8 @@ For the optional INTERNAL-LINKS argument see
 	(when outer-attrs
 	  (setq result (list outer-attrs result)))
 	;; Prepend author to textual citations
-	(when (eq (citeproc-citation-mode c) 'textual)
+	(when (and (eq (citeproc-citation-mode c) 'textual)
+		   (not (member (citeproc-style-category style) '("numeric" "label"))))
 	  (let* ((first-elt (car cites)) ;; First elt is either a cite or a cite group.
 		 ;; If the latter then we need to locate the
 		 ;; first cite as the 2nd element of the first
