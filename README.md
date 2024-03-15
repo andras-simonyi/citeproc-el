@@ -284,6 +284,9 @@ format, `style` is a `citeproc-style` style object, `mode` is one of the symbols
 symbol. If the optional `no-external-links` is non-nil then don't generate
 external links in the item.
 
+See the Wiki page [Rendering isolated references with a modified html
+formatter](https://github.com/andras-simonyi/citeproc-el/wiki/Rendering-isolated-references-with-a-modified-html-formatter) for a worked-out example.
+
 ### Supported output formats
 
 Currently `html`, `org`, `plain` (plain text), `latex`, `org-odt`, `org-latex`
