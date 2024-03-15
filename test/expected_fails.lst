@@ -185,10 +185,8 @@ citeproc-suite-sort-quotes
 citeproc-suite-sort-range-unaffected
 citeproc-suite-sort-separate-authors-and-others
 citeproc-suite-sort-with-and-in-one-entry
-citeproc-suite-substitute-substitute-only-once-string
 citeproc-suite-substitute-substitute-only-once-term
 citeproc-suite-substitute-substitute-only-once-term-empty
-citeproc-suite-substitute-substitute-only-once-variable
 citeproc-suite-substitute-suppress-ordinary-variable
 citeproc-suite-testers-first-auto-generated-zotero-plugin-test
 citeproc-suite-testers-second-auto-generated-zotero-plugin-test
@@ -205,7 +203,3 @@ citeproc-suite-textcase-stop-word-before-hyphen
 citeproc-suite-variables-container-title-short
 citeproc-suite-variables-container-title-short2
 citeproc-suite-variables-title-short-on-short-title-no-title-condition
-citeproc-suite-fullstyles-chicago-article-title-question
-citeproc-suite-label-missing-returns-empty
-citeproc-suite-sort-chicago-year-suffix1
-citeproc-suite-sort-chicago-year-suffix2
