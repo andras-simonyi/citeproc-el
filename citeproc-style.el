@@ -317,6 +317,11 @@ position and before the (possibly empty) body."
   "Return whether csl STYLE is a note style."
   (string= (citeproc-style-category style) "note"))
 
+(defun citeproc-style-cite-superscript-p (style)
+  "Return whether csl STYLE has a superscript citaton layout."
+  (string= (alist-get 'vertical-align (citeproc-style-cite-layout-attrs style))
+	   "sup"))
+
 (defun citeproc-style-global-opts (style layout)
   "Return the global opts in STYLE for LAYOUT.
 LAYOUT is either `bib' or `cite'."
