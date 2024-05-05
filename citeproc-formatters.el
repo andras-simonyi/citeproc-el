@@ -164,13 +164,18 @@ Performs finalization by removing unnecessary zero-width spaces."
       (setq result (citeproc-s-replace-all-seq
 		    result '((" ​" . " ") ("​ " . " ") ("​," . ",") ("​;" . ";")
 			     ("​:" . ":") ("​." . "."))))
-      ;; Starting and ending z-w spaces are also removed, but not before an
-      ;; asterisk to avoid creating an Org heading.
+      ;; Starting and ending z-w spaces are also removed, but not before an asterisk
+      ;; to avoid creating an Org heading.
       (when (and (= (aref result 0) 8203)
 		 (not (= (aref result 1) ?*)))
 	(setq result (substring result 1)))
       (when (= (aref result (- (length result) 1)) 8203)
-	(setq result (substring result 0 -1))))
+	(setq result (substring result 0 -1)))
+      ;; Prepend a zero width no-break space when the text starts with
+      ;; superscript to make Org parse it correctly.
+      ;; NOTE: This is a workaround, ideally should be fixed in Org.
+      (when (= (aref result 0) ?^)
+	(setq result (concat "﻿" result))))
     result))
 
 ;; HTML
