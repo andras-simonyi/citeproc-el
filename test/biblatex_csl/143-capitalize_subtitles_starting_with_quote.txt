@@ -1,0 +1,33 @@
+---
+@Article{myers-1988,
+  author       = {Myers, Norman},
+  title        = {Threatened biotas},
+  journal      = {Environmentalist},
+  year         = 1988,
+  volume       = 8,
+  number       = 3,
+  pages        = {187-208},
+  month        = {Sep},
+  type         = {Abstract},
+  subtitle     = {"Hot spots" in tropical forests},
+  day          = 01,
+  issn         = {1573-2991},
+  doi          = {10.1007/BF02240252}
+}
+---
+- DOI: 10.1007/BF02240252
+  ISSN: 1573-2991
+  author:
+  - family: Myers
+    given: Norman
+  blt-type: article
+  container-title: Environmentalist
+  genre: Abstract
+  id: myers-1988
+  issue: 3
+  issued: 1988-09
+  page: 187-208
+  title: "Threatened biotas: \"Hot spots\" in tropical forests"
+  title-short: "Threatened biotas"
+  type: article-journal
+  volume: 8
