@@ -160,7 +160,6 @@ If optional OMIT-NOCASE is non-nil then omit the nocase tags from the output."
 	  (protect-level 0)
 	  (first t)
 	  result)
-      (message "SLICE: %s" sliced)
       (dolist (slice sliced)
 	(push
 	 (pcase slice
