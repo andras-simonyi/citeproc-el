@@ -275,7 +275,7 @@ CSL tests."
     (font-weight-bold . ,(lambda (x) (concat "\\textbf{" x "}")))
     (cited-item-no . ,(lambda (x y) (concat "\\citeprocitem{" y "}{" x "}")))
     (bib-item-no . ,(lambda (x y) (concat "\\hypertarget{citeproc_bib_item_" y "}{"
-					  x "}")))
+					  (citeproc-fmt--latex-escape x) "}")))
     (font-variant-small-caps . ,(lambda (x) (concat "\\textsc{" x "}")))
     (text-decoration-underline . ,(lambda (x) (concat "\\underline{" x "}")))
     (vertical-align-sup . ,(lambda (x) (concat "\\textsuperscript{" x "}")))
