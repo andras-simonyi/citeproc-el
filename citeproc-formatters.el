@@ -262,11 +262,16 @@ CSL tests."
   "Return the LaTeX-escaped version of string S."
   (replace-regexp-in-string citeproc-fmt--latex-esc-regex "\\\\\\&" s))
 
+(defconst citeproc-fmt--latex-uri-esc-regex
+  (regexp-opt '("#" "%"))
+  "Regular expression matching characters to be escaped in URIs for LaTeX output.")
+
 (defun citeproc-fmt--latex-href (text uri)
-  (let ((escaped-uri (replace-regexp-in-string "%" "\\\\%" uri)))
-   (if (string-prefix-p "http" text)
-       (concat "\\url{" escaped-uri "}")
-     (concat "\\href{" escaped-uri "}{" text "}"))))
+  (let ((escaped-uri (replace-regexp-in-string
+		      citeproc-fmt--latex-uri-esc-regex "\\\\\\&" uri)))
+    (if (string-prefix-p "http" text)
+	(concat "\\url{" escaped-uri "}")
+      (concat "\\href{" escaped-uri "}{" text "}"))))
 
 (defconst citeproc-fmt--latex-alist
   `((unformatted . ,#'citeproc-fmt--latex-escape)
