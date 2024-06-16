@@ -40,6 +40,8 @@
 (require 'citeproc-s)
 (require 'citeproc-lib)
 
+(declare-function citeproc-itemdata-rawbibitem "citeproc-itemdata")
+
 (defconst citeproc-rt-format-attrs
   '(font-variant font-style font-weight text-decoration vertical-align font-variant
 		 display rendered-var name-id quotes cited-item-no bib-item-no

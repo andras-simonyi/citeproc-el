@@ -28,6 +28,7 @@
 (require 'dash)
 (require 's)
 
+(declare-function citeproc-context-vars "citeproc-context")
 (declare-function citeproc-rt-render-affixes "citeproc-rt" (rt &optional shallow))
 
 (defconst citeproc--number-vars
