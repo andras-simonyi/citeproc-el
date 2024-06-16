@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(declare-function citeproc-s-fill-copy "citeproc-s" (s1 s2))
+
 (defun citeproc-prange--end-significant (start end len)
   "Return the significant digits of the end in page range START END.
 START and END are strings of equal length containing integers. If

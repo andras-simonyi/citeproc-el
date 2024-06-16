@@ -28,6 +28,8 @@
 (require 'dash)
 (require 's)
 
+(declare-function citeproc-rt-render-affixes "citeproc-rt" (rt &optional shallow))
+
 (defconst citeproc--number-vars
   '(chapter-number citation-number collection-number edition first-reference-note-number
 		   issue number number-of-pages number-of-volumes page page-first

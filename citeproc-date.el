@@ -35,6 +35,8 @@
 (require 'citeproc-rt)
 (require 'citeproc-context)
 
+(declare-function citeproc-number--format-as-ordinal "citeproc-number" (s term context))
+
 (cl-defstruct (citeproc-date (:constructor citeproc-date-create))
   "Struct for representing dates.
 Slots YEAR, MONTH, DAY are integers, while SEASON and CIRCA are

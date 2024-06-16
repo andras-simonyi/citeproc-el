@@ -37,6 +37,8 @@
 (require 'citeproc-proc)
 (require 'citeproc-name)
 
+(declare-function citeproc-number-var-value "citeproc-number" (value variable form context))
+
 (defun citeproc--sort (_attrs _context &rest body)
   "Placeholder function corresponding to the cs:sort element of CSL."
   body)

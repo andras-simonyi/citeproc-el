@@ -33,6 +33,9 @@
 (require 's)
 (require 'cl-lib)
 
+(declare-function citeproc-s-replace-all-seq "citeproc-s"  (s replacements))
+(declare-function citeproc-rt-to-plain "citeproc-rt" (rt))
+
   (cl-defstruct (citeproc-formatter (:constructor citeproc-formatter-create))
     "Output formatter struct with slots RT, CITE, BIB-ITEM and BIB.
 RT is a one-argument function mapping a rich-text to its
