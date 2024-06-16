@@ -29,9 +29,10 @@
 (require 's)
 
 ;; Handle the unavailability of `string-replace' in early Emacs versions
-(if (fboundp 'string-replace)
-    (defalias 'citeproc-s-replace #'string-replace)
-  (defalias 'citeproc-s-replace #'s-replace))
+(defalias 'citeproc-s-replace
+  (if (fboundp 'string-replace)
+      #'string-replace
+	#'s-replace))
 
 (defun citeproc-s-camelcase-p (s)
   "Return whether string S is in camel case."
