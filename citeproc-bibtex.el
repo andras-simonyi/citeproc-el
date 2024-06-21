@@ -32,6 +32,7 @@
 (require 's)
 (require 'org)
 (require 'map)
+(require 'compat)
 ;; Handle the fact that org-bibtex has been renamed to ol-bibtex -- for the time
 ;; being we support both feature names.
 (or (require 'ol-bibtex nil t)
@@ -262,7 +263,7 @@ replacements."
   (let ((wo-quotes (if (and (string= (substring s 0 1) "\"")
 			    (string= (substring s -1) "\""))
 		       (substring s 1 -1) s)))
-    (citeproc-s-replace "\\&" "&" wo-quotes)))
+    (string-replace "\\&" "&" wo-quotes)))
 
 (defun citeproc-bt--to-csl (s &optional with-nocase)
   "Convert a BibTeX field S to a CSL one.

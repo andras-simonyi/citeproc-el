@@ -36,6 +36,7 @@
 (require 'cl-lib)
 (require 'let-alist)
 (require 's)
+(require 'compat)
 
 (require 'citeproc-s)
 (require 'citeproc-lib)
@@ -148,7 +149,7 @@ If optional SKIP-NOCASE is non-nil then skip spans with the
 
 (defun citeproc-rt-strip-periods (rts)
   "Remove all periods from rich-texts RTS."
-  (citeproc-rt-map-strings (lambda (x) (citeproc-s-replace "." "" x)) rts))
+  (citeproc-rt-map-strings (lambda (x) (string-replace "." "" x)) rts))
 
 (defun citeproc-rt-length (rt)
   "Return the length of rich-text RT as a string."
@@ -531,12 +532,6 @@ The values are ordered depth-first."
   (--select (memq it citeproc--name-vars) (citeproc-rt-rendered-vars r)))
 
 ;;; Helpers for bibliography rendering
-
-(defun citeproc-rt-max-offset (itemdata)
-  "Return the maximal first field width in rich-texts RTS."
-  (cl-loop for itd being the hash-values of itemdata
-	   when (listp (citeproc-itemdata-rawbibitem itd)) maximize
-	   (length (citeproc-rt-to-plain (cadr (citeproc-itemdata-rawbibitem itd))))))
 
 (defun citeproc-rt-subsequent-author-substitute (bib s)
   "Substitute S for subsequent author(s) in BIB.

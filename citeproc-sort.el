@@ -36,6 +36,7 @@
 (require 'citeproc-macro)
 (require 'citeproc-proc)
 (require 'citeproc-name)
+(require 'citeproc-number)
 
 (defun citeproc--sort (_attrs _context &rest body)
   "Placeholder function corresponding to the cs:sort element of CSL."

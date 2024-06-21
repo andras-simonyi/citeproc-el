@@ -27,11 +27,7 @@
 
 (require 'thingatpt)
 (require 's)
-
-;; Handle the unavailability of `string-replace' in early Emacs versions
-(if (fboundp 'string-replace)
-    (defalias 'citeproc-s-replace #'string-replace)
-  (defalias 'citeproc-s-replace #'s-replace))
+(require 'compat)
 
 (defun citeproc-s-camelcase-p (s)
   "Return whether string S is in camel case."
@@ -237,7 +233,7 @@ OQ is the opening quote, CQ is the closing quote to use."
 REPLACEMENTS is an alist with (FROM . TO) elements."
   (let ((result s))
     (pcase-dolist (`(,from . ,to) replacements)
-      (setq result (citeproc-s-replace from to result)))
+      (setq result (string-replace from to result)))
     result))
 
 (defun citeproc-s-replace-all-sim (s regex replacements)

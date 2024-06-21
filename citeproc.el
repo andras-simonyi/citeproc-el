@@ -244,7 +244,7 @@ formatting parameters keyed to the parameter names as symbols:
 	     ;; could be handled way more efficiently. 
 	     (max-offset (if (and (alist-get 'second-field-align bib-opts)
 				  (not (hash-table-empty-p itemdata)))
-			     (citeproc-rt-max-offset itemdata)
+			     (citeproc-proc-max-offset itemdata)
 			   0))
 	     (format-params (cons (cons 'max-offset max-offset)
 				  (citeproc-style-bib-opts-to-formatting-params bib-opts)))

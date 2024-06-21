@@ -33,8 +33,11 @@
 (require 's)
 (require 'cl-lib)
 
-  (cl-defstruct (citeproc-formatter (:constructor citeproc-formatter-create))
-    "Output formatter struct with slots RT, CITE, BIB-ITEM and BIB.
+(require 'citeproc-s)
+(require 'citeproc-rt)
+
+(cl-defstruct (citeproc-formatter (:constructor citeproc-formatter-create))
+  "Output formatter struct with slots RT, CITE, BIB-ITEM and BIB.
 RT is a one-argument function mapping a rich-text to its
   formatted version,
 CITE is a one-argument function mapping the output of RT for a
@@ -48,9 +51,9 @@ BIB is a two-argument function mapping a list of formatted
   bibliography,
 NO-EXTERNAL-LINKS is non-nil if the formatter doesn't support
   external linking."
-    rt (cite #'identity) (bib-item (lambda (x _) x))
-    (bib (lambda (x _) (mapconcat #'identity x "\n\n")))
-    (no-external-links nil))
+  rt (cite #'identity) (bib-item (lambda (x _) x))
+  (bib (lambda (x _) (mapconcat #'identity x "\n\n")))
+  (no-external-links nil))
 
 (defun citeproc-formatter-fun-create (fmt-alist)
   "Return a rich-text formatter function based on FMT-ALIST.

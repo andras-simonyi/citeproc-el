@@ -143,7 +143,7 @@
 		       (setq type (cdr macro-val)))))
       ;; We stop if only the title had to be rendered.
       (let ((result (cons (citeproc-rt-format-single attrs content context) type)))
-	(citeproc-lib-maybe-stop-rendering
+	(citeproc-context-maybe-stop-rendering
 	 'title context result (or (and .variable (intern .variable)) t))))))
 
 (provide 'citeproc-generic-elements)
