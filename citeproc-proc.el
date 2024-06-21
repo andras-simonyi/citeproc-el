@@ -230,6 +230,14 @@ Return the PROC-internal representation of REP."
   (let ((filters (citeproc-proc-bib-filters proc)))
     (and filters (not (equal filters '(nil))))))
 
+(defun citeproc-proc-max-offset (itds)
+  "Return the maximal first field width of bibitems in ITDS.
+ITDS should be the value of the itemdata field of a citeproc-proc
+structure."
+  (cl-loop for itd being the hash-values of itds
+	   when (listp (citeproc-itemdata-rawbibitem itd)) maximize
+	   (length (citeproc-rt-to-plain (cadr (citeproc-itemdata-rawbibitem itd))))))
+
 (provide 'citeproc-proc)
 
 ;;; citeproc-proc.el ends here

@@ -218,6 +218,20 @@ no internal links should be produced."
 	;; Else link each cite to the corresponding bib item.
 	(if (eq mode 'cite) 'cited-item-no 'bib-item-no)))))
 
+(defun citeproc-context-maybe-stop-rendering
+    (trigger context result &optional var)
+  "Stop rendering if a (`stop-rendering-at'. TRIGGER) pair is present in CONTEXT.
+In case of stopping return with RESULT. If the optional VAR
+symbol is non-nil then rendering is stopped only if VAR is eq to
+TRIGGER."
+  (if (and (eq trigger (alist-get 'stop-rendering-at (citeproc-context-vars context)))
+	   (or (not var) (eq var trigger))
+	   (eq (cdr result) 'present-var))
+      (let ((rt-result (car result)))
+	(push '(stopped-rendering . t) (car rt-result))
+	(throw 'stop-rendering (citeproc-rt-render-affixes rt-result)))
+    result))
+
 (defun citeproc-render-varlist-in-rt (var-alist style mode render-mode &optional
 						internal-links no-external-links)
   "Render an item described by VAR-ALIST with STYLE in rich-text.
@@ -257,7 +271,7 @@ external links."
 		       (citeproc-context-int-link-attrval
 			style internal-links mode (alist-get 'position var-alist)))
 		      (cite-no-attr-val (cons cite-no-attr
-					     (alist-get 'citation-number var-alist))))
+					      (alist-get 'citation-number var-alist))))
 	    (cond ((consp rendered) (setf (car rendered)
 					  (-snoc (car rendered) cite-no-attr-val)))
 		  ((stringp rendered) (setq rendered

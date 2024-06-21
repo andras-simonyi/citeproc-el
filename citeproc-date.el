@@ -34,6 +34,7 @@
 (require 'citeproc-lib)
 (require 'citeproc-rt)
 (require 'citeproc-context)
+(require 'citeproc-number)
 
 (cl-defstruct (citeproc-date (:constructor citeproc-date-create))
   "Struct for representing dates.
@@ -94,7 +95,7 @@ Set the remaining slots to the values SEASON and CIRCA."
 		   (cons nil 'empty-vars)))
 	     (cons nil 'empty-vars))))
     ;; Handle `year' citation mode by stopping if needed
-    (citeproc-lib-maybe-stop-rendering 'issued context result var-sym)))
+    (citeproc-context-maybe-stop-rendering 'issued context result var-sym)))
 
 (defun citeproc--date-part (attrs _context &rest _body)
   "Function corresponding to the date-part CSL element."

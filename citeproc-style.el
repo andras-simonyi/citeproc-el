@@ -311,7 +311,7 @@ position and before the (possibly empty) body."
 			   (cons str (cdr result)))
 		       result)))
 	 ;; Handle `author' citation mode by stopping if needed
-	 (citeproc-lib-maybe-stop-rendering 'names context final)))))
+	 (citeproc-context-maybe-stop-rendering 'names context final)))))
 
 (defun citeproc-style-cite-note (style)
   "Return whether csl STYLE is a note style."
