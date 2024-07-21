@@ -1,6 +1,6 @@
 ;;; citeproc.el --- A CSL 1.0.2 Citation Processor -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017-2023 András Simonyi
+;; Copyright (C) 2017-2024 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
@@ -87,10 +87,12 @@ CITATIONS is a list of `citeproc-citation' structures."
 	   (new-ids (--remove (gethash it itemdata) uniq-ids)))
       ;; Add all new items in one pass
       (citeproc-proc-put-items-by-id proc new-ids)
-      ;; Add itemdata to the cite structs and add them to the cite queue.
+      ;; Internalize the cites dealing with locator-extra if present, add itemdata to
+      ;; the cite structs and add them to the cite queue.
       (dolist (citation citations)
 	(setf (citeproc-citation-cites citation)
-	      (--map (cons (cons 'itd (gethash (alist-get 'id it) itemdata)) it)
+	      (--map (cons (cons 'itd (gethash (alist-get 'id it) itemdata))
+			   (citeproc-cite--internalize-locator it))
 		     (citeproc-citation-cites citation)))
 	(queue-append (citeproc-proc-citations proc) citation))
       (setf (citeproc-proc-finalized proc) nil))))
