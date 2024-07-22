@@ -1,6 +1,6 @@
 ;;; citeproc-cite.el --- cite and citation rendering -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017-2021 András Simonyi
+;; Copyright (C) 2017-2024 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 
@@ -40,6 +40,9 @@
 (require 'citeproc-formatters)
 (require 'citeproc-sort)
 (require 'citeproc-subbibs)
+(require 'citeproc-date)
+(require 'citeproc-biblatex)
+
 
 (declare-function citeproc-style-category "citeproc-style" (style))
 
@@ -79,6 +82,35 @@ Each function takes a single argument, a rich-text, and returns a
 post-processed rich-text value. The functions are applied in the
 order they appear in the list.")
 
+(defun citeproc-cite--parse-locator-extra (s)
+  "Parse extra locator text S into locator-date and locator-extra.
+Return a pair (LOCATOR-DATE . LOCATOR-EXTRA) where
+- LOCATOR-DATE is a `citeproc-date' struct or nil, and
+- LOCATOR-EXTRA is a string or nil."
+  (let (locator-date locator-extra)
+    (if (not (string-match-p "^[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}" s))
+	(setq locator-extra (and (not (s-blank-str-p s)) s))
+      (setq locator-date (citeproc-date-parse (citeproc-blt--to-csl-date
+					       (substring s 0 10))))
+      (let ((extra (substring s 10)))
+	(unless (s-blank-str-p extra) (setq locator-extra extra))))
+    (cons locator-date locator-extra)))
+
+(defun citeproc-cite--internalize-locator (cite)
+  "Internalize a CITE struct's locator by parsing it into fields.
+If the \"|\" separator is present in the locator then parse it
+into `locator', `locator-extra' and `locator-date', and update
+CITE with these fields accordingly. Returns the possibly modified
+CITE."
+  (when-let ((locator (alist-get 'locator cite))
+	     (separator-pos (cl-position ?| locator)))
+    (setf (alist-get 'locator cite) (substring locator 0 separator-pos))
+    (pcase-let ((`(,locator-date . ,locator-extra) (citeproc-cite--parse-locator-extra
+						    (substring locator (1+ separator-pos)))))
+      (when locator-date (push (cons 'locator-date locator-date) cite))
+      (when locator-extra (push (cons 'locator-extra locator-extra) cite))))
+  cite)
+
 (defun citeproc-cite--varlist (cite)
   "Return the varlist belonging to CITE."
   (let* ((itd (alist-get 'itd cite))
@@ -89,7 +121,8 @@ order they appear in the list.")
 			  '(label locator suppress-author suppress-date
 				  stop-rendering-at position near-note
 				  first-reference-note-number ignore-et-al
-				  bib-entry locator-only use-short-title))
+				  bib-entry locator-only use-short-title
+				  locator-extra locator-date))
 		    cite)))
     (nconc cite-vv item-vv)))
 

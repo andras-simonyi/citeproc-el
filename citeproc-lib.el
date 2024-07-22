@@ -38,7 +38,7 @@
   )
 
 (defconst citeproc--date-vars
-  '(accessed available-date event-date issued original-date submitted)
+  '(accessed available-date event-date issued original-date submitted locator-date)
   "CSL date variables.")
 
 (defconst citeproc--name-vars
