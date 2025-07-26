@@ -211,3 +211,11 @@ citeproc-suite-date-negative-date-sort-via-macro-on-year-month-only
 citeproc-suite-locale-force-empty-et-al-term
 citeproc-suite-magic-subsequent-author-substitute-not-fooled
 citeproc-suite-punctuation-delimiter-with-strip-periods-and-substitute3
+citeproc-suite-bugreports-sorted-ieee-italics-fail
+citeproc-suite-bugreports-undefined-in-name3
+citeproc-suite-date-negative-date-sort
+citeproc-suite-date-negative-date-sort-via-macro
+citeproc-suite-date-negative-date-sort-via-macro-on-year-month-only
+citeproc-suite-locale-force-empty-et-al-term
+citeproc-suite-magic-subsequent-author-substitute-not-fooled
+citeproc-suite-punctuation-delimiter-with-strip-periods-and-substitute3
