@@ -1,0 +1,16 @@
+---
+@software{expressionTest,
+  author       = {Myself, Me},
+  title        = {Regex:[01]\{20\}},
+  year         = {2025}
+}
+---
+- author:
+  - family: Myself
+    given: Me
+  blt-type: software
+  id: expressionTest
+  issued: 2025
+  title: Regex:[01]{20}
+  type: software
+

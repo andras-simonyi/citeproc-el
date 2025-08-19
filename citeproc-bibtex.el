@@ -232,7 +232,9 @@ character was found."
   (rx "\\" (1+ (any "a-z" "A-Z")) word-end)) ; \TEX-COMMAND + word-end
 
 (defconst citeproc-bt--braces-rx
-  (rx "{" (group (*? anything)) "}")) 	; {TEXT}
+  (rx (group (or string-start (not "\\"))) "{"		; unescaped {
+      (group (optional (seq (*? anything) (not "\\")))) ; TEXT
+      "}"))						; unescaped }
 
 (defun citeproc-bt--process-brackets (s &optional lhb rhb)
   "Process LaTeX curly brackets in string S.
@@ -250,11 +252,11 @@ The default is to remove them."
 		   match t))
 	    ((string-match citeproc-bt--braces-rx result)
 	     (setq result (replace-match
-			   (concat lhb "\\1" rhb)
+			   (concat "\\1" lhb "\\2" rhb)
 			   t nil result)
 		   match t))
 	    (t (setq match nil))))
-    result))
+    (s-replace-all '(("\\{" . "{") ("\\}" . "}")) result)))
 
 (defun citeproc-bt--preprocess-for-decode (s)
   "Preprocess field S before decoding.
