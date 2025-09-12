@@ -247,7 +247,7 @@ REPLACEMENTS is an alist with (FROM . TO) elements."
   "Replace dumb apostophes in string S with smart ones.
 The replacement character used is the unicode character `modifier
 letter apostrophe'."
-  (subst-char-in-string ?' ?ʼ (subst-char-in-string ?’ ?ʼ s t) t))
+  (string-replace "'" "ʼ" (string-replace "’" "ʼ" s)))
 
 (defconst citeproc-s--cull-spaces-alist
   '(("  " . " ") (";;" . ";") ("..." . ".") (",," . ",") (".." . "."))
