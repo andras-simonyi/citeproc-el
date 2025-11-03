@@ -79,8 +79,11 @@ en-US locale, which must exist, and warn the user."
 		(error
 		 "The default CSL locale file %s doesn't exist or is unreadable"
 		 default-loc-file)
-	      (warn "Could not read CSL locale file %s, using the fallback en-US locale"
-		    loc-file)
+	      (display-warning
+	       'citeproc
+	       (format
+		"Could not read CSL locale file %s, using the fallback en-US locale"
+		loc-file))
 	      default-loc-file))))))))
 
 (defun citeproc-locale-termlist-from-xml-frag (frag)
