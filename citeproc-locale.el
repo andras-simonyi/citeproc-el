@@ -63,7 +63,7 @@ simply the result of upcasing.")
 (defun citeproc-locale-getter-from-dir (dir)
   "Return a locale getter getting parsed locales from a local DIR.
 If the requested locale couldn't be read then return the parsed
-en-US locale, which must exist."
+en-US locale, which must exist, and warn the user."
   (let ((default-loc-file (f-join dir "locales-en-US.xml")))
     (lambda (loc)
       (let* ((ext-loc (if (or (member loc citeproc-locale--simple-locales)
@@ -75,11 +75,13 @@ en-US locale, which must exist."
 	(citeproc-lib-remove-xml-comments
 	 (citeproc-lib-parse-xml-file
 	  (if loc-available loc-file
-	   (if (not (f-readable-p default-loc-file))
-	       (error
-		"The default CSL locale file %s doesn't exist or is unreadable"
-		      default-loc-file)   
-	     default-loc-file))))))))
+	    (if (not (f-readable-p default-loc-file))
+		(error
+		 "The default CSL locale file %s doesn't exist or is unreadable"
+		 default-loc-file)
+	      (warn "Could not read CSL locale file %s, using the fallback en-US locale"
+		    loc-file)
+	      default-loc-file))))))))
 
 (defun citeproc-locale-termlist-from-xml-frag (frag)
   "Transform xml FRAG representing citeproc--terms into a citeproc-term list."
