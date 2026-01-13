@@ -237,7 +237,7 @@ CSL tests."
 	 "<span style=\"text-decoration:underline;\">" x "</span>")))
     (vertical-align-sub . ,(lambda (x) (concat "<sub>" x "</sub>")))
     (vertical-align-sup . ,(lambda (x) (concat "<sup>" x "</sup>")))
-    (vertical-align-baseline . ,(lambda (x) (concat "<span style=\"baseline\">" x "</span>")))
+    (vertical-align-baseline . ,(lambda (x) (concat "<span class=\"baseline\">" x "</span>")))
     (display-left-margin . ,(lambda (x) (concat "\n    <div class=\"csl-left-margin\">"
 						x "</div>")))
     (display-right-inline . ,(lambda (x) (concat "<div class=\"csl-right-inline\">"
