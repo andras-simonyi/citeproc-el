@@ -203,15 +203,9 @@ citeproc-suite-textcase-stop-word-before-hyphen
 citeproc-suite-variables-container-title-short
 citeproc-suite-variables-container-title-short2
 citeproc-suite-variables-title-short-on-short-title-no-title-condition
-citeproc-suite-bugreports-sorted-ieee-italics-fail
 citeproc-suite-bugreports-undefined-in-name3
-citeproc-suite-date-negative-date-sort
-citeproc-suite-date-negative-date-sort-via-macro-on-year-month-only
-citeproc-suite-magic-subsequent-author-substitute-not-fooled
 citeproc-suite-punctuation-delimiter-with-strip-periods-and-substitute3
-citeproc-suite-bugreports-sorted-ieee-italics-fail
 citeproc-suite-bugreports-undefined-in-name3
-citeproc-suite-date-negative-date-sort
-citeproc-suite-date-negative-date-sort-via-macro-on-year-month-only
-citeproc-suite-magic-subsequent-author-substitute-not-fooled
 citeproc-suite-punctuation-delimiter-with-strip-periods-and-substitute3
+citeproc-suite-decorations-baseline
+citeproc-suite-locale-empty-plus-override-term
