@@ -92,11 +92,11 @@ sorted."
     ;; Generate the editor-translator variable if needed
     ;; (required by CSL 1.02)
     (when-let* (((null (alist-get 'editor-translator result)))
-		(editor (alist-get 'editor result))
-		(translator (alist-get 'translator result))
-		((string= (alist-get 'name-id editor)
-			  (alist-get 'name-id translator))))
-      (push (cons 'editor-translator editor) result))
+                (editor (car (alist-get 'editor result)))
+                (translator (car (alist-get 'translator result)))
+                ((equal (alist-get 'name-id editor)
+                        (alist-get 'name-id translator))))
+      (push (cons 'editor-translator (alist-get 'editor result)) result))
     result))
 
 (defun citeproc-proc--put-item (proc item itemid &optional uncited)
