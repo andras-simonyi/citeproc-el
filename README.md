@@ -324,6 +324,7 @@ the functions are applied in the order they appear in the list.
 - [Marvin Gülker](https://github.com/Quintus)
 - [Matt Price](https://github.com/titaniumbones)
 - [Alexey Shiklomanov](https://github.com/ashiklom)
+- [Joar von Arndt](https://github.com/JanJoar)
 
 ### Advice, discussion
 
