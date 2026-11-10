@@ -94,8 +94,8 @@ sorted."
     (when-let* (((null (alist-get 'editor-translator result)))
 		(editor (alist-get 'editor result))
 		(translator (alist-get 'translator result))
-		((= (alist-get 'name-id (car editor))
-		    (alist-get 'name-id (car translator)))))
+		((equal (--map (alist-get 'name-id it) editor)
+			(--map (alist-get 'name-id it) translator))))
       (push (cons 'editor-translator editor) result))
     result))
 
